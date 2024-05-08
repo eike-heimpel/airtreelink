@@ -26,10 +26,4 @@
 	});
 </script>
 
-<svelte:head>
-	<title>User Management</title>
-</svelte:head>
-
-<!-- <button class="btn btn-secondary fixed top-0 left-0 m-2">Home</button>
-<button class="btn btn-primary fixed top-0 right-0 m-2">Login</button> -->
 <slot />

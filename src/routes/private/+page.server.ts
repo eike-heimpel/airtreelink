@@ -1,11 +1,8 @@
-import { fail, redirect } from '@sveltejs/kit'
-import type { Actions, PageServerLoad } from '../../account/$types'
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession }, params }) => {
-    const { session } = await safeGetSession()
-    if (!session) {
-        throw redirect(303, '/')
-    }
+export const load: PageServerLoad = async ({ locals }) => {
 
-    redirect(303, '/private/' + session.user.id)
+    console.log(`/private/${locals.session.user.id}/listings`)
+    throw redirect(301, `/private/${locals.session.user.id}/listings`)
 }
