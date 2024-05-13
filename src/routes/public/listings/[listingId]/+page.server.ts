@@ -16,6 +16,6 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
     }
 
     return {
-        listing
+        listing: listing.data[0]
     }
 }
