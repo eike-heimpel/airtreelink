@@ -1,5 +1,4 @@
 <script lang="ts">
-	// Prop passed from the parent or framework
 	export let data;
 
 	let showModal = false;

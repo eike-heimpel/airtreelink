@@ -27,6 +27,7 @@
 		class:absolute={mobileMenuOpen}
 		class:top-10={mobileMenuOpen}
 	>
+		<img src="/logo.webp" alt="Logo" class="w-24 mx-auto mt-4" />
 		<ul class="menu">
 			<li class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-secondary' : ''}">
 				<a href="/private/{$page.params.userId}/account">Account Settings</a>
