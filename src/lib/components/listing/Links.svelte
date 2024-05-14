@@ -75,36 +75,36 @@
 	}
 </script>
 
-<div class="grid-container">
+<div class="grid gap-4 grid-cols-2">
 	{#each entries as entry}
-		<button
-			class={`grid-item bg-gradient-to-r ${entry.color}`}
+		<div
+			class={`text-white rounded-lg p-4 flex flex-col justify-center items-center relative cursor-pointer min-h-[120px] bg-gradient-to-r ${entry.color}`}
 			on:click={() => handleClick(entry.link)}
-			on:keydown={(event) => {
-				if (event.key === 'Enter') {
-					handleClick(entry.link);
-				}
-			}}
 		>
-			<div class="icon-wrapper">
-				<span class="icon">{entry.icon}</span>
+			<div
+				class="bg-white rounded-full p-2 absolute top-2 left-2 flex items-center justify-center w-[32px] h-[32px]"
+			>
+				<span class="text-lg text-black">{entry.icon}</span>
 			</div>
-			<span class="item-text">{entry.name}</span>
-		</button>
+			<span class="mt-4 text-center text-sm">{entry.name}</span>
+		</div>
 	{/each}
 	{#if showAddButton}
-		<button class="add-item" type="button" on:click={toggleLinksModal}>
+		<div
+			class="border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer min-h-[120px]"
+			on:click={toggleLinksModal}
+		>
 			<span class="text-3xl">➕</span>
-		</button>
+		</div>
 	{/if}
 </div>
 
 {#if showLinksModal}
-	<div class="modal modal-open">
-		<div class="modal-box">
+	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+		<div class="bg-white rounded-lg p-8 shadow-lg w-[90%] max-w-[500px]">
 			<h2 class="font-bold text-lg">Add New Entry</h2>
 			<form on:submit={handleFormSubmit}>
-				<div class="form-control">
+				<div class="mb-4">
 					<label class="label">Icon</label>
 					<div class="flex flex-wrap gap-2">
 						{#each mockIcons as icon}
@@ -117,7 +117,7 @@
 						{/each}
 					</div>
 				</div>
-				<div class="form-control">
+				<div class="mb-4">
 					<label class="label">Name</label>
 					<input
 						class="input input-bordered"
@@ -127,11 +127,11 @@
 						required
 					/>
 				</div>
-				<div class="form-control">
+				<div class="mb-4">
 					<label class="label">Color Gradient</label>
 					<input class="input input-bordered" type="text" bind:value={newEntry.color} readonly />
 				</div>
-				<div class="modal-action">
+				<div class="flex justify-end">
 					<button type="button" class="btn" on:click={toggleLinksModal}>Cancel</button>
 					<button type="submit" class="btn btn-primary">Add</button>
 				</div>
@@ -139,56 +139,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.grid-container {
-		@apply grid gap-4;
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	.grid-item {
-		@apply text-white rounded-lg p-4 flex flex-col justify-center items-center relative cursor-pointer;
-		min-height: 120px;
-	}
-
-	.add-item {
-		@apply border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer;
-		min-height: 120px;
-	}
-
-	.icon-wrapper {
-		@apply bg-white rounded-full p-2 absolute top-2 left-2 flex items-center justify-center;
-		width: 32px; /* Adjust size */
-		height: 32px; /* Adjust size */
-	}
-
-	.icon {
-		@apply text-lg text-black; /* Adjust size */
-	}
-
-	.item-text {
-		@apply mt-4 sm:mt-0 text-center sm:text-xl;
-	}
-
-	.modal-open .modal-box {
-		display: block;
-	}
-
-	.modal {
-		@apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50;
-	}
-
-	.modal-box {
-		@apply bg-white rounded-lg p-8 shadow-lg;
-		width: 90%;
-		max-width: 500px;
-	}
-
-	.form-control {
-		@apply mb-4;
-	}
-
-	.modal-action {
-		@apply flex justify-end;
-	}
-</style>
