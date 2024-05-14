@@ -1,11 +1,10 @@
 <script>
 	import { page } from '$app/stores';
-	import { fly } from 'svelte/transition';
 
-	let mobileMenuOpen = false; // State to toggle mobile menu
+	let mobileMenuOpen = false;
 </script>
 
-<div class="flex flex-col md:flex-row min-h-screen bg-gray-100">
+<div class="flex flex-col md:flex-row min-h-screen bg-slate-200">
 	<!-- Mobile menu button -->
 	<button
 		class="md:hidden p-4 focus:outline-none focus:bg-gray-300"
@@ -27,20 +26,26 @@
 		class:absolute={mobileMenuOpen}
 		class:top-10={mobileMenuOpen}
 	>
-		<img src="/logo.webp" alt="Logo" class="w-24 mx-auto mt-4" />
+		<img src="/logo.webp" alt="Logo" class="w-20 mx-auto mt-4" />
 		<ul class="menu">
 			<li class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-secondary' : ''}">
-				<a href="/private/{$page.params.userId}/account">Account Settings</a>
+				<a href="/private/{$page.params.userId}/account">Profile</a>
 			</li>
 			<li class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-secondary' : ''}">
 				<a href="/private/{$page.params.userId}/listings">Listings</a>
 			</li>
-			<!-- Additional navigation items can be added here -->
+			<li class="rounded-lg {$page.url.pathname.endsWith('/pricing') ? 'bg-secondary' : ''}">
+				<a href="/pricing">Pricing</a>
+			</li>
+			<li class="rounded-lg {$page.url.pathname.endsWith('billing') ? 'bg-secondary' : ''}">
+				<a href="/private/{$page.params.userId}/billing">Billing</a>
+				<!-- Additional navigation items can be added here -->
+			</li>
 		</ul>
 	</nav>
 
 	<!-- Content area -->
-	<div class="flex-1 p-8 text-gray-800">
+	<div class="flex-1">
 		<slot></slot>
 	</div>
 </div>
