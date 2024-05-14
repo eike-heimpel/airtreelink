@@ -9,6 +9,7 @@ export const actions: Actions = {
         const password = formData.get('password') as string
 
         const { error } = await supabase.auth.signUp({ email, password })
+        console.log(error)
         if (error) {
             console.error(error)
             return redirect(303, '/auth/error')

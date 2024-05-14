@@ -65,7 +65,7 @@
 						<span class="plan-icon">✓</span>URL hash and password rotation
 					</li>
 					<li class="flex items-center">
-						<span class="plan-icon">✓</span>Permission to add affinity links to generate revenue
+						<span class="plan-icon">✓</span>Permission to add affiliate links to generate revenue
 					</li>
 				</ul>
 			</div>
