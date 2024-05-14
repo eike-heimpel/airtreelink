@@ -45,8 +45,8 @@
 			<li class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral' : ''}">
 				<a href="/private/{$page.params.userId}/listings">Listings</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('/pricing') ? 'bg-neutral' : ''}">
-				<a href="/pricing">Pricing</a>
+			<li class="rounded-lg">
+				<a href="/#pricing">Pricing</a>
 			</li>
 			<li class="rounded-lg {$page.url.pathname.endsWith('billing') ? 'bg-neutral' : ''}">
 				<a href="/private/{$page.params.userId}/billing">Billing</a>

@@ -1,20 +1,140 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	export let data;
 	$: ({ session, supabase } = data);
+
+	function handleBasicPlanPurchase() {
+		console.log('Purchasing basic plan...');
+	}
+
+	function handlePremiumPlanPurchase() {
+		console.log('Purchasing premium plan...');
+	}
+
+	function scrollToSection(event, sectionId) {
+		event.preventDefault();
+		document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+	}
 </script>
 
-<div class="flex justify-center items-center h-96">
-	{#if session}
-		<div class="flex flex-col gap-4">
-			<h1>Welcome, {session.user.email}</h1>
-			<button class="btn btn-primary" on:click={() => goto('private')}>Go to account</button>
+<nav class="bg-neutral text-white p-4 fixed w-full z-10 shadow-lg">
+	<div class="container mx-auto flex justify-between items-center">
+		<a href="/" class="text-2xl font-bold">Airtree</a>
+		<div class="space-x-4 flex items-center">
+			<a href="#home" on:click={(e) => scrollToSection(e, 'home')} class="hover:text-primary"
+				>Home</a
+			>
+			<a href="#demo" on:click={(e) => scrollToSection(e, 'demo')} class="hover:text-primary"
+				>Demo</a
+			>
+			<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="hover:text-primary"
+				>Pricing</a
+			>
+			{#if session}
+				<a href="/private" class="btn btn-primary">Account</a>
+			{:else}
+				<a href="/auth" class="btn btn-secondary">Login/Signup</a>
+			{/if}
 		</div>
-	{:else}
-		<div class="flex flex-col gap-4">
-			<h1>Not logged in</h1>
-			<button class="btn btn-primary" on:click={() => goto('auth')}>Go to Login</button>
+	</div>
+</nav>
+
+<section id="home" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
+	<div class="text-center">
+		<h1 class="text-5xl font-bold mb-6">Welcome to Airtree</h1>
+		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
+		<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="btn btn-primary"
+			>Get Started</a
+		>
+	</div>
+</section>
+
+<section id="demo" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
+	<div class="text-center">
+		<h2 class="text-4xl font-bold mb-6">See Airtree in Action</h2>
+		<p class="text-lg mb-6">Check out a demo of what your guests will see</p>
+		<div class="flex justify-center">
+			<!-- Placeholder for demo content -->
+			<div class="w-3/4 bg-neutral p-4 rounded-lg shadow-lg">
+				<p class="text-lg">Demo content goes here...</p>
+			</div>
 		</div>
-	{/if}
-</div>
+	</div>
+</section>
+
+<section
+	id="pricing"
+	class="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 space-y-8"
+>
+	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
+	<p class="text-lg mb-10 text-center">
+		We currently offer the Simple Plan, which includes everything you need to get started. Stay
+		tuned for our Premium Plan with additional features coming soon!
+	</p>
+	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
+		<!-- Basic Plan -->
+		<div class="bg-neutral p-6 rounded-lg shadow-lg w-full max-w-sm flex flex-col justify-between">
+			<div>
+				<h2 class="text-2xl font-bold mb-4">Basic</h2>
+				<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
+				<ul class="mb-4 space-y-2">
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Host public URL with your listing
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Unique private URL
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
+					</li>
+				</ul>
+			</div>
+			<button class="btn btn-primary w-full mt-4" on:click={handleBasicPlanPurchase}
+				>Get Basic Plan</button
+			>
+		</div>
+
+		<!-- Premium Plan -->
+		<div
+			class="bg-neutral opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm relative flex flex-col justify-between"
+		>
+			<div>
+				<h2 class="text-2xl font-bold mb-4">Premium</h2>
+				<div class="text-5xl font-bold mb-4">$3<span class="text-xl">/listing</span></div>
+				<ul class="mb-4 space-y-2">
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Everything in the Basic plan
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Generate multiple URLs per listing with
+						different content
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Add a password to the public listing
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>URL hash and password rotation
+					</li>
+					<li class="flex items-center">
+						<span class="text-green-500 mr-2">✓</span>Permission to add affiliate links to generate
+						revenue
+					</li>
+				</ul>
+			</div>
+			<button class="btn btn-primary w-full opacity-50 cursor-not-allowed mt-4" disabled
+				>Get Premium Plan</button
+			>
+			<div class="absolute top-2 right-2 bg-accent text-black px-2 py-1 rounded text-xs font-bold">
+				Coming Soon
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.coming-soon::after {
+		content: 'Coming Soon';
+	}
+</style>
