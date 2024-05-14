@@ -1,12 +1,21 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	export let data;
 	$: ({ session, supabase } = data);
 
-	function handleBasicPlanPurchase() {
-		console.log('Purchasing basic plan...');
+	async function handleBasicPlanPurchase() {
+		if (!session) {
+			goto('/auth');
+			return;
+		}
+
+		try {
+			console.log('Purchasing basic plan...123');
+			goto('/api/stripe/checkout');
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	}
 
 	function handlePremiumPlanPurchase() {

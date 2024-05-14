@@ -14,6 +14,7 @@ export const actions: Actions = {
             console.error(error)
             return redirect(303, '/auth/error')
         } else {
+            console.log("asd")
             return redirect(303, '/private')
         }
     },
