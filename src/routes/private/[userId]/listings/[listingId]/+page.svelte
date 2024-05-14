@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Links from '$components/listing/Links.svelte';
 	import ListingImages from '$components/listing/ListingImages.svelte';
@@ -12,6 +13,9 @@
 	);
 
 	let isPublic = currentListing.public;
+	let showDeleteModal = false;
+	let userInputName = '';
+	let deleteConfirmed = false;
 
 	function onSubmit() {
 		return async ({ result, update }: { result: any; update: any }) => {
@@ -25,16 +29,32 @@
 		};
 	}
 
+	function onDelete() {
+		return async ({ result }: { result: any }) => {
+			if (result.type === 'success') {
+				goto('/private/' + data.session.user.id + '/listings');
+			}
+		};
+	}
+
+	function openDeleteModal() {
+		showDeleteModal = true;
+	}
+
+	function closeDeleteModal() {
+		showDeleteModal = false;
+		userInputName = '';
+		deleteConfirmed = false;
+	}
+
 	let showLinksModal = false;
 	let currentDetail = null;
 
-	// Function to handle modal opening
 	function openModal(detail) {
 		currentDetail = detail;
 		showLinksModal = true;
 	}
 
-	// Function to close the modal
 	function closeModal() {
 		showLinksModal = false;
 	}
@@ -49,7 +69,7 @@
 			<Links />
 		</div>
 		<div class="shadow-lg bg-base-100 rounded-lg p-6 w-full max-w-md sm:max-w-sm self-start">
-			<form method="POST" class="space-y-4" use:enhance={onSubmit}>
+			<form method="POST" action="?/publish" class="space-y-4" use:enhance={onSubmit}>
 				<input type="hidden" name="id" value={currentListing.id} />
 				<input type="hidden" name="public" value={!isPublic} />
 
@@ -58,12 +78,39 @@
 				</button>
 			</form>
 
+			<button type="button" class="btn btn-error w-full mt-4" on:click={openDeleteModal}
+				>Delete Listing</button
+			>
+
 			<div class="mt-4">
 				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
 			</div>
 		</div>
 	</div>
 </div>
+
+{#if showDeleteModal}
+	<div class="modal modal-open">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Confirm Deletion</h3>
+			<p class="py-4">
+				Please type the name of the listing <strong>{currentListing.name}</strong> to confirm deletion.
+			</p>
+			<input type="text" bind:value={userInputName} class="input input-bordered w-full" />
+			<div class="modal-action justify-end align-center">
+				<button class="btn mr-2" on:click={closeDeleteModal}>Cancel</button>
+				<form method="POST" action="?/delete" class="inline" use:enhance={onDelete}>
+					<input type="hidden" name="id" value={currentListing.id} />
+					<button
+						type="submit"
+						class="btn btn-error"
+						disabled={userInputName !== currentListing.name}>Delete</button
+					>
+				</form>
+			</div>
+		</div>
+	</div>
+{/if}
 
 {#if showLinksModal}
 	<div class="modal modal-open">
