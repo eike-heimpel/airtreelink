@@ -10,15 +10,13 @@
 	}
 </script>
 
-<div class="space-y-2">
-	{#if isPublic}
-		<div class="flex space-x-2">
-			<a
-				class="btn btn-sm btn-primary"
-				href="/public/listings/{listingId}?hash={listingHash}"
-				target="_blank">View</a
-			>
-			<button class="btn btn-sm btn-secondary" on:click={copyToClipboard}>Copy Link</button>
-		</div>
-	{/if}
-</div>
+{#if isPublic}
+	<div class="flex space-x-2 justify-center">
+		<a
+			class="btn btn-sm btn-secondary"
+			href="/public/listings/{listingId}?hash={listingHash}"
+			target="_blank">View</a
+		>
+		<button class="btn btn-sm btn-secondary" on:click={copyToClipboard}>Copy Link</button>
+	</div>
+{/if}

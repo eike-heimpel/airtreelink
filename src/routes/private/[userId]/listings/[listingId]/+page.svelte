@@ -41,26 +41,23 @@
 </script>
 
 <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 space-y-8">
-	<!-- Image Slider component -->
-	<ListingImages />
-
-	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-		<h1 class="text-2xl font-bold mb-6">Edit Listing</h1>
+	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md sm:max-w-sm">
 		<form method="POST" class="space-y-4" use:enhance={onSubmit}>
 			<input type="hidden" name="id" value={currentListing.id} />
 			<input type="hidden" name="public" value={!isPublic} />
 
 			<button type="submit" class="btn btn-primary w-full"
-				>{isPublic ? 'Unpublish' : 'Publish'}</button
+				>{isPublic ? 'Unpublish' : 'Publish'} Listing</button
 			>
 		</form>
+
+		<div class="mt-4">
+			<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
+		</div>
 	</div>
+	<ListingImages />
 
-	<!-- PublicLink component section -->
-	<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
-
-	<!-- Links component section -->
-	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl sm:max-w-full">
 		<h2 class="text-xl font-bold mb-6">Manage Links</h2>
 		<Links />
 	</div>
