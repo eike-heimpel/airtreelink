@@ -13,10 +13,10 @@
 {#if isPublic}
 	<div class="flex space-x-2 justify-center">
 		<a
-			class="btn btn-sm btn-secondary"
+			class="btn btn-sm btn-outline"
 			href="/public/listings/{listingId}?hash={listingHash}"
-			target="_blank">View</a
+			target="_blank">View Listing</a
 		>
-		<button class="btn btn-sm btn-secondary" on:click={copyToClipboard}>Copy Link</button>
+		<button class="btn btn-sm btn-outline" on:click={copyToClipboard}>Copy Link</button>
 	</div>
 {/if}

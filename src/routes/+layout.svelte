@@ -10,14 +10,18 @@
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
 			if (!newSession) {
 				/**
-				 * Queue this as a task so the navigation won't prevent the
-				 * triggering function from completing
+				 * Only redirect to /auth if the current path includes /private
 				 */
-				setTimeout(() => {
-					goto('/auth', { invalidateAll: true });
-				});
-			}
-			if (newSession?.expires_at !== session?.expires_at) {
+				if (window.location.pathname.includes('/private')) {
+					/**
+					 * Queue this as a task so the navigation won't prevent the
+					 * triggering function from completing
+					 */
+					setTimeout(() => {
+						goto('/auth', { invalidateAll: true });
+					});
+				}
+			} else if (newSession?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
 			}
 		});

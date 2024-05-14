@@ -22,22 +22,22 @@
 
 	<!-- Navigation menu -->
 	<nav
-		class={`bg-base-200 w-1/2 md:w-56 rounded-box ${mobileMenuOpen ? 'block' : 'hidden'} md:block`}
+		class={`bg-base-200 w-1/2 md:w-56  ${mobileMenuOpen ? 'block' : 'hidden'} md:block`}
 		class:absolute={mobileMenuOpen}
 		class:top-10={mobileMenuOpen}
 	>
 		<img src="/logo.webp" alt="Logo" class="w-20 mx-auto mt-4" />
 		<ul class="menu">
-			<li class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-secondary' : ''}">
+			<li class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral' : ''}">
 				<a href="/private/{$page.params.userId}/account">Profile</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-secondary' : ''}">
+			<li class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral' : ''}">
 				<a href="/private/{$page.params.userId}/listings">Listings</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('/pricing') ? 'bg-secondary' : ''}">
+			<li class="rounded-lg {$page.url.pathname.endsWith('/pricing') ? 'bg-neutral' : ''}">
 				<a href="/pricing">Pricing</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('billing') ? 'bg-secondary' : ''}">
+			<li class="rounded-lg {$page.url.pathname.endsWith('billing') ? 'bg-neutral' : ''}">
 				<a href="/private/{$page.params.userId}/billing">Billing</a>
 				<!-- Additional navigation items can be added here -->
 			</li>

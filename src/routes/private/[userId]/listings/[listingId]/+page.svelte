@@ -40,26 +40,28 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 space-y-8">
-	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md sm:max-w-sm">
-		<form method="POST" class="space-y-4" use:enhance={onSubmit}>
-			<input type="hidden" name="id" value={currentListing.id} />
-			<input type="hidden" name="public" value={!isPublic} />
-
-			<button type="submit" class="btn btn-primary w-full"
-				>{isPublic ? 'Unpublish' : 'Publish'} Listing</button
-			>
-		</form>
-
-		<div class="mt-4">
-			<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
-		</div>
-	</div>
+<div class="min-h-screen bg-neutral flex flex-col items-center justify-center p-4 space-y-8">
+	<h1 class="text-4xl font-bold mb-2">Manage {currentListing.name}</h1>
 	<ListingImages />
+	<div class="flex gap-4 w-full justify-center">
+		<div class="shadow-lg bg-base-100 rounded-lg p-6 max-w-xl sm:max-w-full">
+			<h2 class="text-xl font-bold mb-6">Manage Links</h2>
+			<Links />
+		</div>
+		<div class="shadow-lg bg-base-100 rounded-lg p-6 w-full max-w-md sm:max-w-sm self-start">
+			<form method="POST" class="space-y-4" use:enhance={onSubmit}>
+				<input type="hidden" name="id" value={currentListing.id} />
+				<input type="hidden" name="public" value={!isPublic} />
 
-	<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl sm:max-w-full">
-		<h2 class="text-xl font-bold mb-6">Manage Links</h2>
-		<Links />
+				<button type="submit" class="btn btn-primary w-full">
+					{isPublic ? 'Unpublish' : 'Publish'} Listing
+				</button>
+			</form>
+
+			<div class="mt-4">
+				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
+			</div>
+		</div>
 	</div>
 </div>
 

@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4 space-y-8 text-white"
+	class="min-h-screen bg-neutral flex flex-col items-center justify-center p-4 space-y-8 text-white"
 >
 	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
 	<p class="text-lg mb-10 text-center">
@@ -45,7 +45,7 @@
 
 		<!-- Premium Plan -->
 		<div
-			class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-sm coming-soon flex flex-col justify-between"
+			class="bg-gray-800 opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm coming-soon flex flex-col justify-between"
 		>
 			<div>
 				<h2 class="text-2xl font-bold mb-4">Premium</h2>
@@ -86,12 +86,12 @@
 		position: absolute;
 		top: 10px;
 		right: 10px;
-		background-color: #ffd700;
 		color: #000;
 		padding: 4px 8px;
 		border-radius: 4px;
 		font-size: 0.75rem;
 		font-weight: bold;
+		@apply bg-accent;
 	}
 
 	.plan-icon {

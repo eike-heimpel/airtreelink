@@ -3,7 +3,7 @@
 	export let data;
 </script>
 
-<div class="min-h-screen bg-gray-50 flex flex-wrap gap-10 items-center justify-center p-4">
+<div class="min-h-screen flex flex-wrap gap-10 items-center justify-center p-4">
 	{#each data.listings as listing}
 		<button
 			class="card w-full max-w-lg bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out relative"
@@ -23,7 +23,7 @@
 				<div class="flex justify-between items-center">
 					<h2 class="card-title">{listing.name}</h2>
 					{#if listing.public}
-						<div class="badge badge-primary">Public</div>
+						<div class="badge badge-accent">Public</div>
 					{/if}
 				</div>
 				<p>{listing.description}</p>
