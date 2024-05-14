@@ -31,7 +31,7 @@
 	};
 </script>
 
-<div class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+<div class="flex justify-center items-center min-h-screen p-4">
 	<div class="w-full max-w-xl">
 		<form
 			class="card bg-base-100 shadow-xl p-4 space-y-4"
@@ -83,8 +83,13 @@
 			</div>
 		</form>
 
-		<form class="mt-4" method="post" action="?/signout" use:enhance={handleSignOut}>
-			<button class="btn btn-outline btn-error w-full" disabled={loading}>Sign Out</button>
+		<form
+			class="mt-4 flex justify-center"
+			method="post"
+			action="?/signout"
+			use:enhance={handleSignOut}
+		>
+			<button class="btn btn-outline btn-error w-1/2" disabled={loading}>Sign Out</button>
 		</form>
 	</div>
 </div>
