@@ -13,7 +13,7 @@ export const actions: Actions = {
 
         const { session } = await safeGetSession()
         console.log("inserting")
-        const { error } = await supabase.from('profiles').upsert({
+        const { error } = await supabase.from('profile').upsert({
             id: session?.user.id,
             full_name: fullName,
             username,

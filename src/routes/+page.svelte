@@ -11,8 +11,7 @@
 		}
 
 		try {
-			console.log('Purchasing basic plan...123');
-			goto('/api/stripe/checkout');
+			goto('/api/stripe/checkout?userId=' + session.user.id + '&plan=basic');
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -80,7 +79,8 @@
 	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
 	<p class="text-lg mb-10 text-center">
 		We currently offer the Simple Plan, which includes everything you need to get started. Stay
-		tuned for our Premium Plan with additional features coming soon!
+		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
+		turn off auto renewal. See what your guests think and comeback if you like it.
 	</p>
 	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
 		<!-- Basic Plan -->
@@ -141,6 +141,29 @@
 		</div>
 	</div>
 </section>
+
+<footer class="bg-base-200 py-8 mt-10">
+	<div
+		class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+	>
+		<div class="text-center md:text-left">
+			<h2 class="text-lg font-bold">Airtree</h2>
+			<p class="mt-2">
+				© 2024 Airtree. All rights reserved. Airtree is a website by Eike Heimpel. Small business
+				according to § 19 UStG.
+			</p>
+		</div>
+		<div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
+			<a href="/imprint" class="text-gray-600 hover:text-gray-900">Imprint</a>
+			<a href="/privacy-notice" class="text-gray-600 hover:text-gray-900">Privacy Notice</a>
+			<a href="/terms-and-conditions" class="text-gray-600 hover:text-gray-900"
+				>Terms and Conditions</a
+			>
+			<a href="/disclaimer" class="text-gray-600 hover:text-gray-900">Disclaimer</a>
+			<a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a>
+		</div>
+	</div>
+</footer>
 
 <style>
 	.coming-soon::after {
