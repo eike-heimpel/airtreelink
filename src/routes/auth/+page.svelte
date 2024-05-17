@@ -166,15 +166,15 @@
 	{:else}
 		<div class="flex flex-col space-y-2 mt-4">
 			<button type="submit" class="btn btn-primary w-full">Login</button>
-			<button
-				type="button"
-				class="btn btn-accent w-full"
-				on:click={signUpWithEmail}
-				disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
-				>Sign up with Email</button
-			>
 		</div>
 	{/if}
+	<button
+		type="button"
+		class="btn btn-accent w-full"
+		on:click={signUpWithEmail}
+		disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
+		>Sign up with Email</button
+	>
 	<div class="flex flex-col space-y-2 mt-4">
 		<button
 			type="button"

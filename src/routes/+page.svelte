@@ -4,14 +4,28 @@
 	export let data;
 	$: ({ session, supabase } = data);
 
+	let basicQuantity = 1;
+
+	function updateQuantity(plan, change) {
+		if (plan === 'basic') {
+			basicQuantity += change;
+			if (basicQuantity < 1) basicQuantity = 1;
+			if (basicQuantity > 5) basicQuantity = 5;
+			document.getElementById('basicQuantity').value = basicQuantity;
+			document.getElementById('decreaseQuantity').disabled = basicQuantity === 1;
+			document.getElementById('increaseQuantity').disabled = basicQuantity === 5;
+		}
+	}
+
 	async function handleBasicPlanPurchase() {
+		const quantity = basicQuantity;
 		if (!session) {
 			goto('/auth');
 			return;
 		}
 
 		try {
-			goto('/api/stripe/checkout?userId=' + session.user.id + '&plan=basic');
+			goto(`/api/stripe/checkout?userId=${session.user.id}&plan=basic&quantity=${quantity}`);
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -80,7 +94,7 @@
 	<p class="text-lg mb-10 text-center">
 		We currently offer the Simple Plan, which includes everything you need to get started. Stay
 		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
-		turn off auto renewal. See what your guests think and comeback if you like it.
+		turn off auto renewal. See what your guests think and come back if you like it.
 	</p>
 	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
 		<!-- Basic Plan -->
@@ -99,6 +113,40 @@
 						<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
 					</li>
 				</ul>
+				<p class="text-center mb-4 italic">
+					Choose the number of listings you want to add. You can always add more later.
+				</p>
+				<div class="flex items-center justify-center space-x-2 mb-2">
+					<button
+						class="btn btn-primary"
+						id="decreaseQuantity"
+						on:click={() => updateQuantity('basic', -1)}
+						disabled
+					>
+						-
+					</button>
+					<div class="flex items-center justify-center">
+						<input
+							type="number"
+							id="basicQuantity"
+							class="input input-bordered w-20 text-center"
+							value="1"
+							readonly
+						/>
+					</div>
+					<button
+						class="btn btn-primary"
+						id="increaseQuantity"
+						on:click={() => updateQuantity('basic', 1)}
+					>
+						+
+					</button>
+				</div>
+				{#if basicQuantity >= 5}
+					<p class="text-center text-sm text-gray-500 w-full break-words">
+						Contact Support for more listings.
+					</p>
+				{/if}
 			</div>
 			<button class="btn btn-primary w-full mt-4" on:click={handleBasicPlanPurchase}
 				>Get Basic Plan</button

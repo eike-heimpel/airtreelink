@@ -62,37 +62,6 @@ export async function POST({ request, locals }) {
             break;
         }
 
-        case 'invoice.payment_succeeded': {
-        }
-
-        case 'invoice.payment_failed': {
-            const invoice = event.data.object as Stripe.Invoice;
-            const subscriptionId = invoice.subscription as string;
-            await handleSubscriptionUpdate(subscriptionId, null, 'past_due');
-            break;
-        }
-
-        case 'customer.subscription.trial_will_end': {
-            const subscription = event.data.object as Stripe.Subscription;
-            const subscriptionId = subscription.id;
-            await notifyUserBySubscription(subscriptionId, 'Your Trial is About to End', generateEmailHtml('Trial Ending Soon', `
-                Your subscription trial is about to end. Please update your payment information to continue enjoying our services.
-            `));
-            break;
-        }
-
-        case 'invoice.upcoming': {
-            const invoice = event.data.object as Stripe.Invoice;
-            const subscriptionId = invoice.subscription as string;
-            const nextPaymentAttempt = invoice.next_payment_attempt;
-            const nextPaymentDate = nextPaymentAttempt ? new Date(nextPaymentAttempt * 1000).toLocaleDateString() : '';
-
-            await notifyUserBySubscription(subscriptionId, 'Upcoming Subscription Renewal', generateEmailHtml('Upcoming Subscription Renewal', `
-                We wanted to remind you that your subscription will be renewing soon. The next payment of <strong>${invoice.amount_due / 100} ${invoice.currency.toUpperCase()}</strong> will be deducted on <strong>${nextPaymentDate}</strong>.
-                If you wish to update your payment information or cancel your subscription, please visit your account settings.
-            `));
-            break;
-        }
     }
 
     return new Response('Webhook received');

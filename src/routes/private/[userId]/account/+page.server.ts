@@ -64,7 +64,12 @@ export const actions: Actions = {
         }
 
         try {
-            await stripe.subscriptions.cancel(profile.subscription_id);
+            const subscription = await stripe.subscriptions.update(
+                profile.subscription_id,
+                {
+                    cancel_at_period_end: true,
+                }
+            );
         } catch (stripeError) {
             console.error("Failed to cancel Stripe subscription", stripeError);
             return error(500, { message: 'Failed to cancel subscription' });

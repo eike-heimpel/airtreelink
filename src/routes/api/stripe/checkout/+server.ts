@@ -1,14 +1,13 @@
-import { redirect, error } from "@sveltejs/kit";
-import { STRIPE_SECRET_KEY } from "$env/static/private";
-import Stripe from "stripe";
-import type { RequestHandler } from './$types';
+import { redirect, error } from '@sveltejs/kit';
+import { STRIPE_SECRET_KEY } from '$env/static/private';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-/** @type {import('./$types').RequestHandler} */
 export async function GET({ url }) {
     const userId = url.searchParams.get('userId');
     const plan = url.searchParams.get('plan');
+    const quantity = url.searchParams.get('quantity') || 1; // Default to 1 if quantity is not provided
     const baseUrl = `${url.protocol}//${url.host}`;
 
     if (!userId) {
@@ -23,7 +22,7 @@ export async function GET({ url }) {
         line_items: [
             {
                 price: 'price_1PHMswH6fmCpvtpqM5DIJI3p',
-                quantity: 1,
+                quantity: Number(quantity),
             },
         ],
         mode: 'subscription',
@@ -40,4 +39,4 @@ export async function GET({ url }) {
     }
 
     return redirect(303, session.url);
-};
+}
