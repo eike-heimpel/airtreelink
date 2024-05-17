@@ -1,4 +1,3 @@
-<!-- src/routes/account/+page.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -6,40 +5,42 @@
 	export let data;
 	export let form;
 
-	let { session, supabase, profile } = data;
-	$: ({ session, supabase, profile } = data);
+	let { session, supabase, user, profile } = data;
+	$: ({ session, supabase, user, profile } = data);
 
-	let profileForm: HTMLFormElement;
+	let passwordForm: HTMLFormElement;
+	let deleteForm: HTMLFormElement;
 	let loading = false;
-	let fullName: string = profile?.full_name ?? '';
-	let username: string = profile?.username ?? '';
-	let avatarUrl: string = profile?.avatar_url ?? '';
+	let showDeleteModal = false;
+	let showDeletionNotice = false;
+	let userInputEmail = '';
 
-	const handleSubmit: SubmitFunction = () => {
-		loading = true;
-		return async () => {
-			loading = false;
-		};
-	};
+	function openDeleteModal() {
+		showDeleteModal = true;
+	}
 
-	const handleSignOut: SubmitFunction = () => {
+	function closeDeleteModal() {
+		showDeleteModal = false;
+	}
+
+	const handleDeleteAccount: SubmitFunction = ({ result, update }) => {
 		loading = true;
-		return async ({ update }) => {
+		return async ({ result, update }) => {
 			loading = false;
-			update();
+			if (result.type === 'success') {
+				console.log('asd');
+				showDeleteModal = false;
+				showDeletionNotice = true;
+				update();
+			}
 		};
 	};
 </script>
 
-<div class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+<div class="flex justify-center items-center min-h-screen p-4">
 	<div class="w-full max-w-xl">
-		<form
-			class="card bg-base-100 shadow-xl p-4 space-y-4"
-			method="post"
-			action="?/update"
-			use:enhance={handleSubmit}
-			bind:this={profileForm}
-		>
+		<!-- User Email -->
+		<div class="card bg-base-100 shadow-xl p-4 space-y-4">
 			<div class="form-control">
 				<label class="label" for="email">Email</label>
 				<input
@@ -51,25 +52,41 @@
 				/>
 			</div>
 
+			<!-- Subscription Status -->
 			<div class="form-control">
-				<label class="label" for="fullName">Full Name</label>
-				<input
-					class="input input-bordered w-full"
-					id="fullName"
-					name="fullName"
-					type="text"
-					value={form?.fullName ?? fullName}
-				/>
+				<label class="label" for="subscriptionStatus">Subscription Status</label>
+				<div class="flex items-center space-x-2">
+					<input
+						class="input input-bordered w-full"
+						id="subscriptionStatus"
+						type="text"
+						value={profile?.subscription_status}
+						disabled
+					/>
+					{#if profile?.subscription_status && profile?.subscription_status !== 'free' && profile?.subscription_status !== 'canceled'}
+						<form method="post" action="?/cancelSubscription" use:enhance>
+							<button class="btn btn-outline btn-error" disabled={loading}>Cancel</button>
+						</form>
+					{/if}
+				</div>
 			</div>
+		</div>
 
+		<!-- Change Password Form -->
+		<form
+			class="card bg-base-100 shadow-xl p-4 space-y-4 mt-4"
+			method="post"
+			action="?/changePassword"
+			use:enhance
+			bind:this={passwordForm}
+		>
 			<div class="form-control">
-				<label class="label" for="username">Username</label>
+				<label class="label" for="newPassword">New Password</label>
 				<input
 					class="input input-bordered w-full"
-					id="username"
-					name="username"
-					type="text"
-					value={form?.username ?? username}
+					id="newPassword"
+					name="newPassword"
+					type="password"
 				/>
 			</div>
 
@@ -77,14 +94,59 @@
 				<input
 					type="submit"
 					class="btn btn-primary w-full"
-					value={loading ? 'Loading...' : 'Update'}
+					value={loading ? 'Loading...' : 'Change Password'}
 					disabled={loading}
 				/>
 			</div>
 		</form>
 
-		<form class="mt-4" method="post" action="?/signout" use:enhance={handleSignOut}>
-			<button class="btn btn-outline btn-error w-full" disabled={loading}>Sign Out</button>
-		</form>
+		<!-- Delete Account Button -->
+		{#if profile?.subscription_status === 'free' || profile?.subscription_status === 'canceled' || !profile?.subscription_status}
+			<button class="btn btn-error w-full mt-4" on:click={openDeleteModal} disabled={loading}
+				>Delete Account</button
+			>
+		{:else}
+			<div class="alert alert-ghost mt-4">
+				<p>You must cancel your subscription before deleting your account.</p>
+			</div>
+		{/if}
 	</div>
 </div>
+
+{#if showDeleteModal}
+	<div class="modal modal-open">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Confirm Deletion</h3>
+			<p class="py-4">
+				Please type your email <strong>{session.user.email}</strong> to confirm account deletion.
+			</p>
+			<input type="text" bind:value={userInputEmail} class="input input-bordered w-full" />
+			<div class="modal-action justify-end align-center">
+				<button class="btn mr-2" on:click={closeDeleteModal}>Cancel</button>
+				<form
+					method="post"
+					action="?/deleteAccount"
+					class="inline"
+					use:enhance={handleDeleteAccount}
+					bind:this={deleteForm}
+				>
+					<input type="hidden" name="email" value={session.user.email} />
+					<button
+						type="submit"
+						class="btn btn-error"
+						disabled={userInputEmail !== session.user.email}>Delete</button
+					>
+				</form>
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if showDeletionNotice}
+	<div class="alert alert-success mt-4">
+		<p>
+			Your request to delete your account has been received. All data associated with your account
+			will be deleted within 30 days, unless required by law to retain it.
+		</p>
+	</div>
+{/if}
