@@ -27,7 +27,7 @@ export async function GET({ url }) {
             },
         ],
         mode: 'subscription',
-        success_url: `${baseUrl}/private`,
+        success_url: `${baseUrl}/private/${userId}/account`,
         cancel_url: `${baseUrl}/`,
         metadata: {
             user_id: userId,

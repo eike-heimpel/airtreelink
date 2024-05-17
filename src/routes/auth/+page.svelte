@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import zxcvbn from 'zxcvbn';
+	import { enhance } from '$app/forms';
 
 	export let data;
 	let email = '';
 	let password = '';
+	let confirmPassword = '';
 	let message = '';
 	let passwordStrength = '';
 	let progressBarClass = '';
 	let showPasswordStrength = false;
 	let isSignUpInProgress = false;
+	let showConfirmPassword = false;
 	const dispatch = createEventDispatcher();
 
 	async function signInWithGithub() {
@@ -52,6 +55,16 @@
 			return;
 		}
 
+		if (!showConfirmPassword) {
+			showConfirmPassword = true;
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			message = 'Passwords do not match. Please try again.';
+			return;
+		}
+
 		isSignUpInProgress = true;
 
 		try {
@@ -61,11 +74,6 @@
 			} else {
 				message = 'Check your email for the confirmation link!';
 				dispatch('signupSuccess');
-				// Optionally redirect after a short delay
-				setTimeout(() => {
-					// Replace '/welcome' with the desired redirection path
-					window.location.href = '/welcome';
-				}, 3000); // 3-second delay before redirection
 			}
 		} catch (error) {
 			console.error('Error signing up:', error.message);
@@ -96,9 +104,14 @@
 		const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return re.test(email);
 	}
+
+	$: if (data && data.form && data.form.message) {
+		message = data.form.message;
+	}
 </script>
 
 <form
+	use:enhance
 	method="POST"
 	action="?/login"
 	class="flex flex-col space-y-4 p-6 rounded-lg shadow-md max-w-md mx-auto my-10"
@@ -138,6 +151,21 @@
 			<div class="text-sm text-gray-600 mt-2">{passwordStrength}</div>
 		{/if}
 	</div>
+	{#if showConfirmPassword}
+		<div class="form-control w-full">
+			<label class="label" for="confirmPassword">
+				<span class="label-text">Confirm Password</span>
+			</label>
+			<input
+				name="confirmPassword"
+				type="password"
+				placeholder="Confirm your password"
+				class="input input-bordered w-full"
+				bind:value={confirmPassword}
+				on:input={() => (message = '')}
+			/>
+		</div>
+	{/if}
 	<div class="flex flex-col space-y-2 mt-4">
 		<button type="submit" class="btn btn-primary w-full">Login</button>
 		<button
@@ -168,6 +196,6 @@
 		</button>
 	</div>
 	{#if message}
-		<div class="mt-4 text-center text-green-600">{message}</div>
+		<div class="mt-4 text-center text-red-600">{message}</div>
 	{/if}
 </form>
