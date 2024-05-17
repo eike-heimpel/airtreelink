@@ -22,7 +22,7 @@ export async function GET({ url }) {
         payment_method_types: ['card'],
         line_items: [
             {
-                price: 'price_1PGMZ9H6fmCpvtpqBvDlEuNW',
+                price: 'price_1PHMswH6fmCpvtpqM5DIJI3p',
                 quantity: 1,
             },
         ],

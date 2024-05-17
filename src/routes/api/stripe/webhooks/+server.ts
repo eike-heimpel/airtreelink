@@ -12,6 +12,7 @@ const postmarkClient = new postmark.ServerClient(POSTMARK_API_KEY);
 
 /** @type {RequestHandler} */
 export async function POST({ request, locals }) {
+
     const sig = request.headers.get('stripe-signature');
     const body = await request.text();
 
@@ -20,7 +21,7 @@ export async function POST({ request, locals }) {
         event = stripe.webhooks.constructEvent(body, sig, STRIPE_WEBHOOK_SECRET);
     } catch (err) {
         console.error(`Webhook signature verification failed: ${err.message}`);
-        throw error(400, 'Webhook Error');
+        throw error(400, `Webhook signature verification failed: ${err.message}, received ${sig}`);
     }
 
     switch (event.type) {

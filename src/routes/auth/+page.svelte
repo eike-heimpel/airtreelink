@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import zxcvbn from 'zxcvbn';
 	import { enhance } from '$app/forms';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	export let data;
 	let email = '';
 	let password = '';
 	let confirmPassword = '';
-	let message = '';
 	let passwordStrength = '';
 	let progressBarClass = '';
 	let showPasswordStrength = false;
@@ -21,9 +21,9 @@
 				provider: 'github'
 			});
 			if (error) throw error;
-			console.log('Successfully signed in with GitHub');
+			toast.success('Successfully signed in with GitHub');
 		} catch (error) {
-			console.error('Error signing in with GitHub:', error.message);
+			toast.error('Error signing in with GitHub: ' + error.message);
 		}
 	}
 
@@ -35,9 +35,9 @@
 				provider: 'google'
 			});
 			if (error) throw error;
-			console.log('Successfully signed in with Google');
+			toast.success('Successfully signed in with Google');
 		} catch (error) {
-			console.error('Error signing in with Google:', error.message);
+			toast.error('Error signing in with Google: ' + error.message);
 		}
 	}
 
@@ -46,22 +46,25 @@
 		validatePasswordStrength();
 
 		if (!validateEmail(email)) {
-			message = 'Please enter a valid email address.';
+			toast.error('Please enter a valid email address.');
 			return;
 		}
 
 		if (passwordStrength.includes('Password is too weak')) {
-			message = 'Password is too weak. Please choose a stronger password.';
+			toast.error('Password is too weak. Please choose a stronger password.');
 			return;
 		}
 
 		if (!showConfirmPassword) {
 			showConfirmPassword = true;
+			toast('Please confirm your password to continue.', {
+				style: 'background-color: white;'
+			});
 			return;
 		}
 
 		if (password !== confirmPassword) {
-			message = 'Passwords do not match. Please try again.';
+			toast.error('Passwords do not match. Please try again.');
 			return;
 		}
 
@@ -72,12 +75,11 @@
 			if (error) {
 				throw error;
 			} else {
-				message = 'Check your email for the confirmation link!';
+				toast.success('Check your email for the confirmation link!');
 				dispatch('signupSuccess');
 			}
 		} catch (error) {
-			console.error('Error signing up:', error.message);
-			message = 'Error signing up. Please try again.';
+			toast.error('Error signing up. Please try again.');
 			isSignUpInProgress = false;
 		}
 	}
@@ -104,10 +106,6 @@
 		const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return re.test(email);
 	}
-
-	$: if (data && data.form && data.form.message) {
-		message = data.form.message;
-	}
 </script>
 
 <form
@@ -126,7 +124,7 @@
 			placeholder="Enter your email"
 			class="input input-bordered w-full"
 			bind:value={email}
-			on:input={() => (message = '')}
+			on:input={() => toast.dismiss()}
 		/>
 	</div>
 	<div class="form-control w-full">
@@ -141,7 +139,7 @@
 			bind:value={password}
 			on:input={() => {
 				if (showPasswordStrength) validatePasswordStrength();
-				message = '';
+				toast.dismiss();
 			}}
 		/>
 		{#if showPasswordStrength}
@@ -162,20 +160,21 @@
 				placeholder="Confirm your password"
 				class="input input-bordered w-full"
 				bind:value={confirmPassword}
-				on:input={() => (message = '')}
+				on:input={() => toast.dismiss()}
 			/>
 		</div>
+	{:else}
+		<div class="flex flex-col space-y-2 mt-4">
+			<button type="submit" class="btn btn-primary w-full">Login</button>
+			<button
+				type="button"
+				class="btn btn-accent w-full"
+				on:click={signUpWithEmail}
+				disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
+				>Sign up with Email</button
+			>
+		</div>
 	{/if}
-	<div class="flex flex-col space-y-2 mt-4">
-		<button type="submit" class="btn btn-primary w-full">Login</button>
-		<button
-			type="button"
-			class="btn btn-accent w-full"
-			on:click={signUpWithEmail}
-			disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
-			>Sign up with Email</button
-		>
-	</div>
 	<div class="flex flex-col space-y-2 mt-4">
 		<button
 			type="button"
@@ -195,7 +194,6 @@
 			<span>Sign in with Google</span>
 		</button>
 	</div>
-	{#if message}
-		<div class="mt-4 text-center text-red-600">{message}</div>
-	{/if}
 </form>
+
+<Toaster />
