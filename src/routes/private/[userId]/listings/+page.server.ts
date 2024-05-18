@@ -3,7 +3,7 @@ import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
 
 
-export const load = async ({ locals: { session, parent } }) => {
+export const load = async ({ locals: { session }, parent }) => {
 
     const parentData = await parent();
 

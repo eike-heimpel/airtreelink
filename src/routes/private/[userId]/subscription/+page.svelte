@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { PUBLIC_STRIPE_CUSTOMER_PORTAL } from '$env/static/public';
 
 	export let data;
 
@@ -110,11 +111,24 @@
 				</button>
 			</form>
 		{:else}
-			<!-- Renew Button will be implemented later -->
-			<button class="btn btn-success w-full" disabled>Renew Subscription</button>
+			<form method="post" action="?/renewSubscription" use:enhance={handleFormSubmit}>
+				<button class="btn btn-success w-full" disabled={loading}>Renew Subscription</button>
+			</form>
 		{/if}
 	{:else}
 		<p class="text-center">You currently do not have a subscription.</p>
 	{/if}
+	<div class="mt-6 text-center">
+		We use Stripe to handle subscriptions. You can also manage your subscription from your
+		<a
+			href={PUBLIC_STRIPE_CUSTOMER_PORTAL}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="text-primary"
+		>
+			Stripe Dashboard
+		</a>
+	</div>
+
 	<Toaster />
 </div>

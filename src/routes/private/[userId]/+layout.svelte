@@ -40,7 +40,7 @@
 		<a href="/" class="w-full flex justify-center">
 			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1" />
 		</a>
-		<ul class="menu p-4 gap-2">
+		<ul class="menu p-4 gap-2 4xl:text-lg flex-col">
 			<li
 				class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}"
 			>

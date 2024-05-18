@@ -31,7 +31,6 @@ export const load = async ({ locals: { session } }) => {
             console.log('Subscription not found');
         } else subscription = subscriptions.data[0];
 
-
     } catch (stripeError) {
         console.error('Failed to retrieve subscription from Stripe', stripeError);
         throw error(500, { message: 'Failed to retrieve subscription from Stripe' });
@@ -130,4 +129,48 @@ export const actions = {
         }
         return { success: true };
     },
+
+    renewSubscription: async ({ locals: { session } }) => {
+
+        if (!session || !session.user || !session.user.email) {
+            throw error(403, { message: 'Not authenticated' });
+        }
+
+        let subscription = null;
+
+        try {
+            const customer = await stripe.customers.list({
+                email: session.user.email,
+                limit: 1
+            });
+
+            if (customer.data.length === 0) {
+                throw error(404, { message: 'Customer not found' });
+            }
+
+            const subscriptions = await stripe.subscriptions.list({
+                customer: customer.data[0].id,
+                limit: 1
+            });
+
+            if (subscriptions.data.length === 0) {
+                throw error(404, { message: 'Subscription not found' });
+            }
+
+            subscription = subscriptions.data[0];
+
+            if (subscription.cancel_at_period_end) {
+                await stripe.subscriptions.update(subscription.id, {
+                    cancel_at_period_end: false,
+                });
+            } else {
+                throw error(400, { message: 'Subscription is not set to cancel' });
+            }
+        } catch (stripeError) {
+            console.error('Failed to renew Stripe subscription', stripeError);
+            throw error(500, { message: 'Failed to renew subscription' });
+        }
+
+        return { success: true };
+    }
 };
