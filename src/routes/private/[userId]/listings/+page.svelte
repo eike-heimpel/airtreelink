@@ -5,7 +5,7 @@
 
 	let name = '';
 	let description = '';
-	let title_image_url = '';
+	let title_image_url = 'https://picsum.photos/500/700';
 	let showModal = false;
 
 	function openModal() {
