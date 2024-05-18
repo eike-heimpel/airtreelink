@@ -48,8 +48,8 @@
 			<li class="rounded-lg">
 				<a href="/#pricing">Pricing</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('billing') ? 'bg-neutral' : ''}">
-				<a href="/private/{$page.params.userId}/billing">Billing</a>
+			<li class="rounded-lg {$page.url.pathname.endsWith('subscription') ? 'bg-neutral' : ''}">
+				<a href="/private/{$page.params.userId}/subscription">Subscription & Billing</a>
 				<!-- Additional navigation items can be added here -->
 			</li>
 		</ul>

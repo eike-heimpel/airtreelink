@@ -13,6 +13,8 @@ const postmarkClient = new postmark.ServerClient(POSTMARK_API_KEY);
 /** @type {RequestHandler} */
 export async function POST({ request, locals }) {
 
+    console.log('Webhook received');
+
     const sig = request.headers.get('stripe-signature');
     const body = await request.text();
 
