@@ -4,9 +4,7 @@ import { error } from '@sveltejs/kit';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const load = async ({ parent }) => {
-    const parentData = await parent();
-    const session = parentData.session;
+export const load = async ({ locals: { session } }) => {
 
     if (!session || !session.user || !session.user.email) {
         throw error(403, { message: 'Not authenticated' });

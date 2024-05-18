@@ -3,10 +3,9 @@ import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
 
 
-export const load = async ({ parent }) => {
+export const load = async ({ locals: { session, parent } }) => {
 
     const parentData = await parent();
-    const session = parentData.session;
 
     if (!session || !session.user || !session.user.email) {
         throw error(403, { message: 'Not authenticated' });

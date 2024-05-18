@@ -4,10 +4,8 @@ import { STRIPE_SECRET_KEY } from '$env/static/private';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const load = async ({ locals, parent }) => {
+export const load = async ({ locals: { session } }) => {
 
-    const parentData = await parent();
-    const session = parentData.session;
 
     if (!session || !session.user || !session.user.email) {
         throw error(403, { message: 'Not authenticated' });
