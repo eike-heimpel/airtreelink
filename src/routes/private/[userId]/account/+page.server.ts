@@ -1,11 +1,10 @@
 import { error, redirect } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY } from '$env/static/private';
-import type { Actions, PageServerLoad } from '../../account/$types';
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2022-11-15' });
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession }, parent }) => {
+export const load = async ({ locals, parent }) => {
 
     const parentData = await parent();
     const session = parentData.session;
@@ -44,21 +43,19 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
     return { session, subscription };
 };
 
-export const actions: Actions = {
+export const actions = {
 
-    signout: async ({ locals: { supabase, safeGetSession } }) => {
-        const { session } = await safeGetSession()
+    signout: async ({ locals: { supabase, session } }) => {
         if (session) {
             await supabase.auth.signOut()
             throw redirect(303, '/')
         }
     },
 
-    changePassword: async ({ request, locals: { supabase, safeGetSession } }) => {
+    changePassword: async ({ request, locals: { supabase, session } }) => {
         const formData = await request.formData();
         const newPassword = formData.get('newPassword') as string;
 
-        const { session } = await safeGetSession();
         if (!session) {
             return error(403, { message: 'Not authenticated' });
         }
@@ -75,11 +72,10 @@ export const actions: Actions = {
         return { success: true };
     },
 
-    deleteAccount: async ({ request, locals: { supabase, safeGetSession } }) => {
+    deleteAccount: async ({ request, locals: { supabase, session } }) => {
         const formData = await request.formData();
         const email = formData.get('email') as string;
 
-        const { session } = await safeGetSession();
         if (!session) {
             return error(403, { message: 'Not authenticated' });
         }

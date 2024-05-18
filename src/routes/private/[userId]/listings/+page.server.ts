@@ -3,8 +3,6 @@ import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
 
 
-// add load function here if needed
-
 export const load = async ({ parent }) => {
 
     const parentData = await parent();

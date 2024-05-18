@@ -43,8 +43,7 @@ export const load = async ({ parent }) => {
 };
 
 export const actions = {
-    updateSubscription: async ({ request, locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession();
+    updateSubscription: async ({ request, locals: { session } }) => {
 
         if (!session || !session.user || !session.user.email) {
             throw error(403, { message: 'Not authenticated' });
@@ -95,8 +94,7 @@ export const actions = {
         return { success: true };
     },
 
-    cancelSubscription: async ({ locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession();
+    cancelSubscription: async ({ locals: { session } }) => {
 
         if (!session || !session.user || !session.user.email) {
             throw error(403, { message: 'Not authenticated' });
