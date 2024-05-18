@@ -1,6 +1,23 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
+
+
+// add load function here if needed
+
+export const load = async ({ parent }) => {
+
+    const parentData = await parent();
+    const session = parentData.session;
+
+    if (!session || !session.user || !session.user.email) {
+        throw error(403, { message: 'Not authenticated' });
+    }
+
+    return { listings: parentData.listings };
+
+}
+
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
@@ -10,7 +27,7 @@ export const actions: Actions = {
         const title_image_url = data.get('title_image_url');
 
         if (!name || !description || !title_image_url) {
-            return fail(400, { error: 'All fields are required' });
+            return error(400, { message: 'All fields are required' });
         }
 
         const randomString = randomBytes(32).toString('hex');
@@ -22,16 +39,15 @@ export const actions: Actions = {
                 .insert([{ name, description, title_image_url, public: false, hash, listing_data: {} }]);
 
             if (response.error) {
-                return fail(500, { error: 'Failed to add listing' });
+                return error(500, { message: 'Failed to add listing' });
             }
 
-            // Redirect to the new listing URL
-            const listingId = response.data[0].id;
-            throw redirect(303, `/public/listings/${listingId}?hash=${encodeURIComponent(hash)}`);
-        } catch (error) {
-            return fail(500, { error: 'An unexpected error occurred' });
+            return { success: true };
+        } catch (err) {
+            console.log(err)
+            return error(500, { message: 'An unexpected error occurred' });
         }
 
-        return { success: true };
     }
+
 };

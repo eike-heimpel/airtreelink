@@ -37,7 +37,9 @@
 	<nav
 		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40' : 'hidden'}`}
 	>
-		<img src="/logo.webp" alt="Logo" class="w-20 mx-auto mt-4" />
+		<a href="/" class="w-full flex justify-center">
+			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1" />
+		</a>
 		<ul class="menu p-4 gap-2">
 			<li
 				class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}"

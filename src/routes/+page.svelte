@@ -43,7 +43,9 @@
 
 <nav class="navbar bg-base-200 p-4 fixed w-full z-10 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
-		<a href="/" class="text-2xl font-bold">Airtree</a>
+		<a href="/" class="text-2xl font-bold flex gap-4 items-center">
+			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-16 mx-auto bg-white rounded-full" /> Airtree
+		</a>
 		<div class="space-x-4 flex items-center">
 			<a href="#home" on:click={(e) => scrollToSection(e, 'home')} class="hover:text-primary"
 				>Home</a
