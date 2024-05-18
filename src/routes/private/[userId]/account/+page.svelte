@@ -85,7 +85,7 @@
 			<!-- Sign Out Button -->
 			<form class="w-full max-w-72" method="post" action="?/signout" use:enhance>
 				<div>
-					<button class="btn btn-error btn-outline w-full" disabled={loading}>Sign Out</button>
+					<button class="btn btn-outline w-full" disabled={loading}>Sign Out</button>
 				</div>
 			</form>
 

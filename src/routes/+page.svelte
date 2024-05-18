@@ -25,7 +25,7 @@
 		}
 
 		try {
-			goto(`/api/stripe/checkout?userId=${session.user.id}&plan=basic&quantity=${quantity}`);
+			goto(`/api/stripe/checkout?plan=basic&quantity=${quantity}`);
 		} catch (error) {
 			console.error('Error:', error);
 		}

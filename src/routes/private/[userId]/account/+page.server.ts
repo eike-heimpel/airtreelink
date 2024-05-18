@@ -36,7 +36,6 @@ export const load = async ({ locals: { session } }) => {
 
     } catch (stripeError) {
         console.error('Failed to retrieve subscription from Stripe', stripeError);
-        throw error(500, { message: 'Failed to retrieve subscription from Stripe' });
     }
     return { session, subscription };
 };

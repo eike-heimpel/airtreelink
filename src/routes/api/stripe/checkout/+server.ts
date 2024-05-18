@@ -4,8 +4,11 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export async function GET({ url }) {
-    const userId = url.searchParams.get('userId');
+export async function GET({ url, locals }) {
+
+    const customerEmail = locals.session.user.email;
+    const userId = locals.session.user.id;
+
     const plan = url.searchParams.get('plan');
     const quantity = url.searchParams.get('quantity') || 1; // Default to 1 if quantity is not provided
     const baseUrl = `${url.protocol}//${url.host}`;
@@ -25,6 +28,7 @@ export async function GET({ url }) {
                 quantity: Number(quantity),
             },
         ],
+        customer_email: customerEmail,
         mode: 'subscription',
         success_url: `${baseUrl}/private/${userId}/account`,
         cancel_url: `${baseUrl}/`,

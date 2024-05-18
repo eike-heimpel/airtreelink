@@ -1,6 +1,16 @@
 <script>
 	import { page } from '$app/stores';
 
+	export let data;
+
+	$: ({ session, supabase } = data);
+
+	// Logout function
+	const logout = async () => {
+		const { error } = await supabase.auth.signOut();
+		if (error) console.error('Error logging out:', error.message);
+	};
+
 	let mobileMenuOpen = false;
 </script>
 
@@ -40,27 +50,91 @@
 		<a href="/" class="w-full flex justify-center">
 			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1" />
 		</a>
-		<ul class="menu p-4 gap-2 4xl:text-lg flex-col">
+		<ul class="menu p-4 gap-2 md:text-lg flex-col">
 			<li
 				class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}"
 			>
-				<a href="/private/{$page.params.userId}/account">Profile</a>
+				<a href="/private/{$page.params.userId}/account" class="flex items-center">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-5 h-5 mr-2"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zM19 19c0-2.761-4.686-5-7-5s-7 2.239-7 5"
+						/>
+					</svg>
+					Profile
+				</a>
 			</li>
 			<li
 				class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral text-white' : ''}"
 			>
-				<a href="/private/{$page.params.userId}/listings">Listings</a>
-			</li>
-			<li class="rounded-lg">
-				<a href="/#pricing">Pricing</a>
+				<a href="/private/{$page.params.userId}/listings" class="flex items-center">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-5 h-5 mr-2"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M3 7h18M3 12h18m-7 5h7"
+						/>
+					</svg>
+					Listings
+				</a>
 			</li>
 			<li
-				class="rounded-lg {$page.url.pathname.endsWith('subscription')
+				class="rounded-lg {$page.url.pathname.endsWith('/subscription')
 					? 'bg-neutral text-white'
 					: ''}"
 			>
-				<a href="/private/{$page.params.userId}/subscription">Subscription & Billing</a>
-				<!-- Additional navigation items can be added here -->
+				<a href="/private/{$page.params.userId}/subscription" class="flex items-center">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-5 h-5 mr-2"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M8 7V3m8 4V3m-7 8h6m-6 4h6m-9 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+						/>
+					</svg>
+
+					Subscription
+				</a>
+			</li>
+			<li>
+				<button class="btn btn-outline mt-4 flex items-center" on:click={logout}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-5 h-5 mr-2"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 12h-3m3-2a2 2 0 110-4 2 2 0 010 4zm-2 8H5a2 2 0 01-2-2v-1a2 2 0 012-2h2m4 0h1m0 0v-1a2 2 0 114 0v1"
+						/>
+					</svg>
+					Sign Out
+				</button>
 			</li>
 		</ul>
 	</nav>
