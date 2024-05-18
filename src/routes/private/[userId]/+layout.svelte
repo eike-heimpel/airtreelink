@@ -35,20 +35,28 @@
 
 	<!-- Navigation menu -->
 	<nav
-		class={`bg-base-100 w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40' : 'hidden'}`}
+		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40' : 'hidden'}`}
 	>
 		<img src="/logo.webp" alt="Logo" class="w-20 mx-auto mt-4" />
 		<ul class="menu p-4 gap-2">
-			<li class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral' : ''}">
+			<li
+				class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}"
+			>
 				<a href="/private/{$page.params.userId}/account">Profile</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral' : ''}">
+			<li
+				class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral text-white' : ''}"
+			>
 				<a href="/private/{$page.params.userId}/listings">Listings</a>
 			</li>
 			<li class="rounded-lg">
 				<a href="/#pricing">Pricing</a>
 			</li>
-			<li class="rounded-lg {$page.url.pathname.endsWith('subscription') ? 'bg-neutral' : ''}">
+			<li
+				class="rounded-lg {$page.url.pathname.endsWith('subscription')
+					? 'bg-neutral text-white'
+					: ''}"
+			>
 				<a href="/private/{$page.params.userId}/subscription">Subscription & Billing</a>
 				<!-- Additional navigation items can be added here -->
 			</li>
@@ -56,7 +64,7 @@
 	</nav>
 
 	<!-- Content area -->
-	<div class="flex-1 bg-neutral">
+	<div class="flex-1">
 		<slot></slot>
 	</div>
 </div>

@@ -41,7 +41,7 @@
 	}
 </script>
 
-<nav class="bg-neutral text-white p-4 fixed w-full z-10 shadow-lg">
+<nav class="navbar bg-base-200 p-4 fixed w-full z-10 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
 		<a href="/" class="text-2xl font-bold">Airtree</a>
 		<div class="space-x-4 flex items-center">
@@ -68,7 +68,7 @@
 		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
 
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+			<div class="card border shadow-md p-4">
 				<div class="card-body">
 					<h3 class="card-title text-primary">Unique Rotating Links</h3>
 					<p>
@@ -78,7 +78,7 @@
 				</div>
 			</div>
 
-			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+			<div class="card border shadow-md p-4">
 				<div class="card-body">
 					<h3 class="card-title text-primary">Customizable Information Pages</h3>
 					<p>
@@ -88,7 +88,7 @@
 				</div>
 			</div>
 
-			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+			<div class="card border shadow-md p-4">
 				<div class="card-body">
 					<h3 class="card-title text-primary">Automated Guest Communication</h3>
 					<p>
@@ -115,17 +115,14 @@
 		<p class="text-lg mb-6">Check out a demo of what your guests will see</p>
 		<div class="flex justify-center">
 			<!-- Placeholder for demo content -->
-			<div class="w-3/4 bg-neutral p-4 rounded-lg shadow-lg">
+			<div class="w-3/4 p-4 rounded-lg shadow-lg">
 				<p class="text-lg">Demo content goes here...</p>
 			</div>
 		</div>
 	</div>
 </section>
 
-<section
-	id="pricing"
-	class="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 space-y-8"
->
+<section id="pricing" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
 	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
 	<p class="text-lg mb-10 text-center max-w-4xl">
 		We currently offer the Simple Plan, which includes everything you need to get started. Stay
@@ -134,7 +131,7 @@
 	</p>
 	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
 		<!-- Basic Plan -->
-		<div class="bg-neutral p-6 rounded-lg shadow-lg w-full max-w-sm flex flex-col justify-between">
+		<div class="card p-6 rounded-lg shadow-xl w-full max-w-sm flex flex-col justify-between">
 			<div>
 				<h2 class="text-2xl font-bold mb-4">Basic</h2>
 				<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
@@ -191,7 +188,7 @@
 
 		<!-- Premium Plan -->
 		<div
-			class="bg-neutral opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm relative flex flex-col justify-between"
+			class="card opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm relative flex flex-col justify-between"
 		>
 			<div>
 				<h2 class="text-2xl font-bold mb-4">Premium</h2>

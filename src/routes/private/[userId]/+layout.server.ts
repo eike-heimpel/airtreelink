@@ -11,5 +11,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
     if (session.user.id !== params.userId)
         throw redirect(303, '/private/' + session.user.id)
 
+
+
     return { session }
 }

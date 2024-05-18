@@ -51,6 +51,8 @@ export async function POST({ request, locals }) {
 
             await handleSubscriptionUpdate(subscriptionId, null, status);
 
+            console.log(`Subscription ${subscriptionId} status updated to ${status}`);
+
             if (status === 'past_due') {
                 await notifyUserBySubscription(subscriptionId, 'Payment Failed', generateEmailHtml('Payment Failure Notice', `
                     We wanted to inform you that your recent payment attempt has failed. Please update your payment information to avoid interruption of services.

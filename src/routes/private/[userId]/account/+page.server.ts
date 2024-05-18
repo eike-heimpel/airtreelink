@@ -5,24 +5,43 @@ import type { Actions, PageServerLoad } from '../../account/$types';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2022-11-15' });
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
-    const { session } = await safeGetSession();
-    if (!session) {
-        throw redirect(303, '/login');
-    }
-    console.log(session.user.id);
-    const { data: profile, error } = await supabase
-        .from('profile')
-        .select('subscription_status, profile_status, subscription_id')
-        .eq('id', session.user.id)
-        .single();
+export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession }, parent }) => {
 
-    if (error) {
-        console.error("Failed to load profile", error);
-        return error(500, { error: 'Failed to load profile' });
+    const parentData = await parent();
+    const session = parentData.session;
+
+    if (!session || !session.user || !session.user.email) {
+        throw error(403, { message: 'Not authenticated' });
     }
 
-    return { session, profile };
+    let subscription;
+
+    try {
+        const customer = await stripe.customers.list({
+            email: session.user.email,
+            limit: 1
+        });
+
+        if (customer.data.length === 0) {
+            throw error(404, { message: 'Customer not found' });
+        }
+
+        const subscriptions = await stripe.subscriptions.list({
+            customer: customer.data[0].id,
+            limit: 1
+        });
+
+        if (subscriptions.data.length === 0) {
+            throw error(404, { message: 'Subscription not found' });
+        }
+
+        subscription = subscriptions.data[0];
+
+    } catch (stripeError) {
+        console.error('Failed to retrieve subscription from Stripe', stripeError);
+        throw error(500, { message: 'Failed to retrieve subscription from Stripe' });
+    }
+    return { session, subscription };
 };
 
 export const actions: Actions = {
@@ -51,47 +70,6 @@ export const actions: Actions = {
         if (response.error) {
             console.error("Failed to change password", response.error);
             return error(500, { message: 'Failed to change password' });
-        }
-
-        return { success: true };
-    },
-
-    cancelSubscription: async ({ locals: { supabase, safeGetSession } }) => {
-        const { session } = await safeGetSession();
-        if (!session) {
-            return error(403, { message: 'Not authenticated' });
-        }
-
-        const { data: profile, error: profileError } = await supabase
-            .from('profile')
-            .select('subscription_id')
-            .eq('id', session.user.id)
-            .single();
-
-        if (profileError || !profile.subscription_id) {
-            return error(400, { message: 'Subscription not found' });
-        }
-
-        try {
-            const subscription = await stripe.subscriptions.update(
-                profile.subscription_id,
-                {
-                    cancel_at_period_end: true,
-                }
-            );
-        } catch (stripeError) {
-            console.error("Failed to cancel Stripe subscription", stripeError);
-            return error(500, { message: 'Failed to cancel subscription' });
-        }
-
-        const response = await supabase
-            .from('profile')
-            .update({ subscription_status: 'canceled' })
-            .eq('id', session.user.id);
-
-        if (response.error) {
-            console.error("Failed to cancel subscription", response.error);
-            return error(500, { message: 'Failed to cancel subscription' });
         }
 
         return { success: true };

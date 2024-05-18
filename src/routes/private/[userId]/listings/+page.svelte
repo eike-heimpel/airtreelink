@@ -32,7 +32,7 @@
 	}
 </script>
 
-<div class="min-h-screen flex flex-wrap gap-10 items-center justify-center p-4 bg-neutral relative">
+<div class="min-h-screen flex flex-wrap gap-10 items-center justify-center p-4 relative">
 	{#each data.listings as listing}
 		<button
 			class="card w-full max-w-lg bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out relative"

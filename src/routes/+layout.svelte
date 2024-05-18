@@ -7,6 +7,25 @@
 	$: ({ session, supabase } = data);
 
 	onMount(() => {
+		// Check if the user has a preference
+		const userPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+		// Apply the appropriate theme
+		if (userPrefersDark) {
+			document.documentElement.setAttribute('data-theme', 'dark');
+		} else {
+			document.documentElement.setAttribute('data-theme', 'light');
+		}
+
+		// Listen for changes to the system preference
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+			if (event.matches) {
+				document.documentElement.setAttribute('data-theme', 'dark');
+			} else {
+				document.documentElement.setAttribute('data-theme', 'light');
+			}
+		});
+
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
 			if (!newSession) {
 				/**

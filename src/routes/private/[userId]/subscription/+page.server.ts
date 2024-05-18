@@ -1,40 +1,52 @@
 import { STRIPE_SECRET_KEY } from '$env/static/private';
 import Stripe from 'stripe';
+import { error } from '@sveltejs/kit';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
-import { error } from '@sveltejs/kit';
-export const load = async ({ locals: { supabase, safeGetSession } }) => {
-    const { session } = await safeGetSession();
-    if (!session) {
+
+export const load = async ({ parent }) => {
+    const parentData = await parent();
+    const session = parentData.session;
+
+    if (!session || !session.user || !session.user.email) {
         throw error(403, { message: 'Not authenticated' });
     }
 
-    const { data: profile, error: profileError } = await supabase
-        .from('profile')
-        .select('subscription_id')
-        .eq('id', session.user.id)
-        .single();
-
-
-    if (profileError) {
-        throw error(500, { message: 'Failed to load profile' });
-    }
-
     let subscription = null;
-    if (profile.subscription_id) {
-        try {
-            subscription = await stripe.subscriptions.retrieve(profile.subscription_id);
-        } catch (stripeError) {
-            throw error(500, { message: 'Failed to retrieve subscription from Stripe' });
+
+    try {
+        const customer = await stripe.customers.list({
+            email: session.user.email,
+            limit: 1
+        });
+
+        if (customer.data.length === 0) {
+            throw error(404, { message: 'Customer not found' });
         }
+
+        const subscriptions = await stripe.subscriptions.list({
+            customer: customer.data[0].id,
+            limit: 1
+        });
+
+        if (subscriptions.data.length === 0) {
+            console.log('Subscription not found');
+        } else subscription = subscriptions.data[0];
+
+
+    } catch (stripeError) {
+        console.error('Failed to retrieve subscription from Stripe', stripeError);
+        throw error(500, { message: 'Failed to retrieve subscription from Stripe' });
     }
-    return { profile, subscription };
+
+    return { subscription };
 };
 
 export const actions = {
-    updateSubscription: async ({ request, locals: { supabase, safeGetSession } }) => {
+    updateSubscription: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession();
-        if (!session) {
+
+        if (!session || !session.user || !session.user.email) {
             throw error(403, { message: 'Not authenticated' });
         }
 
@@ -45,20 +57,32 @@ export const actions = {
             throw error(400, { message: 'Invalid quantity' });
         }
 
-        const { data: profile, error: profileError } = await supabase
-            .from('profile')
-            .select('subscription_id, subscription_item_id')
-            .eq('id', session.user.id)
-            .single();
-
-        if (profileError || !profile.subscription_id) {
-            throw error(400, { message: 'Subscription not found' });
-        }
+        let subscription = null;
 
         try {
-            await stripe.subscriptions.update(profile.subscription_id, {
+            const customer = await stripe.customers.list({
+                email: session.user.email,
+                limit: 1
+            });
+
+            if (customer.data.length === 0) {
+                throw error(404, { message: 'Customer not found' });
+            }
+
+            const subscriptions = await stripe.subscriptions.list({
+                customer: customer.data[0].id,
+                limit: 1
+            });
+
+            if (subscriptions.data.length === 0) {
+                throw error(404, { message: 'Subscription not found' });
+            }
+
+            subscription = subscriptions.data[0];
+
+            await stripe.subscriptions.update(subscription.id, {
                 items: [{
-                    id: profile.subscription_item_id,
+                    id: subscription.items.data[0].id,
                     quantity: newQuantity,
                 }],
                 proration_behavior: 'create_prorations',
@@ -68,54 +92,46 @@ export const actions = {
             throw error(500, { message: 'Failed to update subscription' });
         }
 
-        const { error: updateError } = await supabase
-            .from('profile')
-            .update({ subscription_quantity: newQuantity })
-            .eq('id', session.user.id);
-
-        if (updateError) {
-            console.error('Failed to update subscription quantity in database', updateError);
-            throw error(500, { message: 'Failed to update subscription' });
-        }
-
         return { success: true };
     },
 
-    cancelSubscription: async ({ locals: { supabase, safeGetSession } }) => {
+    cancelSubscription: async ({ locals: { safeGetSession } }) => {
         const { session } = await safeGetSession();
-        if (!session) {
+
+        if (!session || !session.user || !session.user.email) {
             throw error(403, { message: 'Not authenticated' });
         }
 
-        const { data: profile, error: profileError } = await supabase
-            .from('profile')
-            .select('subscription_id')
-            .eq('id', session.user.id)
-            .single();
-
-        if (profileError || !profile.subscription_id) {
-            throw error(400, { message: 'Subscription not found' });
-        }
+        let subscription = null;
 
         try {
-            await stripe.subscriptions.update(profile.subscription_id, {
+            const customer = await stripe.customers.list({
+                email: session.user.email,
+                limit: 1
+            });
+
+            if (customer.data.length === 0) {
+                throw error(404, { message: 'Customer not found' });
+            }
+
+            const subscriptions = await stripe.subscriptions.list({
+                customer: customer.data[0].id,
+                limit: 1
+            });
+
+            if (subscriptions.data.length === 0) {
+                throw error(404, { message: 'Subscription not found' });
+            }
+
+            subscription = subscriptions.data[0];
+
+            await stripe.subscriptions.update(subscription.id, {
                 cancel_at_period_end: true,
             });
         } catch (stripeError) {
             console.error('Failed to cancel Stripe subscription', stripeError);
             throw error(500, { message: 'Failed to cancel subscription' });
         }
-
-        const { error: updateError } = await supabase
-            .from('profile')
-            .update({ subscription_status: 'canceled' })
-            .eq('id', session.user.id);
-
-        if (updateError) {
-            console.error('Failed to update subscription status in database', updateError);
-            throw error(500, { message: 'Failed to update subscription' });
-        }
-
         return { success: true };
     },
 };
