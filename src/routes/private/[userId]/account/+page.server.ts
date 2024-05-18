@@ -26,6 +26,15 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
 };
 
 export const actions: Actions = {
+
+    signout: async ({ locals: { supabase, safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        if (session) {
+            await supabase.auth.signOut()
+            throw redirect(303, '/')
+        }
+    },
+
     changePassword: async ({ request, locals: { supabase, safeGetSession } }) => {
         const formData = await request.formData();
         const newPassword = formData.get('newPassword') as string;

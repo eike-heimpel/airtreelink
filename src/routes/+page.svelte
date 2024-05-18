@@ -62,14 +62,50 @@
 		</div>
 	</div>
 </nav>
-
-<section id="home" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
-	<div class="text-center">
+<section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
+	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10">
 		<h1 class="text-5xl font-bold mb-6">Welcome to Airtree</h1>
 		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
-		<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="btn btn-primary"
-			>Get Started</a
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Unique Rotating Links</h3>
+					<p>
+						Provide guests with secure, unique URLs that offer a centralized hub for all
+						property-related information, ensuring a seamless and personalized experience.
+					</p>
+				</div>
+			</div>
+
+			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Customizable Information Pages</h3>
+					<p>
+						Share detailed stay instructions, local recommendations, and links to nearby
+						attractions, all tailored to your property and guest needs.
+					</p>
+				</div>
+			</div>
+
+			<div class="card shadow-md p-4 bg-base-200 shadow-primary">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Automated Guest Communication</h3>
+					<p>
+						Simplify and automate the sharing of essential information, reducing your workload and
+						ensuring guests receive timely updates.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<a
+			href="#pricing"
+			on:click={(e) => scrollToSection(e, 'pricing')}
+			class="btn btn-primary btn-lg mx-auto"
 		>
+			Get Started
+		</a>
 	</div>
 </section>
 
@@ -91,7 +127,7 @@
 	class="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 space-y-8"
 >
 	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
-	<p class="text-lg mb-10 text-center">
+	<p class="text-lg mb-10 text-center max-w-4xl">
 		We currently offer the Simple Plan, which includes everything you need to get started. Stay
 		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
 		turn off auto renewal. See what your guests think and come back if you like it.
@@ -188,6 +224,22 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- <div class="mt-12">
+		<h2 class="text-4xl font-semibold mb-4">Our Basic Plan</h2>
+		<p class="text-lg mb-4">
+			Our basic plan offers an efficient, cost-effective solution for short-term rental hosts to
+			enhance guest experiences and streamline property management. For just $2 per listing per
+			month, enjoy the following benefits:
+		</p>
+
+		<p class="text-lg mt-6">
+			Our service integrates effortlessly into your existing operations, offering a low barrier to
+			entry with significant returns in guest satisfaction and operational efficiency. Join our
+			growing community of hosts who are transforming their rental properties into memorable
+			experiences for their guests.
+		</p>
+	</div> -->
 </section>
 
 <footer class="bg-base-200 py-8 mt-10">

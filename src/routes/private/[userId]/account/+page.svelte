@@ -100,16 +100,27 @@
 			</div>
 		</form>
 
-		<!-- Delete Account Button -->
-		{#if profile?.subscription_status === 'free' || profile?.subscription_status === 'canceled' || !profile?.subscription_status}
-			<button class="btn btn-error w-full mt-4" on:click={openDeleteModal} disabled={loading}
-				>Delete Account</button
-			>
-		{:else}
-			<div class="alert alert-ghost mt-4">
-				<p>You must cancel your subscription before deleting your account.</p>
-			</div>
-		{/if}
+		<div class="flex flex-col items-center space-y-4 mt-4">
+			<!-- Sign Out Button -->
+			<form class="w-full max-w-72" method="post" action="?/signout" use:enhance>
+				<div>
+					<button class="btn btn-error btn-outline w-full" disabled={loading}>Sign Out</button>
+				</div>
+			</form>
+
+			<!-- Delete Account Button -->
+			{#if profile?.subscription_status === 'free' || profile?.subscription_status === 'canceled' || !profile?.subscription_status}
+				<button
+					class="btn btn-error btn-outline w-full max-w-44"
+					on:click={openDeleteModal}
+					disabled={loading}>Delete Account</button
+				>
+			{:else}
+				<div class="alert alert-ghost w-full max-w-44">
+					<p>You must cancel your subscription before deleting your account.</p>
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>
 
