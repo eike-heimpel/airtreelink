@@ -49,12 +49,12 @@
 
 	<!-- Navigation menu -->
 	<nav
-		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40 h-[calc(100vh-3rem)] flex flex-col items-center justify-center' : 'hidden'}`}
+		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40 h-[calc(100vh-3rem)] flex flex-col items-center justify-start' : 'hidden'}`}
 	>
 		<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
-			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1" />
+			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1 mb-6" />
 		</a>
-		<ul class="menu p-4 gap-4 md:text-lg flex-col items-center w-full">
+		<ul class="menu gap-6 md:text-lg flex-col items-center w-full p-4 md:p-0">
 			<li
 				class={`rounded-lg ${$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}`}
 				on:click={closeMobileMenu}
