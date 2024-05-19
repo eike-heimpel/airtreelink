@@ -41,7 +41,7 @@ export const actions: Actions = {
 
             return { success: true };
         } catch (err) {
-            console.log(err)
+            console.error('Unexpected error:', err);
             return error(500, { message: 'An unexpected error occurred' });
         }
 

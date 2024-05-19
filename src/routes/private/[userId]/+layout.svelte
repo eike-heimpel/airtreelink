@@ -12,6 +12,10 @@
 	};
 
 	let mobileMenuOpen = false;
+
+	const closeMobileMenu = () => {
+		mobileMenuOpen = false;
+	};
 </script>
 
 <div class="flex flex-col md:flex-row min-h-screen relative">
@@ -45,19 +49,23 @@
 
 	<!-- Navigation menu -->
 	<nav
-		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40' : 'hidden'}`}
+		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40 h-[calc(100vh-3rem)] flex flex-col items-center justify-center' : 'hidden'}`}
 	>
-		<a href="/" class="w-full flex justify-center">
+		<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
 			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1" />
 		</a>
-		<ul class="menu p-4 gap-2 md:text-lg flex-col">
+		<ul class="menu p-4 gap-4 md:text-lg flex-col items-center w-full">
 			<li
-				class="rounded-lg {$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}"
+				class={`rounded-lg ${$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}`}
+				on:click={closeMobileMenu}
 			>
-				<a href="/private/{$page.params.userId}/account" class="flex items-center">
+				<a
+					href="/private/{$page.params.userId}/account"
+					class="flex items-center text-xl py-4 w-full justify-center"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5 mr-2"
+						class="w-6 h-6 mr-2"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -73,12 +81,16 @@
 				</a>
 			</li>
 			<li
-				class="rounded-lg {$page.url.pathname.endsWith('/listings') ? 'bg-neutral text-white' : ''}"
+				class={`rounded-lg ${$page.url.pathname.endsWith('/listings') ? 'bg-neutral text-white' : ''}`}
+				on:click={closeMobileMenu}
 			>
-				<a href="/private/{$page.params.userId}/listings" class="flex items-center">
+				<a
+					href="/private/{$page.params.userId}/listings"
+					class="flex items-center text-xl py-4 w-full justify-center"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5 mr-2"
+						class="w-6 h-6 mr-2"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -94,14 +106,16 @@
 				</a>
 			</li>
 			<li
-				class="rounded-lg {$page.url.pathname.endsWith('/subscription')
-					? 'bg-neutral text-white'
-					: ''}"
+				class={`rounded-lg ${$page.url.pathname.endsWith('/subscription') ? 'bg-neutral text-white' : ''}`}
+				on:click={closeMobileMenu}
 			>
-				<a href="/private/{$page.params.userId}/subscription" class="flex items-center">
+				<a
+					href="/private/{$page.params.userId}/subscription"
+					class="flex items-center text-xl py-4 w-full justify-center"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5 mr-2"
+						class="w-6 h-6 mr-2"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -113,15 +127,17 @@
 							d="M8 7V3m8 4V3m-7 8h6m-6 4h6m-9 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
 						/>
 					</svg>
-
 					Subscription
 				</a>
 			</li>
-			<li>
-				<button class="btn btn-outline mt-4 flex items-center" on:click={logout}>
+			<li on:click={closeMobileMenu} class="mt-4">
+				<button
+					class="btn btn-outline flex items-center text-xl w-full justify-center"
+					on:click={logout}
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5 mr-2"
+						class="w-6 h-6 mr-2"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"

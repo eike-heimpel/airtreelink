@@ -5,6 +5,7 @@
 	$: ({ session, supabase } = data);
 
 	let basicQuantity = 1;
+	let mobileMenuOpen = false;
 
 	function updateQuantity(plan, change) {
 		if (plan === 'basic') {
@@ -39,33 +40,116 @@
 		event.preventDefault();
 		document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
 	}
+
+	const closeMobileMenu = () => {
+		mobileMenuOpen = false;
+	};
 </script>
 
-<nav class="navbar bg-base-200 p-4 fixed w-full z-10 shadow-lg">
+<nav class="navbar bg-base-200 p-2 fixed w-full z-20 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
-		<a href="/" class="text-2xl font-bold flex gap-4 items-center">
-			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-16 mx-auto bg-white rounded-full" /> Airtree
-		</a>
-		<div class="space-x-4 flex items-center">
-			<a href="#home" on:click={(e) => scrollToSection(e, 'home')} class="hover:text-primary"
-				>Home</a
-			>
-			<a href="#demo" on:click={(e) => scrollToSection(e, 'demo')} class="hover:text-primary"
-				>Demo</a
-			>
-			<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="hover:text-primary"
-				>Pricing</a
-			>
+		<div class="md:hidden flex items-center">
+			<button class="p-4 focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
+				{#if mobileMenuOpen}
+					<!-- Close icon -->
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				{:else}
+					<!-- Hamburger icon -->
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6h16M4 12h16m-7 6h7"
+						/>
+					</svg>
+				{/if}
+			</button>
 			{#if session}
-				<a href="/private" class="btn btn-primary">Account</a>
+				<a href="/private" class="btn btn-primary ml-2 btn-sm md:btn-md">Account</a>
 			{:else}
-				<a href="/auth" class="btn btn-secondary">Login/Signup</a>
+				<a href="/auth" class="btn btn-secondary ml-2 btn-sm md:btn-md">Login/Signup</a>
 			{/if}
 		</div>
+		<a
+			href="/"
+			class="text-2xl font-bold flex gap-4 items-center md:order-1"
+			on:click={closeMobileMenu}
+		>
+			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-16 mx-auto bg-white rounded-full" /> Airtree
+		</a>
+		<div class="hidden md:flex gap-8 items-center text-xl">
+			{#if session}
+				<a href="/private" on:click={closeMobileMenu} class="btn btn-primary">Account</a>
+			{:else}
+				<a href="/auth" on:click={closeMobileMenu} class="btn btn-secondary">Login/Signup</a>
+			{/if}
+			<a
+				href="#home"
+				on:click={(e) => {
+					scrollToSection(e, 'home');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Home</a
+			>
+			<a
+				href="#demo"
+				on:click={(e) => {
+					scrollToSection(e, 'demo');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Demo</a
+			>
+			<a
+				href="#pricing"
+				on:click={(e) => {
+					scrollToSection(e, 'pricing');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Pricing</a
+			>
+		</div>
 	</div>
+	{#if mobileMenuOpen}
+		<div
+			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-10 z-10"
+		>
+			<a
+				href="#home"
+				on:click={(e) => {
+					scrollToSection(e, 'home');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Home</a
+			>
+			<a
+				href="#demo"
+				on:click={(e) => {
+					scrollToSection(e, 'demo');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Demo</a
+			>
+			<a
+				href="#pricing"
+				on:click={(e) => {
+					scrollToSection(e, 'pricing');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Pricing</a
+			>
+		</div>
+	{/if}
 </nav>
 <section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
-	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10">
+	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-6 md:mt-0">
 		<h1 class="text-5xl font-bold mb-6">Welcome to Airtree</h1>
 		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
 
