@@ -101,7 +101,7 @@
 
 {#if showLinksModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-		<div class="bg-white rounded-lg p-8 shadow-lg w-[90%] max-w-[500px]">
+		<div class="bg-base-100 rounded-lg p-8 shadow-lg w-[90%] max-w-[500px]">
 			<h2 class="font-bold text-lg">Add New Entry</h2>
 			<form on:submit={handleFormSubmit}>
 				<div class="mb-4">
@@ -131,8 +131,8 @@
 					<label class="label">Color Gradient</label>
 					<input class="input input-bordered" type="text" bind:value={newEntry.color} readonly />
 				</div>
-				<div class="flex justify-end">
-					<button type="button" class="btn" on:click={toggleLinksModal}>Cancel</button>
+				<div class="flex justify-end gap-2">
+					<button type="button" class="btn btn-outline" on:click={toggleLinksModal}>Cancel</button>
 					<button type="submit" class="btn btn-primary">Add</button>
 				</div>
 			</form>
