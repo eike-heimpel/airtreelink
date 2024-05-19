@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
+	import { onDestroy, onMount } from 'svelte';
+	import { navigating } from '$app/stores';
 
 	export let data;
 
 	$: ({ session, supabase } = data);
 
-	// Logout function
 	const logout = async () => {
 		const { error } = await supabase.auth.signOut();
 		if (error) console.error('Error logging out:', error.message);
@@ -17,6 +18,11 @@
 		mobileMenuOpen = false;
 	};
 </script>
+
+<div
+	class="fixed top-0 left-0 w-full h-[1px] bg-primary transform scale-x-0 transition-transform duration-1000 ease-out"
+	class:scale-x-100={$navigating}
+></div>
 
 <div class="flex flex-col md:flex-row min-h-screen relative">
 	<!-- Mobile menu button -->
@@ -54,14 +60,14 @@
 		<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
 			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1 mb-6" />
 		</a>
-		<ul class="menu gap-6 md:text-lg flex-col items-center w-full p-4 md:p-0">
+		<ul class="menu gap-4 md:text-lg flex-col items-center w-full p-4 md:p-0">
 			<li
 				class={`rounded-lg ${$page.url.pathname.endsWith('/account') ? 'bg-neutral text-white' : ''}`}
-				on:click={closeMobileMenu}
 			>
 				<a
 					href="/private/{$page.params.userId}/account"
 					class="flex items-center text-xl py-4 w-full justify-center"
+					on:click={closeMobileMenu}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -82,11 +88,11 @@
 			</li>
 			<li
 				class={`rounded-lg ${$page.url.pathname.endsWith('/listings') ? 'bg-neutral text-white' : ''}`}
-				on:click={closeMobileMenu}
 			>
 				<a
 					href="/private/{$page.params.userId}/listings"
 					class="flex items-center text-xl py-4 w-full justify-center"
+					on:click={closeMobileMenu}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -107,11 +113,11 @@
 			</li>
 			<li
 				class={`rounded-lg ${$page.url.pathname.endsWith('/subscription') ? 'bg-neutral text-white' : ''}`}
-				on:click={closeMobileMenu}
 			>
 				<a
 					href="/private/{$page.params.userId}/subscription"
 					class="flex items-center text-xl py-4 w-full justify-center"
+					on:click={closeMobileMenu}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +136,7 @@
 					Subscription
 				</a>
 			</li>
-			<li on:click={closeMobileMenu} class="mt-4">
+			<li class="mt-4">
 				<button
 					class="btn btn-outline flex items-center text-xl w-full justify-center"
 					on:click={logout}
