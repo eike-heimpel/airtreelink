@@ -46,7 +46,7 @@
 	};
 </script>
 
-<nav class="navbar bg-base-200 p-2 fixed w-full z-20 shadow-lg">
+<nav class="navbar bg-base-200 py-2 px-8 fixed w-full z-20 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
 		<div class="md:hidden flex items-center">
 			<button class="p-4 focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
@@ -73,9 +73,9 @@
 				{/if}
 			</button>
 			{#if session}
-				<a href="/private" class="btn btn-primary ml-2 btn-sm md:btn-md">Account</a>
+				<a href="/private" class="btn btn-primary btn-sm md:btn-md">Account</a>
 			{:else}
-				<a href="/auth" class="btn btn-secondary ml-2 btn-sm md:btn-md">Login/Signup</a>
+				<a href="/auth" class="btn btn-secondary btn-sm md:btn-md">Login/Signup</a>
 			{/if}
 		</div>
 		<a
@@ -83,7 +83,7 @@
 			class="text-2xl font-bold flex gap-4 items-center md:order-1"
 			on:click={closeMobileMenu}
 		>
-			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-16 mx-auto bg-white rounded-full" /> Airtree
+			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto bg-white rounded-full" /> Airtree
 		</a>
 		<div class="hidden md:flex gap-8 items-center text-xl">
 			{#if session}
