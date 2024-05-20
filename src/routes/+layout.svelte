@@ -28,14 +28,7 @@
 
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
 			if (!newSession) {
-				/**
-				 * Only redirect to /auth if the current path includes /private
-				 */
 				if (window.location.pathname.includes('/private')) {
-					/**
-					 * Queue this as a task so the navigation won't prevent the
-					 * triggering function from completing
-					 */
 					setTimeout(() => {
 						goto('/auth', { invalidateAll: true });
 					});
@@ -46,6 +39,18 @@
 		});
 
 		return () => data.subscription.unsubscribe();
+
+		// Register service worker only on the client side
+		if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+			navigator.serviceWorker
+				.register('/service-worker.js')
+				.then((registration) => {
+					console.log('Service Worker registered with scope:', registration.scope);
+				})
+				.catch((error) => {
+					console.log('Service Worker registration failed:', error);
+				});
+		}
 	});
 </script>
 

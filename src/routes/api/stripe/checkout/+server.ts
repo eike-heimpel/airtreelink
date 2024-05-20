@@ -6,6 +6,10 @@ const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 export async function GET({ url, locals }) {
 
+    if (!locals.session || !locals.session.user || !locals.session.user.email) {
+        throw error(403, { message: 'Not authenticated' });
+    }
+
     const customerEmail = locals.session.user.email;
     const userId = locals.session.user.id;
 
