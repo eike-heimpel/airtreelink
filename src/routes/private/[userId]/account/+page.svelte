@@ -97,8 +97,13 @@
 					disabled={loading}>Delete Account</button
 				>
 			{:else}
-				<div class="alert alert-ghost w-full max-w-44">
-					<p>Please cancel your subscription before deleting your account.</p>
+				<button
+					class="btn btn-error btn-outline w-full max-w-44"
+					on:click={openDeleteModal}
+					disabled>Delete Account</button
+				>
+				<div class="alert alert-ghost w-full">
+					<p>Please cancel your subscription if you want to delete your account.</p>
 				</div>
 			{/if}
 		</div>

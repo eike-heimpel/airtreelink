@@ -130,92 +130,99 @@
 	};
 </script>
 
-<form
-	use:enhance={signInWithEmail}
-	method="POST"
-	action="?/login"
-	class="flex flex-col space-y-4 p-6 rounded-lg shadow-md max-w-md mx-auto my-10"
->
-	<div class="form-control w-full">
-		<label class="label" for="email">
-			<span class="label-text">Email</span>
-		</label>
-		<input
-			name="email"
-			type="email"
-			placeholder="Enter your email"
-			class="input input-bordered w-full"
-			bind:value={email}
-			on:input={() => toast.dismiss()}
-		/>
-	</div>
-	<div class="form-control w-full">
-		<label class="label" for="password">
-			<span class="label-text">Password</span>
-		</label>
-		<input
-			name="password"
-			type="password"
-			placeholder="Enter your password"
-			class="input input-bordered w-full"
-			bind:value={password}
-			on:input={() => {
-				if (showPasswordStrength) validatePasswordStrength();
-				toast.dismiss();
-			}}
-		/>
-		{#if showPasswordStrength}
-			<div class="w-full h-2 mt-2 bg-gray-300 rounded">
-				<div class="h-full rounded transition-all duration-300 {progressBarClass}"></div>
+<div class="min-h-screen bg-base-200 flex items-center justify-center">
+	<div class="card w-96 bg-base-100 shadow-xl">
+		<div class="card-body">
+			<div class="flex justify-center mb-6">
+				<img src="/logo.webp" alt="Logo" class="h-12" />
 			</div>
-			<div class="text-sm text-gray-600 mt-2">{passwordStrength}</div>
-		{/if}
-	</div>
-	{#if showConfirmPassword}
-		<div class="form-control w-full">
-			<label class="label" for="confirmPassword">
-				<span class="label-text">Confirm Password</span>
-			</label>
-			<input
-				name="confirmPassword"
-				type="password"
-				placeholder="Confirm your password"
-				class="input input-bordered w-full"
-				bind:value={confirmPassword}
-				on:input={() => toast.dismiss()}
-			/>
+			<h2 class="card-title justify-center text-3xl mb-8">Login</h2>
+			<form
+				use:enhance={signInWithEmail}
+				method="POST"
+				action="?/login"
+				class="flex flex-col space-y-4"
+			>
+				<div class="form-control w-full">
+					<label class="label" for="email">
+						<span class="label-text">Email</span>
+					</label>
+					<input
+						name="email"
+						type="email"
+						placeholder="Enter your email"
+						class="input input-bordered w-full"
+						bind:value={email}
+						on:input={() => toast.dismiss()}
+					/>
+				</div>
+				<div class="form-control w-full">
+					<label class="label" for="password">
+						<span class="label-text">Password</span>
+					</label>
+					<input
+						name="password"
+						type="password"
+						placeholder="Enter your password"
+						class="input input-bordered w-full"
+						bind:value={password}
+						on:input={() => {
+							if (showPasswordStrength) validatePasswordStrength();
+							toast.dismiss();
+						}}
+					/>
+					{#if showPasswordStrength}
+						<div class="w-full h-2 mt-2 bg-gray-300 rounded">
+							<div class="h-full rounded transition-all duration-300 {progressBarClass}"></div>
+						</div>
+						<div class="text-sm text-gray-600 mt-2">{passwordStrength}</div>
+					{/if}
+				</div>
+				{#if showConfirmPassword}
+					<div class="form-control w-full">
+						<label class="label" for="confirmPassword">
+							<span class="label-text">Confirm Password</span>
+						</label>
+						<input
+							name="confirmPassword"
+							type="password"
+							placeholder="Confirm your password"
+							class="input input-bordered w-full"
+							bind:value={confirmPassword}
+							on:input={() => toast.dismiss()}
+						/>
+					</div>
+				{:else}
+					<div class="flex flex-col space-y-2 mt-4">
+						<button type="submit" class="btn btn-primary w-full">Login</button>
+					</div>
+				{/if}
+				<button
+					type="button"
+					class="btn btn-accent w-full"
+					on:click={signUpWithEmail}
+					disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
+					>Sign up with Email</button
+				>
+				<div class="flex flex-col space-y-2 mt-4">
+					<button
+						type="button"
+						class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
+						on:click={signInWithGithub}
+					>
+						<img src="/svgs/github_logo.svg" alt="GitHub Logo" class="w-5 h-5" />
+						<span>Sign in with GitHub</span>
+					</button>
+					<button
+						type="button"
+						class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
+						on:click={signInWithGoogle}
+					>
+						<img src="/svgs/google_logo.svg" alt="Google Logo" class="w-5 h-5" />
+						<span>Sign in with Google</span>
+					</button>
+				</div>
+			</form>
 		</div>
-	{:else}
-		<div class="flex flex-col space-y-2 mt-4">
-			<button type="submit" class="btn btn-primary w-full">Login</button>
-		</div>
-	{/if}
-	<button
-		type="button"
-		class="btn btn-accent w-full"
-		on:click={signUpWithEmail}
-		disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
-		>Sign up with Email</button
-	>
-	<div class="flex flex-col space-y-2 mt-4">
-		<button
-			type="button"
-			class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
-			on:click={signInWithGithub}
-		>
-			<img src="/svgs/github_logo.svg" alt="GitHub Logo" class="w-5 h-5" />
-			<span>Sign in with GitHub</span>
-		</button>
-
-		<button
-			type="button"
-			class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
-			on:click={signInWithGoogle}
-		>
-			<img src="/svgs/google_logo.svg" alt="Google Logo" class="w-5 h-5" />
-			<span>Sign in with Google</span>
-		</button>
 	</div>
-</form>
-
-<Toaster />
+</div>
