@@ -1,5 +1,20 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { createHash, randomBytes } from 'crypto';
+
+
+export const load = async ({ locals: { session }, parent }) => {
+
+    const parentData = await parent();
+
+    if (!session || !session.user || !session.user.email) {
+        throw error(403, { message: 'Not authenticated' });
+    }
+
+    return { listings: parentData.listings };
+
+}
+
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
@@ -8,25 +23,28 @@ export const actions: Actions = {
         const description = data.get('description');
         const title_image_url = data.get('title_image_url');
 
-
         if (!name || !description || !title_image_url) {
-            return fail(400, { error: 'All fields are required' });
+            return error(400, { message: 'All fields are required' });
         }
+
+        const randomString = randomBytes(32).toString('hex');
+        const hash = createHash('sha256').update(randomString).digest('base64'); // Generate a secure SHA-256 hash and encode in base64
 
         try {
             const response = await locals.supabase
                 .from('Listings')
-                .insert([{ name, description, title_image_url, public: false, hash: "abc", listing_data: {} }]);
+                .insert([{ name, description, title_image_url, public: false, hash, listing_data: {} }]);
 
-            console.log(response)
             if (response.error) {
-                return fail(500, { error: 'Failed to add listing' });
+                return error(500, { message: 'Failed to add listing' });
             }
-        } catch (error) {
-            return fail(500, { error: 'An unexpected error occurred' });
+
+            return { success: true };
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            return error(500, { message: 'An unexpected error occurred' });
         }
 
-        // Optionally redirect to the listings page
-        // throw redirect(303, '/listings');
     }
+
 };

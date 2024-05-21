@@ -5,8 +5,8 @@
 	export let data;
 	export let form;
 
-	let { session, supabase, user, profile } = data;
-	$: ({ session, supabase, user, profile } = data);
+	let { session, supabase, user, subscription } = data;
+	$: ({ session, supabase, user, subscription } = data);
 
 	let passwordForm: HTMLFormElement;
 	let deleteForm: HTMLFormElement;
@@ -51,25 +51,6 @@
 					disabled
 				/>
 			</div>
-
-			<!-- Subscription Status -->
-			<div class="form-control">
-				<label class="label" for="subscriptionStatus">Subscription Status</label>
-				<div class="flex items-center space-x-2">
-					<input
-						class="input input-bordered w-full"
-						id="subscriptionStatus"
-						type="text"
-						value={profile?.subscription_status}
-						disabled
-					/>
-					{#if profile?.subscription_status && profile?.subscription_status !== 'free' && profile?.subscription_status !== 'canceled'}
-						<form method="post" action="?/cancelSubscription" use:enhance>
-							<button class="btn btn-outline btn-error" disabled={loading}>Cancel</button>
-						</form>
-					{/if}
-				</div>
-			</div>
 		</div>
 
 		<!-- Change Password Form -->
@@ -100,16 +81,32 @@
 			</div>
 		</form>
 
-		<!-- Delete Account Button -->
-		{#if profile?.subscription_status === 'free' || profile?.subscription_status === 'canceled' || !profile?.subscription_status}
-			<button class="btn btn-error w-full mt-4" on:click={openDeleteModal} disabled={loading}
-				>Delete Account</button
-			>
-		{:else}
-			<div class="alert alert-ghost mt-4">
-				<p>You must cancel your subscription before deleting your account.</p>
-			</div>
-		{/if}
+		<div class="flex flex-col items-center space-y-4 mt-4">
+			<!-- Sign Out Button -->
+			<form class="w-full max-w-72" method="post" action="?/signout" use:enhance>
+				<div>
+					<button class="btn btn-outline w-full" disabled={loading}>Sign Out</button>
+				</div>
+			</form>
+
+			<!-- Delete Account Button -->
+			{#if !subscription || subscription.status === 'canceled' || subscription.cancel_at_period_end}
+				<button
+					class="btn btn-error btn-outline w-full max-w-44"
+					on:click={openDeleteModal}
+					disabled={loading}>Delete Account</button
+				>
+			{:else}
+				<button
+					class="btn btn-error btn-outline w-full max-w-44"
+					on:click={openDeleteModal}
+					disabled>Delete Account</button
+				>
+				<div class="alert alert-ghost w-full">
+					<p>Please cancel your subscription if you want to delete your account.</p>
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>
 

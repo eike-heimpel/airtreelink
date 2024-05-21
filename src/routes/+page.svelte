@@ -1,193 +1,181 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
 
 	export let data;
 	$: ({ session, supabase } = data);
 
-	let basicQuantity = 1;
-
-	function updateQuantity(plan, change) {
-		if (plan === 'basic') {
-			basicQuantity += change;
-			if (basicQuantity < 1) basicQuantity = 1;
-			if (basicQuantity > 5) basicQuantity = 5;
-			document.getElementById('basicQuantity').value = basicQuantity;
-			document.getElementById('decreaseQuantity').disabled = basicQuantity === 1;
-			document.getElementById('increaseQuantity').disabled = basicQuantity === 5;
-		}
-	}
-
-	async function handleBasicPlanPurchase() {
-		const quantity = basicQuantity;
-		if (!session) {
-			goto('/auth');
-			return;
-		}
-
-		try {
-			goto(`/api/stripe/checkout?userId=${session.user.id}&plan=basic&quantity=${quantity}`);
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-
-	function handlePremiumPlanPurchase() {
-		console.log('Purchasing premium plan...');
-	}
+	let mobileMenuOpen = false;
 
 	function scrollToSection(event, sectionId) {
 		event.preventDefault();
 		document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
 	}
+
+	const closeMobileMenu = () => {
+		mobileMenuOpen = false;
+	};
 </script>
 
-<nav class="bg-neutral text-white p-4 fixed w-full z-10 shadow-lg">
+<nav class="navbar bg-base-200 py-2 px-8 fixed w-full z-20 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
-		<a href="/" class="text-2xl font-bold">Airtree</a>
-		<div class="space-x-4 flex items-center">
-			<a href="#home" on:click={(e) => scrollToSection(e, 'home')} class="hover:text-primary"
-				>Home</a
-			>
-			<a href="#demo" on:click={(e) => scrollToSection(e, 'demo')} class="hover:text-primary"
-				>Demo</a
-			>
-			<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="hover:text-primary"
-				>Pricing</a
-			>
+		<div class="md:hidden flex items-center">
+			<button class="p-4 focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
+				{#if mobileMenuOpen}
+					<!-- Close icon -->
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				{:else}
+					<!-- Hamburger icon -->
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6h16M4 12h16m-7 6h7"
+						/>
+					</svg>
+				{/if}
+			</button>
 			{#if session}
-				<a href="/private" class="btn btn-primary">Account</a>
+				<a href="/private" class="btn btn-primary btn-sm md:btn-md">Account</a>
 			{:else}
-				<a href="/auth" class="btn btn-secondary">Login/Signup</a>
+				<a href="/auth" class="btn btn-secondary btn-sm md:btn-md">Login/Signup</a>
 			{/if}
 		</div>
+		<a href="/" class="text-2xl font-bold flex items-center md:order-1" on:click={closeMobileMenu}>
+			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
+		</a>
+		<div class="hidden md:flex gap-8 items-center text-xl">
+			{#if session}
+				<a href="/private" on:click={closeMobileMenu} class="btn btn-primary">Account</a>
+			{:else}
+				<a href="/auth" on:click={closeMobileMenu} class="btn btn-secondary">Login/Signup</a>
+			{/if}
+			<a
+				href="#home"
+				on:click={(e) => {
+					scrollToSection(e, 'home');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Home</a
+			>
+			<a
+				href="#demo"
+				on:click={(e) => {
+					scrollToSection(e, 'demo');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Demo</a
+			>
+			<a
+				href="#pricing"
+				on:click={(e) => {
+					scrollToSection(e, 'pricing');
+					closeMobileMenu();
+				}}
+				class="hover:text-primary">Pricing</a
+			>
+		</div>
 	</div>
-</nav>
-
-<section id="home" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
-	<div class="text-center">
-		<h1 class="text-5xl font-bold mb-6">Welcome to Airtree</h1>
-		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
-		<a href="#pricing" on:click={(e) => scrollToSection(e, 'pricing')} class="btn btn-primary"
-			>Get Started</a
+	{#if mobileMenuOpen}
+		<div
+			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-10 z-10"
 		>
+			<a
+				href="#home"
+				on:click={(e) => {
+					scrollToSection(e, 'home');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Home</a
+			>
+			<a
+				href="#demo"
+				on:click={(e) => {
+					scrollToSection(e, 'demo');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Demo</a
+			>
+			<a
+				href="#pricing"
+				on:click={(e) => {
+					scrollToSection(e, 'pricing');
+					closeMobileMenu();
+				}}
+				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Pricing</a
+			>
+		</div>
+	{/if}
+</nav>
+<section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
+	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-6 md:mt-0">
+		<h1 class="text-5xl font-bold mb-6">Welcome to GuestLink</h1>
+		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+			<div class="card border shadow-md p-4">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Unique Rotating Links</h3>
+					<p>
+						Provide guests with secure, unique URLs that offer a centralized hub for all
+						property-related information, ensuring a seamless and personalized experience.
+					</p>
+				</div>
+			</div>
+
+			<div class="card border shadow-md p-4">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Customizable Information Pages</h3>
+					<p>
+						Share detailed stay instructions, local recommendations, and links to nearby
+						attractions, all tailored to your property and guest needs.
+					</p>
+				</div>
+			</div>
+
+			<div class="card border shadow-md p-4">
+				<div class="card-body">
+					<h3 class="card-title text-primary">Automated Guest Communication</h3>
+					<p>
+						Simplify and automate the sharing of essential information, reducing your workload and
+						ensuring guests receive timely updates.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<a
+			href="#pricing"
+			on:click={(e) => scrollToSection(e, 'pricing')}
+			class="btn btn-primary btn-lg mx-auto"
+		>
+			Get Started
+		</a>
 	</div>
 </section>
 
 <section id="demo" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
 	<div class="text-center">
-		<h2 class="text-4xl font-bold mb-6">See Airtree in Action</h2>
+		<h2 class="text-4xl font-bold mb-6">See GuestLink in Action</h2>
 		<p class="text-lg mb-6">Check out a demo of what your guests will see</p>
 		<div class="flex justify-center">
 			<!-- Placeholder for demo content -->
-			<div class="w-3/4 bg-neutral p-4 rounded-lg shadow-lg">
+			<div class="w-3/4 p-4 rounded-lg shadow-lg">
 				<p class="text-lg">Demo content goes here...</p>
 			</div>
 		</div>
 	</div>
 </section>
 
-<section
-	id="pricing"
-	class="min-h-screen bg-base-100 flex flex-col items-center justify-center p-4 space-y-8"
->
-	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
-	<p class="text-lg mb-10 text-center">
-		We currently offer the Simple Plan, which includes everything you need to get started. Stay
-		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
-		turn off auto renewal. See what your guests think and come back if you like it.
-	</p>
-	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
-		<!-- Basic Plan -->
-		<div class="bg-neutral p-6 rounded-lg shadow-lg w-full max-w-sm flex flex-col justify-between">
-			<div>
-				<h2 class="text-2xl font-bold mb-4">Basic</h2>
-				<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
-				<ul class="mb-4 space-y-2">
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Host public URL with your listing
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Unique private URL
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
-					</li>
-				</ul>
-				<p class="text-center mb-4 italic">
-					Choose the number of listings you want to add. You can always add more later.
-				</p>
-				<div class="flex items-center justify-center space-x-2 mb-2">
-					<button
-						class="btn btn-primary"
-						id="decreaseQuantity"
-						on:click={() => updateQuantity('basic', -1)}
-						disabled
-					>
-						-
-					</button>
-					<div class="flex items-center justify-center">
-						<input
-							type="number"
-							id="basicQuantity"
-							class="input input-bordered w-20 text-center"
-							value="1"
-							readonly
-						/>
-					</div>
-					<button
-						class="btn btn-primary"
-						id="increaseQuantity"
-						on:click={() => updateQuantity('basic', 1)}
-					>
-						+
-					</button>
-				</div>
-				{#if basicQuantity >= 5}
-					<p class="text-center text-sm text-gray-500 w-full break-words">
-						Contact Support for more listings.
-					</p>
-				{/if}
-			</div>
-			<button class="btn btn-primary w-full mt-4" on:click={handleBasicPlanPurchase}
-				>Get Basic Plan</button
-			>
-		</div>
-
-		<!-- Premium Plan -->
-		<div
-			class="bg-neutral opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm relative flex flex-col justify-between"
-		>
-			<div>
-				<h2 class="text-2xl font-bold mb-4">Premium</h2>
-				<div class="text-5xl font-bold mb-4">$3<span class="text-xl">/listing</span></div>
-				<ul class="mb-4 space-y-2">
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Everything in the Basic plan
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Generate multiple URLs per listing with
-						different content
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Add a password to the public listing
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>URL hash and password rotation
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Permission to add affiliate links to generate
-						revenue
-					</li>
-				</ul>
-			</div>
-			<button class="btn btn-primary w-full opacity-50 cursor-not-allowed mt-4" disabled
-				>Get Premium Plan</button
-			>
-			<div class="absolute top-2 right-2 bg-accent text-black px-2 py-1 rounded text-xs font-bold">
-				Coming Soon
-			</div>
-		</div>
-	</div>
+<section id="pricing" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
+	<PricingPlans supabaseSession={session} />
 </section>
 
 <footer class="bg-base-200 py-8 mt-10">
@@ -195,10 +183,10 @@
 		class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
 	>
 		<div class="text-center md:text-left">
-			<h2 class="text-lg font-bold">Airtree</h2>
+			<h2 class="text-lg font-bold">GuestLink</h2>
 			<p class="mt-2">
-				© 2024 Airtree. All rights reserved. Airtree is a website by Eike Heimpel. Small business
-				according to § 19 UStG.
+				© 2024 GuestLink. All rights reserved. GuestLink is a website by Eike Heimpel. Small
+				business according to § 19 UStG.
 			</p>
 		</div>
 		<div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">

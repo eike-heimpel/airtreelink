@@ -41,7 +41,11 @@
 		<li>Usage data (such as IP address, browser type, and access times)</li>
 	</ul>
 	This data is collected to operate our service, improve user experience, and ensure security.
-	<!-- Removed unnecessary closing </p> tags -->
+	<p class="mt-4">
+		<strong>Use of Service Workers and Caching</strong> <br />
+		We use service workers to cache certain assets, such as map tiles, locally on your device. This helps
+		to improve load times and provide offline capabilities. No personal data is stored in the cache.
+	</p>
 	<p class="mt-4">
 		<strong>Data Sharing</strong> <br />
 		We do not share your personal data with third parties, except as required by law or to protect our
@@ -86,7 +90,7 @@
 		welche Rechte Sie bezüglich Ihrer Daten haben.
 	</p>
 	<p class="mt-4">
-		<strong>Datenschutzbeauftragter</strong> <br />
+		<strong>Verantwortlicher für die Datenverarbeitung</strong> <br />
 		Der Verantwortliche für die Datenverarbeitung auf dieser Website ist:
 		<br />{companyName}
 		<br />{companyAddress}
@@ -112,6 +116,12 @@
 	</ul>
 	Diese Daten werden gesammelt, um unseren Service zu betreiben, die Benutzererfahrung zu verbessern
 	und die Sicherheit zu gewährleisten.
+	<p class="mt-4">
+		<strong>Verwendung von Service-Arbeitern und Caching</strong> <br />
+		Wir verwenden Service-Arbeiter, um bestimmte Ressourcen wie Kartentiles lokal auf Ihrem Gerät zu
+		speichern. Dies trägt dazu bei, die Ladezeiten zu verkürzen und Offline-Funktionen bereitzustellen.
+		Es werden keine personenbezogenen Daten im Cache gespeichert.
+	</p>
 	<p class="mt-4">
 		<strong>Weitergabe von Daten</strong> <br />
 		Wir geben Ihre personenbezogenen Daten nicht an Dritte weiter, außer wenn dies gesetzlich vorgeschrieben

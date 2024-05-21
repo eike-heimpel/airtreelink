@@ -1,20 +1,20 @@
-import type { PageServerLoad, Actions } from "../../../$types";
 
-export const load: PageServerLoad = async ({ params, locals }) => {
-    const listingId = parseInt(params.listingId);
-    const { data: listings, error } = await locals.supabase.from('Listings').select('*').eq('id', listingId);
-    if (error) {
-        throw new Error(error.message);
-    }
+export const load = async ({ parent }) => {
+
+    const parentData = await parent();
+
     return {
-        listings
+        listings: parentData.listings
     };
 };
 
-export const actions: Actions = {
+export const actions = {
+
     publish: async ({ request, locals }) => {
         const formData = await request.formData();
-        const id = parseInt(formData.get('id'));
+
+        const id = parseInt(formData.get('id')?.toString() || '');
+
         const publicStatus = formData.get('public') === 'true';
         try {
             const response = await locals.supabase.from('Listings').update({ public: publicStatus }).eq('id', id);
@@ -24,9 +24,11 @@ export const actions: Actions = {
             return { error: error.message };
         }
     },
+
     delete: async ({ request, locals }) => {
         const formData = await request.formData();
-        const id = parseInt(formData.get('id'));
+
+        const id = parseInt(formData.get('id')?.toString() || '');
 
         try {
             const response = await locals.supabase.from('Listings').delete().eq('id', id);
