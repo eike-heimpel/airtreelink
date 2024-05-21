@@ -3,6 +3,8 @@
 	import zxcvbn from 'zxcvbn';
 	import { enhance } from '$app/forms';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 
 	export let data;
 	let email = '';
@@ -16,29 +18,39 @@
 	const dispatch = createEventDispatcher();
 
 	async function signInWithGithub() {
-		try {
-			const { error } = await data.supabase.auth.signInWithOAuth({
-				provider: 'github'
+		toast
+			.promise(
+				data.supabase.auth.signInWithOAuth({
+					provider: 'github'
+				}),
+				{
+					loading: 'Signing in with GitHub...',
+					success: 'Successfully signed in with GitHub',
+					error: 'Error signing in with GitHub'
+				}
+			)
+			.catch((error) => {
+				toast.error('Error signing in with GitHub: ' + error.message);
 			});
-			if (error) throw error;
-			toast.success('Successfully signed in with GitHub');
-		} catch (error) {
-			toast.error('Error signing in with GitHub: ' + error.message);
-		}
 	}
 
 	async function signInWithGoogle() {
 		alert('This feature is not yet implemented');
 		return;
-		try {
-			const { error } = await data.supabase.auth.signInWithOAuth({
-				provider: 'google'
+		toast
+			.promise(
+				data.supabase.auth.signInWithOAuth({
+					provider: 'google'
+				}),
+				{
+					loading: 'Signing in with Google...',
+					success: 'Successfully signed in with Google',
+					error: 'Error signing in with Google'
+				}
+			)
+			.catch((error) => {
+				toast.error('Error signing in with Google: ' + error.message);
 			});
-			if (error) throw error;
-			toast.success('Successfully signed in with Google');
-		} catch (error) {
-			toast.error('Error signing in with Google: ' + error.message);
-		}
 	}
 
 	async function signUpWithEmail() {
@@ -70,18 +82,18 @@
 
 		isSignUpInProgress = true;
 
-		try {
-			const { error } = await data.supabase.auth.signUp({ email, password });
-			if (error) {
-				throw error;
-			} else {
-				toast.success('Check your email for the confirmation link!');
+		toast
+			.promise(data.supabase.auth.signUp({ email, password }), {
+				loading: 'Signing up...',
+				success: 'Check your email for the confirmation link!',
+				error: 'Error signing up. Please try again.'
+			})
+			.then(() => {
 				dispatch('signupSuccess');
-			}
-		} catch (error) {
-			toast.error('Error signing up. Please try again.');
-			isSignUpInProgress = false;
-		}
+			})
+			.catch(() => {
+				isSignUpInProgress = false;
+			});
 	}
 
 	function validatePasswordStrength() {
@@ -106,10 +118,20 @@
 		const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return re.test(email);
 	}
+
+	const signInWithEmail: SubmitFunction = ({ result, update }) => {
+		return async ({ result, update }) => {
+			if (result.type === 'error') toast.error(result.error.message);
+			if (result.type === 'redirect') {
+				toast.success('Successfully signed in!');
+				goto(result.location);
+			}
+		};
+	};
 </script>
 
 <form
-	use:enhance
+	use:enhance={signInWithEmail}
 	method="POST"
 	action="?/login"
 	class="flex flex-col space-y-4 p-6 rounded-lg shadow-md max-w-md mx-auto my-10"

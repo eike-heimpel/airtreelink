@@ -22,10 +22,10 @@ export const actions: Actions = {
 
         if (profileError || !profile) {
             console.error(profileError || 'Profile not found');
-            return error(400, { message: 'Unable to find your profile. Please try again.' });
+            return error(400, { message: 'Invalid email or password.' })
         }
 
-        if (profile.profile_status !== 'active') {
+        if (profile?.profile_status !== 'active') {
             return error(403, { message: `Your account is currently ${profile.profile_status}.` });
         }
 
