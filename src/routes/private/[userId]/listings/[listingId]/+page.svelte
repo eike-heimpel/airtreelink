@@ -5,7 +5,7 @@
 	import Links from '$components/listing/Links.svelte';
 	import ListingImages from '$components/listing/ListingImages.svelte';
 	import PublicLink from '$components/listing/PublicLink.svelte';
-
+	import Recommendations from '$components/listing/Recommendations.svelte';
 	export let data;
 
 	let currentListing = data.listings.find(
@@ -63,6 +63,7 @@
 <div class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
 	<h1 class="text-4xl font-bold mb-2">{currentListing.name}</h1>
 	<ListingImages />
+	<div class="btn"><a href="{$page.url.pathname}/recommendations">Recommendations</a></div>
 	<div class="flex flex-col md:flex-row gap-4 w-full justify-center">
 		<div class="shadow-lg bg-base-100 rounded-lg p-6 max-w-xl sm:max-w-full">
 			<h2 class="text-xl font-bold mb-6">Manage Links</h2>

@@ -10,21 +10,25 @@
 	// Example marker data
 	const markers = [
 		{
-			lat: 52.4306013, // latitude
-			lng: 13.5322527, // longitude
-			name: 'Kaufland Berlin-Adlershof',
-			googleMapsUrl: 'https://maps.google.com/?q=Kaufland+Berlin-Adlershof'
+			lat: 52.4306013,
+			lng: 13.5322527,
+			name: 'Kaufland Berlin-Adlershof'
+		},
+		{
+			lat: 52.52,
+			lng: 13.405,
+			name: 'Berlin City Center'
 		}
 	];
 
 	function initMap() {
-		map = L.map(mapContainer).setView([52.4306013, 13.5322527], 13);
+		map = L.map(mapContainer, {
+			attributionControl: false
+		}).setView([52.4306013, 13.5322527], 13);
 
 		L.tileLayer(
 			`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${PUBLIC_MAPBOX_ACCESS_TOKEN}`,
 			{
-				attribution:
-					'© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 				maxZoom: 18,
 				id: 'mapbox/light-v10',
 				tileSize: 512,
@@ -46,16 +50,48 @@
 				.bindPopup(
 					'<b>' +
 						marker.name +
-						'</b><br><a href="' +
-						marker.googleMapsUrl +
-						'" target="_blank">View on Google Maps</a>'
+						'</b><br><a href="https://www.google.com/maps/dir/?api=1&destination=' +
+						marker.lat +
+						',' +
+						marker.lng +
+						'" target="_blank">Get Directions</a>'
 				);
 
 			// Only open the popup when the marker is clicked
 			leafletMarker.on('click', function () {
 				this.openPopup();
 			});
+
+			// Attach the marker to the marker data for highlighting
+			marker.leafletMarker = leafletMarker;
 		});
+
+		// Add custom attribution control with Mapbox logo
+		L.control
+			.attribution({
+				prefix: false
+			})
+			.addAttribution(
+				'© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ' +
+					'© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+					'© <a href="https://leafletjs.com">Leaflet</a>'
+			)
+			.addTo(map);
+
+		// Add Mapbox logo
+		const logo = L.control({ position: 'bottomleft' });
+		logo.onAdd = function () {
+			const div = L.DomUtil.create('div', 'mapbox-logo');
+			div.innerHTML =
+				'<a href="https://www.mapbox.com/about/maps/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Mapbox_logo_2019.svg/512px-Mapbox_logo_2019.svg.png" alt="Mapbox Logo" style="height:30px;"></a>';
+			return div;
+		};
+		logo.addTo(map);
+	}
+
+	function highlightMarker(index) {
+		const marker = markers[index];
+		marker.leafletMarker.openPopup();
 	}
 
 	onMount(async () => {

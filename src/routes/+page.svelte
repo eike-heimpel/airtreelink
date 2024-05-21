@@ -78,12 +78,8 @@
 				<a href="/auth" class="btn btn-secondary btn-sm md:btn-md">Login/Signup</a>
 			{/if}
 		</div>
-		<a
-			href="/"
-			class="text-2xl font-bold flex gap-4 items-center md:order-1"
-			on:click={closeMobileMenu}
-		>
-			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto bg-white rounded-full" /> Airtree
+		<a href="/" class="text-2xl font-bold flex items-center md:order-1" on:click={closeMobileMenu}>
+			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
 		</a>
 		<div class="hidden md:flex gap-8 items-center text-xl">
 			{#if session}
@@ -150,7 +146,7 @@
 </nav>
 <section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
 	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-6 md:mt-0">
-		<h1 class="text-5xl font-bold mb-6">Welcome to Airtree</h1>
+		<h1 class="text-5xl font-bold mb-6">Welcome to GuestLink</h1>
 		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
 
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -197,7 +193,7 @@
 
 <section id="demo" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
 	<div class="text-center">
-		<h2 class="text-4xl font-bold mb-6">See Airtree in Action</h2>
+		<h2 class="text-4xl font-bold mb-6">See GuestLink in Action</h2>
 		<p class="text-lg mb-6">Check out a demo of what your guests will see</p>
 		<div class="flex justify-center">
 			<!-- Placeholder for demo content -->
@@ -330,10 +326,10 @@
 		class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
 	>
 		<div class="text-center md:text-left">
-			<h2 class="text-lg font-bold">Airtree</h2>
+			<h2 class="text-lg font-bold">GuestLink</h2>
 			<p class="mt-2">
-				© 2024 Airtree. All rights reserved. Airtree is a website by Eike Heimpel. Small business
-				according to § 19 UStG.
+				© 2024 GuestLink. All rights reserved. GuestLink is a website by Eike Heimpel. Small
+				business according to § 19 UStG.
 			</p>
 		</div>
 		<div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">

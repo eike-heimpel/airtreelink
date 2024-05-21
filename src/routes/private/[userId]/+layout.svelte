@@ -20,7 +20,7 @@
 </script>
 
 <div
-	class="fixed top-0 left-0 w-full h-[1px] bg-primary transform scale-x-0 transition-transform duration-1000 ease-out"
+	class="fixed top-0 left-0 w-full h-[1px] md:h-[2px] bg-primary transform scale-x-0 transition-transform duration-1000 ease-out"
 	class:scale-x-100={$navigating}
 ></div>
 
@@ -58,7 +58,7 @@
 		class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40 h-[calc(100vh-3rem)] flex flex-col items-center justify-start' : 'hidden'}`}
 	>
 		<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
-			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 bg-white rounded-full p-1 mb-6" />
+			<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 mb-6" />
 		</a>
 		<ul class="menu gap-4 md:text-lg flex-col items-center w-full p-4 md:p-0">
 			<li
