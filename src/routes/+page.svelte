@@ -1,40 +1,10 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
 
 	export let data;
 	$: ({ session, supabase } = data);
 
-	let basicQuantity = 1;
 	let mobileMenuOpen = false;
-
-	function updateQuantity(plan, change) {
-		if (plan === 'basic') {
-			basicQuantity += change;
-			if (basicQuantity < 1) basicQuantity = 1;
-			if (basicQuantity > 5) basicQuantity = 5;
-			document.getElementById('basicQuantity').value = basicQuantity;
-			document.getElementById('decreaseQuantity').disabled = basicQuantity === 1;
-			document.getElementById('increaseQuantity').disabled = basicQuantity === 5;
-		}
-	}
-
-	async function handleBasicPlanPurchase() {
-		const quantity = basicQuantity;
-		if (!session) {
-			goto('/auth');
-			return;
-		}
-
-		try {
-			goto(`/api/stripe/checkout?plan=basic&quantity=${quantity}`);
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-
-	function handlePremiumPlanPurchase() {
-		console.log('Purchasing premium plan...');
-	}
 
 	function scrollToSection(event, sectionId) {
 		event.preventDefault();
@@ -205,120 +175,7 @@
 </section>
 
 <section id="pricing" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
-	<h1 class="text-4xl font-bold mb-10">Choose Your Plan</h1>
-	<p class="text-lg mb-10 text-center max-w-4xl">
-		We currently offer the Simple Plan, which includes everything you need to get started. Stay
-		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
-		turn off auto renewal. See what your guests think and come back if you like it.
-	</p>
-	<div class="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
-		<!-- Basic Plan -->
-		<div class="card p-6 rounded-lg shadow-xl w-full max-w-sm flex flex-col justify-between">
-			<div>
-				<h2 class="text-2xl font-bold mb-4">Basic</h2>
-				<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
-				<ul class="mb-4 space-y-2">
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Host public URL with your listing
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Unique private URL
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
-					</li>
-				</ul>
-				<p class="text-center mb-4 italic">
-					Choose the number of listings you want to add. You can always add more later.
-				</p>
-				<div class="flex items-center justify-center space-x-2 mb-2">
-					<button
-						class="btn btn-primary"
-						id="decreaseQuantity"
-						on:click={() => updateQuantity('basic', -1)}
-						disabled
-					>
-						-
-					</button>
-					<div class="flex items-center justify-center">
-						<input
-							type="number"
-							id="basicQuantity"
-							class="input input-bordered w-20 text-center"
-							value="1"
-							readonly
-						/>
-					</div>
-					<button
-						class="btn btn-primary"
-						id="increaseQuantity"
-						on:click={() => updateQuantity('basic', 1)}
-					>
-						+
-					</button>
-				</div>
-				{#if basicQuantity >= 5}
-					<p class="text-center text-sm text-gray-500 w-full break-words">
-						Contact Support for more listings.
-					</p>
-				{/if}
-			</div>
-			<button class="btn btn-primary w-full mt-4" on:click={handleBasicPlanPurchase}
-				>Get Basic Plan</button
-			>
-		</div>
-
-		<!-- Premium Plan -->
-		<div
-			class="card opacity-50 p-6 rounded-lg shadow-lg w-full max-w-sm relative flex flex-col justify-between"
-		>
-			<div>
-				<h2 class="text-2xl font-bold mb-4">Premium</h2>
-				<div class="text-5xl font-bold mb-4">$3<span class="text-xl">/listing</span></div>
-				<ul class="mb-4 space-y-2">
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Everything in the Basic plan
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Generate multiple URLs per listing with
-						different content
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Add a password to the public listing
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>URL hash and password rotation
-					</li>
-					<li class="flex items-center">
-						<span class="text-green-500 mr-2">✓</span>Permission to add affiliate links to generate
-						revenue
-					</li>
-				</ul>
-			</div>
-			<button class="btn btn-primary w-full opacity-50 cursor-not-allowed mt-4" disabled
-				>Get Premium Plan</button
-			>
-			<div class="absolute top-2 right-2 bg-accent text-black px-2 py-1 rounded text-xs font-bold">
-				Coming Soon
-			</div>
-		</div>
-	</div>
-
-	<!-- <div class="mt-12">
-		<h2 class="text-4xl font-semibold mb-4">Our Basic Plan</h2>
-		<p class="text-lg mb-4">
-			Our basic plan offers an efficient, cost-effective solution for short-term rental hosts to
-			enhance guest experiences and streamline property management. For just $2 per listing per
-			month, enjoy the following benefits:
-		</p>
-
-		<p class="text-lg mt-6">
-			Our service integrates effortlessly into your existing operations, offering a low barrier to
-			entry with significant returns in guest satisfaction and operational efficiency. Join our
-			growing community of hosts who are transforming their rental properties into memorable
-			experiences for their guests.
-		</p>
-	</div> -->
+	<PricingPlans supabaseSession={session} />
 </section>
 
 <footer class="bg-base-200 py-8 mt-10">

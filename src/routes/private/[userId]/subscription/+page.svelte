@@ -3,6 +3,7 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 	import { PUBLIC_STRIPE_CUSTOMER_PORTAL } from '$env/static/public';
 	import { goto } from '$app/navigation';
+	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
 
 	export let data;
 	$: ({ session } = data);
@@ -53,7 +54,7 @@
 	}
 </script>
 
-<div class="max-w-lg mx-auto mt-10 p-6 bg-base-100 shadow-md rounded-lg">
+<div class="w-fit mx-auto mt-10 p-6 bg-base-100 shadow-md rounded-lg">
 	<h1 class="text-2xl font-semibold mb-6 text-center">Subscription Info</h1>
 	{#if data.subscription}
 		<div class="mb-6">
@@ -148,61 +149,11 @@
 			</a>
 		</div>
 	{:else}
-		<p class="text-center">You currently do not have a subscription. Checkout the options below</p>
-		<!-- Basic Plan Purchase Section -->
-		<div class="w-full flex justify-center">
-			<div
-				class="card p-6 rounded-lg shadow-xl w-full max-w-sm flex flex-col justify-between mt-10"
-			>
-				<div>
-					<h2 class="text-2xl font-bold mb-4">Basic</h2>
-					<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
-					<ul class="mb-4 space-y-2">
-						<li class="flex items-center">
-							<span class="text-green-500 mr-2">✓</span>Host public URL with your listing
-						</li>
-						<li class="flex items-center">
-							<span class="text-green-500 mr-2">✓</span>Unique private URL
-						</li>
-						<li class="flex items-center">
-							<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
-						</li>
-					</ul>
-					<p class="text-center mb-4 italic">
-						Choose the number of listings you want to add. You can always add more later.
-					</p>
-					<div class="flex items-center justify-center space-x-2 mb-2">
-						<button
-							class="btn btn-primary"
-							id="decreaseQuantity"
-							on:click={() => updateQuantity('basic', -1)}
-							disabled={basicQuantity <= 1}>-</button
-						>
-						<div class="flex items-center justify-center">
-							<input
-								type="number"
-								id="basicQuantity"
-								class="input input-bordered w-20 text-center"
-								bind:value={basicQuantity}
-								readonly
-							/>
-						</div>
-						<button
-							class="btn btn-primary"
-							id="increaseQuantity"
-							on:click={() => updateQuantity('basic', 1)}>+</button
-						>
-					</div>
-					{#if basicQuantity >= 5}
-						<p class="text-center text-sm text-gray-500 w-full break-words">
-							Contact Support for more listings.
-						</p>
-					{/if}
-				</div>
-				<button class="btn btn-primary w-full mt-4" on:click={handleBasicPlanPurchase}
-					>Get Basic Plan</button
-				>
-			</div>
+		<p class="text-center text-lg mb-4">
+			You currently do not have a subscription. Check out the options below:
+		</p>
+		<div class="flex flex-col items-center justify-center mt-6 w-full">
+			<PricingPlans supabaseSession={session} />
 		</div>
 		<div class="mt-6 text-center italic text-sm">
 			We use Stripe to handle subscriptions. If you think you should have a subscription, please try
@@ -217,6 +168,5 @@
 			</a> If you still have issues, please contact support.
 		</div>
 	{/if}
-
 	<Toaster />
 </div>
