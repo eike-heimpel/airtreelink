@@ -93,6 +93,7 @@
 			})
 			.catch(() => {
 				isSignUpInProgress = false;
+				console.error('Error signing up');
 			});
 	}
 

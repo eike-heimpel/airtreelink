@@ -32,7 +32,7 @@ export const actions: Actions = {
         // Proceed with sign-in
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) {
-            console.error(signInError);
+            console.error("error signing in:", signInError);
             return error(400, { message: 'Invalid email or password.' });
         }
 

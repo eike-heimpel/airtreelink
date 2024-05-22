@@ -6,6 +6,7 @@
 	import PublicLink from '$components/listing/PublicLink.svelte';
 	import Recommendations from '$components/listing/Recommendations.svelte';
 	import { showListingSettings } from '$lib/stores/store';
+	import ListingView from '$components/ListingView.svelte';
 
 	export let data;
 
@@ -48,68 +49,12 @@
 		deleteConfirmed = false;
 	}
 
-	let activeTab = 'recommendations';
-
 	function closeEditModal() {
 		$showListingSettings = false;
 	}
-
-	$: console.log(activeTab);
 </script>
 
-<div
-	class="hero min-h-screen w-full"
-	style="background-image: url({currentListing.title_image_url});"
->
-	<div class="hero-overlay bg-opacity-60"></div>
-
-	<div class="h-full text-center">
-		<div class="">
-			<h1
-				class="my-4 text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
-			>
-				{currentListing.name}
-			</h1>
-			<div class="">
-				{#if activeTab === 'recommendations'}
-					<Recommendations />
-				{:else if activeTab === 'links'}
-					<Links />
-				{:else if activeTab === 'getStarted'}
-					<p>Get Started content goes here.</p>
-				{/if}
-			</div>
-		</div>
-	</div>
-	<div class="fixed bottom-0 w-full bg-base-100 border-t border-neutral">
-		<ul class="menu menu-horizontal w-full justify-around">
-			<li>
-				<a
-					class="lg:text-2xl {activeTab === 'getStarted' ? 'active' : ''}"
-					on:click={() => (activeTab = 'getStarted')}
-				>
-					Basics
-				</a>
-			</li>
-			<li>
-				<a
-					class="lg:text-2xl {activeTab === 'links' ? 'active' : ''}"
-					on:click={() => (activeTab = 'links')}
-				>
-					House Info
-				</a>
-			</li>
-			<li>
-				<a
-					class="lg:text-2xl {activeTab === 'recommendations' ? 'active' : ''}"
-					on:click={() => (activeTab = 'recommendations')}
-				>
-					Recommendations
-				</a>
-			</li>
-		</ul>
-	</div>
-</div>
+<ListingView {currentListing} />
 
 {#if $showListingSettings}
 	<div class="modal modal-open">
@@ -161,13 +106,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.hero {
-		background-size: cover;
-		background-position: center;
-	}
-	.hero-overlay {
-		background-color: rgba(0, 0, 0, 0.6);
-	}
-</style>
