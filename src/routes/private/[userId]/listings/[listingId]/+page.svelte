@@ -3,9 +3,10 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Links from '$components/listing/Links.svelte';
-	import ListingImages from '$components/listing/ListingImages.svelte';
 	import PublicLink from '$components/listing/PublicLink.svelte';
 	import Recommendations from '$components/listing/Recommendations.svelte';
+	import { showListingSettings } from '$lib/stores/store';
+
 	export let data;
 
 	let currentListing = data.listings.find(
@@ -47,48 +48,96 @@
 		deleteConfirmed = false;
 	}
 
-	let showLinksModal = false;
-	let currentDetail = null;
+	let activeTab = 'recommendations';
 
-	function openModal(detail) {
-		currentDetail = detail;
-		showLinksModal = true;
+	function closeEditModal() {
+		$showListingSettings = false;
 	}
 
-	function closeModal() {
-		showLinksModal = false;
-	}
+	$: console.log(activeTab);
 </script>
 
-<div class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
-	<h1 class="text-4xl font-bold mb-2">{currentListing.name}</h1>
-	<ListingImages />
-	<div class="btn"><a href="{$page.url.pathname}/recommendations">Recommendations</a></div>
-	<div class="flex flex-col md:flex-row gap-4 w-full justify-center">
-		<div class="shadow-lg bg-base-100 rounded-lg p-6 max-w-xl sm:max-w-full">
-			<h2 class="text-xl font-bold mb-6">Manage Links</h2>
-			<Links />
+<div
+	class="hero min-h-screen w-full"
+	style="background-image: url({currentListing.title_image_url});"
+>
+	<div class="hero-overlay bg-opacity-60"></div>
+
+	<div class="h-full text-center">
+		<div class="">
+			<h1
+				class="my-4 text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
+			>
+				{currentListing.name}
+			</h1>
+			<div class="">
+				{#if activeTab === 'recommendations'}
+					<Recommendations />
+				{:else if activeTab === 'links'}
+					<Links />
+				{:else if activeTab === 'getStarted'}
+					<p>Get Started content goes here.</p>
+				{/if}
+			</div>
 		</div>
-		<div class="shadow-lg bg-base-100 rounded-lg p-6 w-full max-w-md sm:max-w-sm self-start">
+	</div>
+	<div class="fixed bottom-0 w-full bg-base-100 border-t border-neutral">
+		<ul class="menu menu-horizontal w-full justify-around">
+			<li>
+				<a
+					class="lg:text-2xl {activeTab === 'getStarted' ? 'active' : ''}"
+					on:click={() => (activeTab = 'getStarted')}
+				>
+					Basics
+				</a>
+			</li>
+			<li>
+				<a
+					class="lg:text-2xl {activeTab === 'links' ? 'active' : ''}"
+					on:click={() => (activeTab = 'links')}
+				>
+					House Info
+				</a>
+			</li>
+			<li>
+				<a
+					class="lg:text-2xl {activeTab === 'recommendations' ? 'active' : ''}"
+					on:click={() => (activeTab = 'recommendations')}
+				>
+					Recommendations
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+{#if $showListingSettings}
+	<div class="modal modal-open">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Edit Listing</h3>
 			<form method="POST" action="?/publish" class="space-y-4" use:enhance={onSubmit}>
 				<input type="hidden" name="id" value={currentListing.id} />
 				<input type="hidden" name="public" value={!isPublic} />
 
-				<button type="submit" class="btn btn-primary w-full">
+				<button type="submit" class="btn btn-primary btn-block">
 					{isPublic ? 'Unpublish' : 'Publish'} Listing
 				</button>
 			</form>
 
-			<button type="button" class="btn btn-error w-full mt-4" on:click={openDeleteModal}
-				>Delete Listing</button
-			>
+			<button type="button" class="btn btn-error btn-block mt-4" on:click={openDeleteModal}>
+				Delete Listing
+			</button>
 
 			<div class="mt-4">
 				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
 			</div>
+
+			<div class="modal-action">
+				<button class="btn" on:click={closeEditModal}>Close</button>
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 {#if showDeleteModal}
 	<div class="modal modal-open">
@@ -113,14 +162,12 @@
 	</div>
 {/if}
 
-{#if showLinksModal}
-	<div class="modal modal-open">
-		<div class="modal-box">
-			<h3 class="font-bold text-lg">{currentDetail?.title}</h3>
-			<p class="py-4">{currentDetail?.description}</p>
-			<div class="modal-action">
-				<button class="btn" on:click={closeModal}>Close</button>
-			</div>
-		</div>
-	</div>
-{/if}
+<style>
+	.hero {
+		background-size: cover;
+		background-position: center;
+	}
+	.hero-overlay {
+		background-color: rgba(0, 0, 0, 0.6);
+	}
+</style>

@@ -2,8 +2,11 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 	import { navigating } from '$app/stores';
+	import { editMode, showListingSettings, previewMode } from '$lib/stores/store';
 
 	export let data;
+
+	let hostView = true;
 
 	$: ({ session, supabase } = data);
 
@@ -17,6 +20,24 @@
 	const closeMobileMenu = () => {
 		mobileMenuOpen = false;
 	};
+
+	function toggleEditMode() {
+		if (session) {
+			$editMode = !$editMode;
+		} else {
+			console.log('unauthorized attempt to edit listing by user');
+		}
+	}
+
+	function openSettingsModal() {
+		$showListingSettings = true;
+	}
+
+	function startPreviewMode() {
+		console.log('Preview mode started');
+		$previewMode = true;
+	}
+	console.log(session);
 </script>
 
 <div
@@ -25,33 +46,44 @@
 ></div>
 
 <div class="flex flex-col md:flex-row min-h-screen relative">
-	<!-- Mobile menu button -->
-	<button
-		class="md:hidden p-4 focus:outline-none z-50"
-		on:click={() => (mobileMenuOpen = !mobileMenuOpen)}
-	>
-		{#if mobileMenuOpen}
-			<!-- Close icon -->
-			<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M6 18L18 6M6 6l12 12"
-				/>
-			</svg>
-		{:else}
-			<!-- Hamburger icon -->
-			<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M4 6h16M4 12h16m-7 6h7"
-				/>
-			</svg>
+	<!-- Mobile menu button and action buttons for mobile -->
+	<div class="flex items-center justify-between md:hidden p-4 z-50">
+		<button class="focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
+			{#if mobileMenuOpen}
+				<!-- Close icon -->
+				<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M6 18L18 6M6 6l12 12"
+					/>
+				</svg>
+			{:else}
+				<!-- Hamburger icon -->
+				<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h16m-7 6h7"
+					/>
+				</svg>
+			{/if}
+		</button>
+		<!-- Action buttons -->
+		{#if !$page.url.pathname.endsWith('/listings')}
+			<button class="btn btn-sm btn-outline ml-1">Preview</button>
+
+			<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>Settings</button>
+			<button
+				class="btn btn-sm btn-{$editMode ? 'secondary' : 'primary'} ml-1"
+				on:click={toggleEditMode}
+			>
+				{$editMode ? 'Stop' : 'Start'} Editing
+			</button>
 		{/if}
-	</button>
+	</div>
 
 	<!-- Navigation menu -->
 	<nav
@@ -159,10 +191,20 @@
 				</button>
 			</li>
 		</ul>
-	</nav>
+		<!-- Action buttons for desktop -->
+		{#if !$page.url.pathname.endsWith('/listings')}
+			<div class="hidden md:flex flex-col items-center justify-around w-full mt-4 h-48">
+				<button class="btn btn-outline mb-2" on:click={startPreviewMode}>Preview</button>
 
+				<button class="btn btn-outline mb-2" on:click={openSettingsModal}>Settings</button>
+				<button class="btn btn-{$editMode ? 'secondary' : 'primary'}" on:click={toggleEditMode}>
+					{$editMode ? 'Stop' : 'Start'} Editing
+				</button>
+			</div>
+		{/if}
+	</nav>
 	<!-- Content area -->
-	<div class="flex-1">
+	<div class="flex-1 relative flex flex-col">
 		<slot></slot>
 	</div>
 </div>

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
+	import { editMode } from '$lib/stores/store';
 
 	type Recommendation = {
 		id: number;
@@ -31,7 +32,6 @@
 		}
 	];
 
-	let editMode = false;
 	let showAddModal = false;
 	let showDeleteModal = false;
 	let showCardModal = false;
@@ -42,10 +42,6 @@
 		description: '',
 		address: ''
 	};
-
-	function toggleEditMode() {
-		editMode = !editMode;
-	}
 
 	function openAddModal() {
 		newRecommendation = {
@@ -91,20 +87,11 @@
 		const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 		window.open(url, '_blank');
 	}
-
-	onMount(() => {
-		// Initialize any necessary logic here
-	});
 </script>
 
-<div class="container mx-auto px-4 py-8">
-	<h1 class="text-3xl font-bold mb-4">Recommendations</h1>
-
-	{#if editMode}
-		<button class="btn btn-primary mb-4" on:click={toggleEditMode}>Done</button>
+<div class="container mx-auto px-4">
+	{#if $editMode}
 		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add Recommendation</button>
-	{:else}
-		<button class="btn btn-primary mb-4" on:click={toggleEditMode}>Edit</button>
 	{/if}
 
 	<div
@@ -113,13 +100,13 @@
 			items: recommendations,
 			flipDurationMs: 200,
 			dropTargetStyle: {},
-			dragDisabled: !editMode
+			dragDisabled: !$editMode
 		}}
 		on:consider={handleDndConsider}
 		on:finalize={handleDndFinalize}
 	>
 		{#each recommendations as recommendation (recommendation.id)}
-			<div class="card bg-base-100 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+			<div class="card bg-base-100 bg-opacity-70 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
 				<div class="card-body">
 					<h2 class="card-title">{recommendation.title}</h2>
 					<div class="flex-grow">
@@ -129,7 +116,7 @@
 						<button class="btn btn-primary" on:click={() => openCardModal(recommendation)}
 							>View</button
 						>
-						{#if editMode}
+						{#if $editMode}
 							<button class="btn btn-error" on:click={() => openDeleteModal(recommendation)}
 								>Delete</button
 							>

@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	export let showAddButton = true; // Prop to control the visibility of the "+" button
+	import { editMode } from '$lib/stores/store';
 
 	let entries = [
 		{
@@ -32,7 +32,7 @@
 		color: 'from-gray-400 to-gray-500'
 	};
 
-	let showLinksModal = false;
+	let showAddModal = false;
 	let selectedIcon = '🛫';
 
 	const mockIcons = ['🛫', '📶', '🔑', '🎵', '☕', '📅', '🌐', '🔍', '📞'];
@@ -46,27 +46,20 @@
 		'from-teal-400 to-cyan-500'
 	];
 
+	function openAddModal() {
+		newEntry.color = gradients[Math.floor(Math.random() * gradients.length)];
+		newEntry.icon = mockIcons[0];
+		showAddModal = true;
+	}
+
 	function addEntry() {
 		entries = [...entries, { ...newEntry, link: '/new-entry' }];
 		newEntry = { icon: '', name: '', link: '', color: '' };
-		showLinksModal = false;
+		showAddModal = false;
 	}
 
 	function handleClick(link) {
 		goto(link);
-	}
-
-	function toggleLinksModal() {
-		if (!showLinksModal) {
-			newEntry.color = gradients[Math.floor(Math.random() * gradients.length)];
-			newEntry.icon = mockIcons[0];
-		}
-		showLinksModal = !showLinksModal;
-	}
-
-	function handleFormSubmit(event) {
-		event.preventDefault();
-		addEntry();
 	}
 
 	function selectIcon(icon) {
@@ -75,36 +68,36 @@
 	}
 </script>
 
-<div class="grid gap-4 grid-cols-2">
-	{#each entries as entry}
-		<div
-			class={`text-white rounded-lg p-4 flex flex-col justify-center items-center relative cursor-pointer min-h-[120px] bg-gradient-to-r ${entry.color}`}
-			on:click={() => handleClick(entry.link)}
-		>
-			<div
-				class="bg-white rounded-full p-2 absolute top-2 left-2 flex items-center justify-center w-[32px] h-[32px]"
-			>
-				<span class="text-lg text-black">{entry.icon}</span>
-			</div>
-			<span class="mt-4 text-center text-sm">{entry.name}</span>
-		</div>
-	{/each}
-	{#if showAddButton}
-		<div
-			class="border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer min-h-[120px]"
-			on:click={toggleLinksModal}
-		>
-			<span class="text-3xl">➕</span>
-		</div>
+<div class="container mx-auto px-4 py-8">
+	{#if $editMode}
+		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add Link</button>
 	{/if}
-</div>
+	<div class="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+		{#each entries as entry}
+			<button
+				class={`text-white rounded-lg p-4 flex flex-col justify-center items-center relative cursor-pointer min-h-[120px] bg-gradient-to-r ${entry.color}`}
+				on:click={() => handleClick(entry.link)}
+				on:keydown={(event) => {
+					if (event.key === 'Enter') {
+						handleClick(entry.link);
+					}
+				}}
+			>
+				<div
+					class="bg-white rounded-full p-2 absolute top-2 left-2 flex items-center justify-center w-[32px] h-[32px]"
+				>
+					<span class="text-lg text-black">{entry.icon}</span>
+				</div>
+				<span class="mt-4 text-center text-sm">{entry.name}</span>
+			</button>
+		{/each}
+	</div>
 
-{#if showLinksModal}
-	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-		<div class="bg-base-100 rounded-lg p-8 shadow-lg w-[90%] max-w-[500px]">
-			<h2 class="font-bold text-lg">Add New Entry</h2>
-			<form on:submit={handleFormSubmit}>
-				<div class="mb-4">
+	{#if showAddModal}
+		<div class="modal modal-open">
+			<div class="modal-box">
+				<h3 class="font-bold text-lg">Add New Entry</h3>
+				<div class="form-control">
 					<label class="label">Icon</label>
 					<div class="flex flex-wrap gap-2">
 						{#each mockIcons as icon}
@@ -117,7 +110,7 @@
 						{/each}
 					</div>
 				</div>
-				<div class="mb-4">
+				<div class="form-control">
 					<label class="label">Name</label>
 					<input
 						class="input input-bordered"
@@ -127,15 +120,15 @@
 						required
 					/>
 				</div>
-				<div class="mb-4">
+				<div class="form-control">
 					<label class="label">Color Gradient</label>
 					<input class="input input-bordered" type="text" bind:value={newEntry.color} readonly />
 				</div>
-				<div class="flex justify-end gap-2">
-					<button type="button" class="btn btn-outline" on:click={toggleLinksModal}>Cancel</button>
-					<button type="submit" class="btn btn-primary">Add</button>
+				<div class="modal-action">
+					<button class="btn btn-primary" on:click={addEntry}>Add</button>
+					<button class="btn" on:click={() => (showAddModal = false)}>Cancel</button>
 				</div>
-			</form>
+			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>

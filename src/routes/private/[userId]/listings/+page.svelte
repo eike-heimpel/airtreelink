@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { enhance } from '$app/forms';
+	import toast, { Toaster } from 'svelte-french-toast';
+
 	export let data;
 
 	let name = '';
@@ -16,17 +18,23 @@
 		showModal = false;
 	}
 
-	function enhanceForm() {
+	function createListing() {
 		return async ({ result, update }: { result: any; update: any }) => {
-			if (result.type === 'success') {
-				console.log('Listing added successfully!');
-				closeModal();
-				invalidateAll();
-				name = '';
-				description = '';
-				title_image_url = '';
-			} else {
+			const toastId = toast.loading('Processing...');
+			try {
+				if (result.type === 'success') {
+					closeModal();
+					invalidateAll();
+					name = '';
+					description = '';
+					title_image_url = '';
+					toast.success('Listing added successfully!', { id: toastId });
+				} else {
+					toast.error('Operation failed!', { id: toastId });
+				}
 				update();
+			} catch (error) {
+				toast.error('An error occurred!', { id: toastId });
 			}
 		};
 	}
@@ -42,6 +50,7 @@
 			}}
 		>
 			<figure class="overflow-hidden h-64 w-full">
+				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<img
 					src={listing.title_image_url}
 					alt="Listing Image"
@@ -76,7 +85,7 @@
 		<div class="modal modal-open">
 			<div class="modal-box">
 				<h2 class="font-bold text-lg mb-4">Add New Listing</h2>
-				<form method="post" use:enhance={enhanceForm}>
+				<form method="post" use:enhance={createListing}>
 					<div class="mb-4">
 						<label class="block text-sm font-medium mb-1">Name</label>
 						<input
