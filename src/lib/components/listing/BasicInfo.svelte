@@ -17,79 +17,99 @@
 	}
 </script>
 
-<div class="container mx-auto px-4 py-8">
-	<div class="card bg-base-100 bg-opacity-75 shadow-xl mb-8">
-		<div class="card-body">
-			<h2 class="card-title">Description</h2>
+<div
+	class="container mx-auto px-4 py-8 text-shadow flex flex-col items-center justify-around gap-4"
+>
+	<div class="divider divider-accent">
+		<h2 class="text-xl font-semibold text-accent">Description</h2>
+	</div>
+	<div class="">
+		{#if $editMode}
+			<textarea class="textarea textarea-bordered text-black w-96 max-w-xs" bind:value={description}
+			></textarea>
+		{:else}
+			<p class="text-lg">{description}</p>
+		{/if}
+		<div class="flex justify-end mt-4">
 			{#if $editMode}
-				<textarea class="textarea textarea-bordered w-full" bind:value={description}></textarea>
-			{:else}
-				<p>{description}</p>
+				<button class="btn btn-secondary mr-2">
+					{$editMode ? 'Save' : 'Edit'}
+				</button>
+				<button class="btn btn-error">Remove</button>
 			{/if}
-			<div class="card-actions justify-end">
-				{#if $editMode}
-					<button class="btn btn-secondary">
-						{$editMode ? 'Save' : 'Edit'}
-					</button>
-					<button class="btn btn-error">Remove</button>
-				{/if}
-			</div>
 		</div>
 	</div>
-	<div class="card bg-base-100 bg-opacity-75 shadow-xl mb-8">
-		<div class="card-body">
-			<h2 class="card-title">Address</h2>
+	<div class="divider divider-accent">
+		<h2 class="text-xl font-semibold text-accent">Address</h2>
+	</div>
+
+	<div class="">
+		{#if $editMode}
+			<input
+				class="input input-bordered text-black w-96 max-w-xs"
+				type="text"
+				bind:value={address}
+			/>
+		{:else}
+			<p class="text-lg">{address}</p>
+		{/if}
+		<div class="flex justify-center mt-4">
+			<button
+				class="btn btn-primary btn-outline mr-2"
+				class:hidden={$editMode}
+				on:click={openGoogleMaps}>Get Directions</button
+			>
 			{#if $editMode}
-				<input class="input input-bordered w-full" type="text" bind:value={address} />
-			{:else}
-				<p>{address}</p>
+				<button class="btn btn-secondary mr-2">
+					{$editMode ? 'Save' : 'Edit'}
+				</button>
+				<button class="btn btn-error">Remove</button>
 			{/if}
-			<div class="card-actions justify-end">
-				<button class="btn btn-primary" on:click={openGoogleMaps}>Get Directions</button>
-				{#if $editMode}
-					<button class="btn btn-secondary">
-						{$editMode ? 'Save' : 'Edit'}
-					</button>
-					<button class="btn btn-error">Remove</button>
-				{/if}
-			</div>
 		</div>
 	</div>
-	<div class="card bg-base-100 bg-opacity-75 shadow-xl mb-8">
-		<div class="card-body">
-			<h2 class="card-title">Contact Information</h2>
+
+	<div class="divider divider-accent">
+		<h2 class="text-xl font-semibold text-accent">Contact Information</h2>
+	</div>
+	<div class="">
+		{#if $editMode}
+			<input
+				class="input input-bordered text-black w-96 max-w-xs mb-2"
+				type="text"
+				bind:value={contact.name}
+				placeholder="Name"
+			/>
+			<input
+				class="input input-bordered text-black w-96 max-w-xs mb-2"
+				type="text"
+				bind:value={contact.phone}
+				placeholder="Phone Number"
+			/>
+			<input
+				class="input input-bordered text-black w-96 max-w-xs mb-2"
+				type="text"
+				bind:value={contact.email}
+				placeholder="Email"
+			/>
+		{:else}
+			<p class="text-lg"><strong>Name:</strong> {contact.name}</p>
+			<p class="text-lg"><strong>Phone:</strong> {contact.phone}</p>
+			<p class="text-lg"><strong>Email:</strong> {contact.email}</p>
+		{/if}
+		<div class="flex justify-end mt-4">
 			{#if $editMode}
-				<input
-					class="input input-bordered w-full mb-2"
-					type="text"
-					bind:value={contact.name}
-					placeholder="Name"
-				/>
-				<input
-					class="input input-bordered w-full mb-2"
-					type="text"
-					bind:value={contact.phone}
-					placeholder="Phone Number"
-				/>
-				<input
-					class="input input-bordered w-full mb-2"
-					type="text"
-					bind:value={contact.email}
-					placeholder="Email"
-				/>
-			{:else}
-				<p><strong>Name:</strong> {contact.name}</p>
-				<p><strong>Phone:</strong> {contact.phone}</p>
-				<p><strong>Email:</strong> {contact.email}</p>
+				<button class="btn btn-secondary mr-2">
+					{$editMode ? 'Save' : 'Edit'}
+				</button>
+				<button class="btn btn-error">Remove</button>
 			{/if}
-			<div class="card-actions justify-end">
-				{#if $editMode}
-					<button class="btn btn-secondary">
-						{$editMode ? 'Save' : 'Edit'}
-					</button>
-					<button class="btn btn-error">Remove</button>
-				{/if}
-			</div>
 		</div>
 	</div>
 </div>
+
+<style>
+	.text-shadow {
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+		color: white; /* Ensure text is readable on dark backgrounds */
+	}
+</style>

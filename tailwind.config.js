@@ -8,7 +8,7 @@ export default {
     require('daisyui'),
   ],
   daisyui: {
-    themes: ["bumblebee"],
+    themes: ["cupcake"],
   },
 }
 

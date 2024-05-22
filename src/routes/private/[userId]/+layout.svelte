@@ -8,7 +8,7 @@
 
 	export let data;
 
-	let hostView = true;
+	console.log(data);
 
 	$: ({ session, supabase } = data);
 
@@ -43,8 +43,6 @@
 		console.log('Preview mode started');
 		$previewMode = true;
 	}
-
-	$: console.log($previewMode);
 </script>
 
 <div
@@ -82,7 +80,7 @@
 				{/if}
 			</button>
 			<!-- Action buttons -->
-			{#if !$page.url.pathname.endsWith('/listings')}
+			{#if $page.data.listings !== undefined}
 				<button class="btn btn-sm btn-outline ml-1" on:click={startPreviewMode}>Preview</button>
 
 				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>Settings</button>
@@ -202,7 +200,7 @@
 				</li>
 			</ul>
 			<!-- Action buttons for desktop -->
-			{#if !$page.url.pathname.endsWith('/listings')}
+			{#if $page.data.listings !== undefined}
 				<div class="hidden md:flex flex-col items-center justify-around w-full mt-4 h-48">
 					<button class="btn btn-outline mb-2" on:click={startPreviewMode}>Preview</button>
 

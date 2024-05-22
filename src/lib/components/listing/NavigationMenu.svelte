@@ -20,6 +20,7 @@
 						activeTab = 'getStarted';
 					}
 				}}
+				on:touchstart={() => (activeTab = 'getStarted')}
 			>
 				<HomeOutline class="w-6 h-6" />
 				<span>Basics</span>
@@ -37,6 +38,7 @@
 						activeTab = 'links';
 					}
 				}}
+				on:touchstart={() => (activeTab = 'links')}
 			>
 				<InfoOutline class="w-6 h-6" />
 				<span>House Info</span>
@@ -54,6 +56,7 @@
 						activeTab = 'recommendations';
 					}
 				}}
+				on:touchstart={() => (activeTab = 'recommendations')}
 			>
 				<StarOutline class="w-6 h-6" />
 				<span>Recs</span>
@@ -61,3 +64,14 @@
 		</li>
 	</ul>
 </div>
+
+<style>
+	.button-active {
+		background-color: var(--accent);
+		color: white;
+	}
+	.button-hover:hover {
+		background-color: var(--accent);
+		color: white;
+	}
+</style>
