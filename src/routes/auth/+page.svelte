@@ -54,14 +54,14 @@
 			.promise(signUpViaBackend(email, password), {
 				loading: 'Signing up...',
 				success: 'Check your email for the confirmation link!',
-				error: 'Error signing up. Please try again.'
+				error: 'Error signing up.'
 			})
 			.then((data) => {
 				dispatch('signupSuccess');
 			})
-			.catch(() => {
+			.catch((err) => {
 				isSignUpInProgress = false;
-				console.error('Error signing up');
+				toast.error(err.toString());
 			});
 	}
 
@@ -76,11 +76,16 @@
 				password: password
 			})
 		});
+
 		if (!response.ok) {
-			throw new Error('Network response was not ok');
+			throw new Error('Error signing up.');
 		}
 
 		const data = await response.json();
+
+		if (data?.signedUpAlready) {
+			throw new Error('Looks like you already have an account, try to log in.');
+		}
 		return data;
 	}
 
