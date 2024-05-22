@@ -122,7 +122,9 @@
 
 	const signInWithEmail: SubmitFunction = ({ result, update }) => {
 		return async ({ result, update }) => {
-			if (result.type === 'error') toast.error(result.error.message);
+			if (result.type === 'error') {
+				toast.error(result.error.message);
+			}
 			if (result.type === 'redirect') {
 				toast.success('Successfully signed in!');
 				goto(result.location);
@@ -227,3 +229,5 @@
 		</div>
 	</div>
 </div>
+
+<Toaster />

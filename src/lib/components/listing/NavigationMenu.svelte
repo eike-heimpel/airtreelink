@@ -1,0 +1,63 @@
+<script lang="ts">
+	import HomeOutline from 'virtual:icons/mdi/home-outline';
+	import InfoOutline from 'virtual:icons/mdi/information-outline';
+	import StarOutline from 'virtual:icons/mdi/star-outline';
+
+	export let activeTab = 'recommendations';
+</script>
+
+<div class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center">
+	<ul class="flex w-full">
+		<li class="flex-1">
+			<button
+				class="w-full py-4 flex flex-col items-center justify-center border-r border-neutral lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				'getStarted'
+					? 'bg-accent text-white'
+					: 'hover:bg-accent hover:text-white'}"
+				on:click={() => (activeTab = 'getStarted')}
+				on:keydown={(event) => {
+					if (event.key === 'Enter' || event.key === ' ') {
+						activeTab = 'getStarted';
+					}
+				}}
+			>
+				<HomeOutline class="w-6 h-6 mb-1" />
+				<span>Basics</span>
+			</button>
+		</li>
+		<li class="flex-1">
+			<button
+				class="w-full py-4 flex flex-col items-center justify-center border-r border-neutral lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				'links'
+					? 'bg-accent text-white'
+					: 'hover:bg-accent hover:text-white'}"
+				on:click={() => (activeTab = 'links')}
+				on:keydown={(event) => {
+					if (event.key === 'Enter' || event.key === ' ') {
+						activeTab = 'links';
+					}
+				}}
+			>
+				<InfoOutline class="w-6 h-6 mb-1" />
+				<span>House Info</span>
+			</button>
+		</li>
+		<li class="flex-1">
+			<button
+				class="w-full py-4 flex flex-col items-center justify-center lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				'recommendations'
+					? 'bg-accent text-white'
+					: 'hover:bg-accent hover:text-white'}"
+				on:click={() => (activeTab = 'recommendations')}
+				on:keydown={(event) => {
+					if (event.key === 'Enter' || event.key === ' ') {
+						activeTab = 'recommendations';
+					}
+				}}
+			>
+				<StarOutline class="w-6 h-6 mb-1" />
+				<span>Recs</span>
+			</button>
+		</li>
+	</ul>
+</div>

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Links from '$components/listing/Links.svelte';
 	import Recommendations from '$components/listing/Recommendations.svelte';
+	import NavigationMenu from './listing/NavigationMenu.svelte';
 
 	export let currentListing;
 
-	let activeTab = 'recommendations';
+	let activeTab = 'links';
 </script>
 
 <div
@@ -31,49 +32,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="fixed bottom-0 bg-base-100 border-t border-neutral flex justify-center">
-		<ul class="menu menu-horizontal justify-around md:gap-10">
-			<li>
-				<button
-					class="lg:text-2xl {activeTab === 'getStarted' ? 'active' : ''}"
-					on:click={() => (activeTab = 'getStarted')}
-					on:keydown={(event) => {
-						if (event.key === 'Enter' || event.key === ' ') {
-							activeTab = 'getStarted';
-						}
-					}}
-				>
-					Basics
-				</button>
-			</li>
-			<li>
-				<button
-					class="lg:text-2xl {activeTab === 'links' ? 'active' : ''}"
-					on:click={() => (activeTab = 'links')}
-					on:keydown={(event) => {
-						if (event.key === 'Enter' || event.key === ' ') {
-							activeTab = 'links';
-						}
-					}}
-				>
-					House Info
-				</button>
-			</li>
-			<li>
-				<button
-					class="lg:text-2xl {activeTab === 'recommendations' ? 'active' : ''}"
-					on:click={() => (activeTab = 'recommendations')}
-					on:keydown={(event) => {
-						if (event.key === 'Enter' || event.key === ' ') {
-							activeTab = 'recommendations';
-						}
-					}}
-				>
-					Recommendations
-				</button>
-			</li>
-		</ul>
-	</div>
+	<NavigationMenu bind:activeTab />
 </div>
 
 <style>
