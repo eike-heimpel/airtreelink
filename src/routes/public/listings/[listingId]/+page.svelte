@@ -14,8 +14,6 @@
 	function closeModal() {
 		showModal = false;
 	}
-
-	console.log(data.listing);
 </script>
 
 <div class="p-4">

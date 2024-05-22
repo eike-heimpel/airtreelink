@@ -8,8 +8,6 @@
 
 	export let data;
 
-	console.log(data);
-
 	$: ({ session, supabase } = data);
 
 	const logout = async () => {

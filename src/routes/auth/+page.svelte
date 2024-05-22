@@ -5,6 +5,9 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+
+	import GoogleLogin from '$components/auth/GoogleLogin.svelte';
 
 	export let data;
 	let email = '';
@@ -16,42 +19,7 @@
 	let isSignUpInProgress = false;
 	let showConfirmPassword = false;
 	const dispatch = createEventDispatcher();
-
-	async function signInWithGithub() {
-		toast
-			.promise(
-				data.supabase.auth.signInWithOAuth({
-					provider: 'github'
-				}),
-				{
-					loading: 'Signing in with GitHub...',
-					success: 'Successfully signed in with GitHub',
-					error: 'Error signing in with GitHub'
-				}
-			)
-			.catch((error) => {
-				toast.error('Error signing in with GitHub: ' + error.message);
-			});
-	}
-
-	async function signInWithGoogle() {
-		alert('This feature is not yet implemented');
-		return;
-		toast
-			.promise(
-				data.supabase.auth.signInWithOAuth({
-					provider: 'google'
-				}),
-				{
-					loading: 'Signing in with Google...',
-					success: 'Successfully signed in with Google',
-					error: 'Error signing in with Google'
-				}
-			)
-			.catch((error) => {
-				toast.error('Error signing in with Google: ' + error.message);
-			});
-	}
+	let showPasswordResetModal = false;
 
 	async function signUpWithEmail() {
 		showPasswordStrength = true;
@@ -83,18 +51,37 @@
 		isSignUpInProgress = true;
 
 		toast
-			.promise(data.supabase.auth.signUp({ email, password }), {
+			.promise(signUpViaBackend(email, password), {
 				loading: 'Signing up...',
 				success: 'Check your email for the confirmation link!',
 				error: 'Error signing up. Please try again.'
 			})
-			.then(() => {
+			.then((data) => {
 				dispatch('signupSuccess');
 			})
 			.catch(() => {
 				isSignUpInProgress = false;
 				console.error('Error signing up');
 			});
+	}
+
+	async function signUpViaBackend(email: string, password: string) {
+		const response = await fetch('/api/auth/sign-up', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				email: email,
+				password: password
+			})
+		});
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+
+		const data = await response.json();
+		return data;
 	}
 
 	function validatePasswordStrength() {
@@ -131,6 +118,22 @@
 			}
 		};
 	};
+
+	function resetPassword() {
+		showPasswordResetModal = true;
+	}
+
+	async function sendResetPasswordEmail(email: string) {
+		try {
+			await data.supabase.auth.resetPasswordForEmail(email, {
+				redirectTo: `${$page.url.origin}/auth/reset-password`
+			});
+			toast.success('Password reset email sent. Check your inbox!');
+		} catch {
+			toast.error('Error sending password reset email. Please try again.');
+		}
+		showPasswordResetModal = false;
+	}
 </script>
 
 <div class="min-h-screen bg-base-200 flex items-center justify-center">
@@ -207,27 +210,31 @@
 					disabled={!validateEmail(email) || password === '' || isSignUpInProgress}
 					>Sign up with Email</button
 				>
-				<div class="flex flex-col space-y-2 mt-4">
-					<button
-						type="button"
-						class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
-						on:click={signInWithGithub}
-					>
-						<img src="/svgs/github_logo.svg" alt="GitHub Logo" class="w-5 h-5" />
-						<span>Sign in with GitHub</span>
-					</button>
-					<button
-						type="button"
-						class="btn btn-outline btn-accent flex items-center justify-center space-x-2 w-full"
-						on:click={signInWithGoogle}
-					>
-						<img src="/svgs/google_logo.svg" alt="Google Logo" class="w-5 h-5" />
-						<span>Sign in with Google</span>
-					</button>
-				</div>
 			</form>
+			<GoogleLogin supabaseClient={data.supabase} />
 		</div>
+		<button type="button" class="flex justify-center mb-2 cursor-pointer" on:click={resetPassword}>
+			Reset Password
+		</button>
 	</div>
 </div>
+
+{#if showPasswordResetModal}
+	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+		<div class="bg-base-100 p-6 rounded-lg shadow-xl">
+			<h3 class="text-lg font-bold mb-4">Reset Password</h3>
+			<p class="mb-4">Please enter your email address to reset your password:</p>
+			<input type="email" class="input input-bordered w-full mb-4" bind:value={email} />
+			<div class="flex justify-end space-x-2">
+				<button class="btn btn-secondary" on:click={() => (showPasswordResetModal = false)}
+					>Cancel</button
+				>
+				<button class="btn btn-primary" on:click={() => sendResetPasswordEmail(email)}
+					>Send Email</button
+				>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <Toaster />
