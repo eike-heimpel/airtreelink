@@ -106,7 +106,7 @@
 		on:finalize={handleDndFinalize}
 	>
 		{#each recommendations as recommendation (recommendation.id)}
-			<div class="card bg-base-100 bg-opacity-70 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+			<div class="card bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
 				<div class="card-body">
 					<h2 class="card-title">{recommendation.title}</h2>
 					<div class="flex-grow">

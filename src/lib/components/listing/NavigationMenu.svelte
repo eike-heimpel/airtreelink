@@ -10,7 +10,7 @@
 	<ul class="flex w-full">
 		<li class="flex-1">
 			<button
-				class="w-full py-4 flex flex-col items-center justify-center border-r border-neutral lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				class="w-full py-1 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'getStarted'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -21,13 +21,13 @@
 					}
 				}}
 			>
-				<HomeOutline class="w-6 h-6 mb-1" />
+				<HomeOutline class="w-6 h-6" />
 				<span>Basics</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-4 flex flex-col items-center justify-center border-r border-neutral lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				class="w-full py-1 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'links'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -38,13 +38,13 @@
 					}
 				}}
 			>
-				<InfoOutline class="w-6 h-6 mb-1" />
+				<InfoOutline class="w-6 h-6" />
 				<span>House Info</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-4 flex flex-col items-center justify-center lg:text-lg transition-colors duration-200 ease-in-out {activeTab ===
+				class="w-full py-1 flex flex-col items-center justify-center lg:text-lg {activeTab ===
 				'recommendations'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -55,7 +55,7 @@
 					}
 				}}
 			>
-				<StarOutline class="w-6 h-6 mb-1" />
+				<StarOutline class="w-6 h-6" />
 				<span>Recs</span>
 			</button>
 		</li>

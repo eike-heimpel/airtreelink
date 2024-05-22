@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Links from '$components/listing/Links.svelte';
 	import Recommendations from '$components/listing/Recommendations.svelte';
-	import NavigationMenu from './listing/NavigationMenu.svelte';
+	import NavigationMenu from '$components/listing/NavigationMenu.svelte';
+	import BasicInfo from '$components/listing/BasicInfo.svelte';
 
 	export let currentListing;
 
@@ -27,7 +28,7 @@
 				{:else if activeTab === 'links'}
 					<Links />
 				{:else if activeTab === 'getStarted'}
-					<p>Get Started content goes here.</p>
+					<BasicInfo />
 				{/if}
 			</div>
 		</div>

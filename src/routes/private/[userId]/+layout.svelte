@@ -55,7 +55,9 @@
 <div class="flex flex-col md:flex-row min-h-screen relative">
 	{#if !$previewMode}
 		<!-- Mobile menu button and action buttons for mobile -->
-		<div class="flex items-center justify-between md:hidden p-4 z-50">
+		<div
+			class="flex items-center justify-between md:hidden p-4 fixed top-0 left-0 w-full z-50 bg-base-100"
+		>
 			<button class="focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
 				{#if mobileMenuOpen}
 					<!-- Close icon -->
@@ -95,7 +97,7 @@
 
 		<!-- Navigation menu -->
 		<nav
-			class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block ${mobileMenuOpen ? 'block absolute top-12 left-0 z-40 h-[calc(100vh-3rem)] flex flex-col items-center justify-start' : 'hidden'}`}
+			class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block fixed md:static top-12 md:top-0 left-0 z-40 ${mobileMenuOpen ? 'block' : 'hidden'} md:block`}
 		>
 			<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
 				<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 mb-6" />
@@ -170,7 +172,7 @@
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="2"
-								d="M8 7V3m8 4V3m-7 8h6m-6 4h6m-9 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+								d="M8 7V3m8 4V3m-7 8h6m-6 4h6m-9 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2z"
 							/>
 						</svg>
 						Subscription
