@@ -16,7 +16,7 @@
 >
 	<div class="hero-overlay bg-opacity-60"></div>
 
-	<div class="h-full listing-info w-full px-4 pt-4 pb-20" class:pt-20={!$previewMode}>
+	<div class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ? 'pt-4' : 'pt-20'}">
 		<div class="w-full flex justify-center items-center pb-4">
 			<h1
 				class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"

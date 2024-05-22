@@ -7,26 +7,7 @@
 	$: ({ session, supabase } = data);
 
 	onMount(() => {
-		// Check if the user has a preference
-		const userPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-		// Apply the appropriate theme
-		if (userPrefersDark) {
-			document.documentElement.setAttribute('data-theme', 'dark');
-		} else {
-			document.documentElement.setAttribute('data-theme', 'light');
-		}
-
-		// Listen for changes to the system preference
-		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-			if (event.matches) {
-				document.documentElement.setAttribute('data-theme', 'dark');
-			} else {
-				document.documentElement.setAttribute('data-theme', 'light');
-			}
-		});
-
-		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
 			if (!newSession) {
 				if (window.location.pathname.includes('/private')) {
 					setTimeout(() => {
@@ -35,12 +16,20 @@
 				}
 			} else if (newSession?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
+			} else if (event === 'PASSWORD_RECOVERY') {
+				console.log('PASSWROD RECOVERY');
+				// const { url } = $page;
+				// const { hash} = url;
+
+				// const token = hash.split('&')[0].slice(14);
+				// redirect user to the page where it creates a new password
+				goto('/login/password-reset?token=' + session?.access_token);
+			} else {
+				// default action
+				invalidate('supabase:auth');
 			}
 		});
 
-		return () => data.subscription.unsubscribe();
-
-		// Register service worker only on the client side
 		if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
 			navigator.serviceWorker
 				.register('/service-worker.js')
@@ -51,6 +40,8 @@
 					console.log('Service Worker registration failed:', error);
 				});
 		}
+
+		return () => data.subscription.unsubscribe();
 	});
 </script>
 

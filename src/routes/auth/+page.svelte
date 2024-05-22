@@ -124,14 +124,20 @@
 	}
 
 	async function sendResetPasswordEmail(email: string) {
-		try {
-			await data.supabase.auth.resetPasswordForEmail(email, {
-				redirectTo: `${$page.url.origin}/auth/reset-password`
-			});
-			toast.success('Password reset email sent. Check your inbox!');
-		} catch {
-			toast.error('Error sending password reset email. Please try again.');
-		}
+		toast.promise(
+			data.supabase.auth.signInWithOtp({
+				email: email,
+				options: {
+					emailRedirectTo: `${$page.url.origin}/private`
+				}
+			}),
+			{
+				loading: 'Sending login link...',
+				success: `Login link sent to ${email}. Please check your inbox.`,
+				error: 'Error sending email. Please try again later.'
+			}
+		);
+
 		showPasswordResetModal = false;
 	}
 </script>
@@ -223,7 +229,10 @@
 	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 		<div class="bg-base-100 p-6 rounded-lg shadow-xl">
 			<h3 class="text-lg font-bold mb-4">Reset Password</h3>
-			<p class="mb-4">Please enter your email address to reset your password:</p>
+			<p class="mb-4 max-w-96">
+				Please enter your email address. We will send you a link to login. Once logged in, simply go
+				to your profile and add a new password.
+			</p>
 			<input type="email" class="input input-bordered w-full mb-4" bind:value={email} />
 			<div class="flex justify-end space-x-2">
 				<button class="btn btn-secondary" on:click={() => (showPasswordResetModal = false)}
