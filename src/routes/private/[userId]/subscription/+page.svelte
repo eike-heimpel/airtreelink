@@ -75,8 +75,6 @@
 	function confirmRenew() {
 		renewModal.showModal();
 	}
-
-	console.log(data);
 </script>
 
 <div class="w-fit mx-auto mt-10 p-6 bg-base-100 shadow-md rounded-lg">
@@ -112,46 +110,48 @@
 			{/if}
 		</div>
 
-		<div class="mb-6">
-			<label class="label mb-2" for="subscriptionQuantity">Update Subscription Quantity</label>
-			<div class="flex items-center justify-center space-x-2 mb-2">
-				<button
-					class="btn btn-primary"
-					id="decreaseQuantity"
-					on:click={() => updateQuantity('subscription', -1)}
-					disabled={newQuantity <= 1}
-				>
-					-
-				</button>
-				<div class="flex items-center justify-center">
-					<input
-						type="number"
-						id="subscriptionQuantity"
-						class="input input-bordered w-20 text-center"
-						bind:value={newQuantity}
-						readonly
-					/>
+		{#if !(data.subscription.cancel_at_period_end || data.subscription.status !== 'active')}
+			<div class="mb-6">
+				<label class="label mb-2" for="subscriptionQuantity">Update Subscription Quantity</label>
+				<div class="flex items-center justify-center space-x-2 mb-2">
+					<button
+						class="btn btn-primary"
+						id="decreaseQuantity"
+						on:click={() => updateQuantity('subscription', -1)}
+						disabled={newQuantity <= 1}
+					>
+						-
+					</button>
+					<div class="flex items-center justify-center">
+						<input
+							type="number"
+							id="subscriptionQuantity"
+							class="input input-bordered w-20 text-center"
+							bind:value={newQuantity}
+							readonly
+						/>
+					</div>
+					<button
+						class="btn btn-primary"
+						id="increaseQuantity"
+						on:click={() => updateQuantity('subscription', 1)}
+					>
+						+
+					</button>
 				</div>
+				{#if newQuantity >= 5}
+					<p class="text-center text-sm text-gray-500 w-full break-words">
+						Contact Support for more listings.
+					</p>
+				{/if}
 				<button
-					class="btn btn-primary"
-					id="increaseQuantity"
-					on:click={() => updateQuantity('subscription', 1)}
+					type="button"
+					class="btn btn-primary w-full"
+					on:click={confirmUpdate}
+					disabled={newQuantity === data.subscription.items.data[0].quantity}>Update</button
 				>
-					+
-				</button>
 			</div>
-			{#if newQuantity >= 5}
-				<p class="text-center text-sm text-gray-500 w-full break-words">
-					Contact Support for more listings.
-				</p>
-			{/if}
-			<button
-				type="button"
-				class="btn btn-primary w-full"
-				on:click={confirmUpdate}
-				disabled={newQuantity === data.subscription.items.data[0].quantity}>Update</button
-			>
-		</div>
+		{/if}
 
 		{#if !data.subscription.cancel_at_period_end}
 			<button type="button" class="btn btn-error btn-outline w-full" on:click={confirmCancel}>
@@ -162,7 +162,7 @@
 				>Renew Subscription</button
 			>
 		{/if}
-		<div class="mt-6 text-center text-sm italic">
+		<div class="mt-6 text-center text-sm italic max-w-96">
 			We use Stripe to handle subscriptions. You can also manage your subscription from your
 			<a
 				href={PUBLIC_STRIPE_CUSTOMER_PORTAL}
@@ -171,7 +171,9 @@
 				class="text-primary"
 			>
 				Stripe Dashboard
-			</a>
+			</a>. <br /><br />
+			If you have any issues, please contact our support at
+			<a href="mailto:support@myguestlink.com">support@myguestlink.com </a>
 		</div>
 	{:else}
 		<p class="text-center text-lg mb-4">
@@ -210,16 +212,25 @@
 		<p class="py-4">
 			{#if newQuantity > data.subscription.items.data[0].quantity}
 				<span class="text-xl font-bold">Increase in Quantity</span>
+
 				<br />
-				You have increased the quantity. You will instantly have access to the new quantity, and Stripe
-				will prorate the payment based on the added quantity and the remaining billing period.
+				You have increased the number of listings and will pay ${(data.subscription.items.data[0]
+					.price.unit_amount /
+					100) *
+					newQuantity} USD per {data.subscription.plan.interval}. You will instantly have access to
+				the new number of listings. For the current billing period Stripe will prorate the payment
+				based on the added number of listings and the remaining billing period.
 				<br /><br />
 				<span class="font-bold">Do you want to proceed?</span>
 			{:else}
-				<span class="text-xl font-bold">Decrease in Quantity</span>
+				<span class="text-xl font-bold">Decrease in Number of Listings</span>
 				<br />
-				You have decreased the quantity. The change will reflect instantly, and Stripe will adjust the
-				payment based on the reduced quantity and the remaining billing period.
+				You have decreased the number of listings and will pay ${(data.subscription.items.data[0]
+					.price.unit_amount /
+					100) *
+					newQuantity} USD per {data.subscription.plan.interval}. The change will reflect instantly,
+				and Stripe will adjust the payment based on the reduced number of listings and the remaining
+				billing period.
 				<br /><br />
 				<span class="font-bold">Do you want to proceed?</span>
 			{/if}
@@ -259,11 +270,12 @@
 		<p class="py-4">
 			<span class="text-xl font-bold">Renew Subscription</span>
 			<br />
-			You have selected to renew your subscription for {newQuantity} listings. By renewing your subscription,
-			you will continue to have access to the service and will be billed ${(data.subscription.items
-				.data[0].price.unit_amount /
+			You have selected to renew your subscription. By renewing your subscription, you will continue
+			to have access to the service and will be billed ${(data.subscription.items.data[0].price
+				.unit_amount /
 				100) *
-				newQuantity} USD {data.subscription.plan.interval} per day.
+				data.subscription?.items.data[0].quantity} USD per {data.subscription.plan.interval}. If you
+			want to change the number of listings, you can do so after renewing your subscription.
 			<br /><br />
 			<span class="font-bold">Do you want to proceed?</span>
 		</p>

@@ -79,6 +79,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
             const ipAddress = charge.metadata.ip_address;
             const country = charge.metadata.country;
             const customerId = charge.customer;
+            const subscriptionId = charge.metadata.subscription_id; // Assuming subscription_id is stored in metadata
 
             if (
                 isSuspiciousEmail(email) ||
@@ -87,20 +88,34 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
                 (await isVelocityExceeded(customerId))
             ) {
                 try {
-                    await stripe.refunds.create({
+                    const refundResp = await stripe.refunds.create({
                         charge: charge.id
                     });
 
+                    if (refundResp.status !== 'succeeded') {
+                        throw new Error(`Failed to refund charge: ${charge.id}`);
+                    }
+
                     console.log(`Refunded suspicious charge: ${charge.id}`);
-                } catch (err) {
+
+                    if (subscriptionId) {
+                        const cancelResp = await stripe.subscriptions.del(subscriptionId);
+
+                        if (cancelResp.status !== 'complete') {
+                            throw new Error(`Failed to cancel subscription: ${subscriptionId}`);
+                        }
+                    } else {
+                        console.warn(`No subscription ID found for charge: ${charge.id}`);
+                    }
+
+                } catch (err: any) {
                     if (err.type === 'StripeInvalidRequestError' && err.message.includes('No such charge')) {
                         console.error(`Failed to refund charge: ${charge.id}. Reason: ${err.message}`);
                     } else {
-                        console.error(`Failed to refund charge for event ${event.type}: ${charge.id}`, err);
+                        console.error(`Failed to handle charge.succeeded for event ${event.type}: ${charge.id}`, err);
                     }
                 }
             }
-            break;
         }
         case 'charge.refunded': {
             const refund = event.data.object;
@@ -149,6 +164,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
 
     return json({ received: true });
 }
+
+
 
 // fraud-detection.ts in $lib directory
 

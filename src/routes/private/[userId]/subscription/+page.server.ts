@@ -135,8 +135,6 @@ export const actions = {
             throw error(403, { message: 'Not authenticated' });
         }
 
-        const formData = await request.formData();
-        const newQuantity = parseInt(formData.get('newQuantity'));
 
         let subscription = null;
 
@@ -164,10 +162,6 @@ export const actions = {
             if (subscription.cancel_at_period_end) {
                 await stripe.subscriptions.update(subscription.id, {
                     cancel_at_period_end: false,
-                    items: [{
-                        id: subscription.items.data[0].id,
-                        quantity: newQuantity
-                    }]
                 });
             } else {
                 throw error(400, { message: 'Subscription is not set to cancel' });
