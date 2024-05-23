@@ -1,7 +1,15 @@
-import { Netmask } from 'netmask';
-import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from "$env/static/private";
+
+import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, SUPABASE_SERVICE_ROLE_KEY } from "$env/static/private";
+import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 import Stripe from "stripe";
 import { json, error } from '@sveltejs/kit';
+import { isSuspiciousEmail, isHighRiskCountry } from '$lib/utils/fraud-checks';
+import { createServerClient } from '@supabase/ssr';
+
+
+const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    cookies: {}
+});
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
@@ -24,6 +32,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
         error(400, 'Webhook signature verification failed');
     }
 
+
     let customer_email = null;
 
     if (event.data.object.customer) {
@@ -41,8 +50,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
             const customerId = paymentIntent.customer;
 
             if (
-                isSuspiciousEmail(email) ||
-                isSuspiciousIP(ipAddress) ||
+                await isSuspiciousEmail(email) ||
                 isHighRiskCountry(country) ||
                 (await isVelocityExceeded(customerId))
             ) {
@@ -79,11 +87,24 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
             const ipAddress = charge.metadata.ip_address;
             const country = charge.metadata.country;
             const customerId = charge.customer;
-            const subscriptionId = charge.metadata.subscription_id; // Assuming subscription_id is stored in metadata
+            charge.invoice
+
+            let subscriptionId
+
+            if (charge.invoice) {
+                try {
+                    const invoice = await stripe.invoices.retrieve(charge.invoice as string);
+                    subscriptionId = invoice?.subscription;
+                } catch (error) {
+                    console.error(`Failed to retrieve invoice: ${error.message}`);
+                }
+            } else {
+                console.log('No invoice found for this charge.');
+            }
+
 
             if (
-                isSuspiciousEmail(email) ||
-                isSuspiciousIP(ipAddress) ||
+                await isSuspiciousEmail(email) ||
                 isHighRiskCountry(country) ||
                 (await isVelocityExceeded(customerId))
             ) {
@@ -99,9 +120,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
                     console.log(`Refunded suspicious charge: ${charge.id}`);
 
                     if (subscriptionId) {
-                        const cancelResp = await stripe.subscriptions.del(subscriptionId);
-
-                        if (cancelResp.status !== 'complete') {
+                        const cancelResp = await stripe.subscriptions.cancel(subscriptionId as string) as Stripe.Subscription;
+                        if (cancelResp.status !== 'canceled') {
                             throw new Error(`Failed to cancel subscription: ${subscriptionId}`);
                         }
                     } else {
@@ -119,7 +139,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
         }
         case 'charge.refunded': {
             const refund = event.data.object;
-            await supabase.from('refund_logs').insert([{
+            const { error } = await supabaseServiceClient.from('refund_logs').insert([{
                 event_type: 'charge.refunded',
                 charge_id: refund.id,
                 amount: refund.amount,
@@ -128,12 +148,16 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
                 description: refund.description || null,
                 customer_email: refund.receipt_email || customer_email
             }]);
-            console.log('Logged charge.refunded event');
+            if (error) {
+                console.error('Error logging charge.refunded event:', error);
+            } else {
+                console.log('Logged charge.refunded event');
+            }
             break;
         }
         case 'charge.refund.updated': {
             const refund = event.data.object;
-            await supabase.from('refund_logs').insert([{
+            const { error } = await supabaseServiceClient.from('refund_logs').insert([{
                 event_type: 'charge.refund.updated',
                 charge_id: refund.id,
                 amount: refund.amount,
@@ -141,12 +165,16 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
                 created_at: new Date(refund.created * 1000).toISOString(),
                 customer_email: customer_email
             }]);
-            console.log('Logged charge.refund.updated event');
+            if (error) {
+                console.error('Error logging charge.refund.updated event:', error);
+            } else {
+                console.log('Logged charge.refund.updated event');
+            }
             break;
         }
         case 'charge.dispute.created': {
             const dispute = event.data.object;
-            await supabase.from('stripe_disputes').insert([{
+            const { error } = await supabaseServiceClient.from('stripe_disputes').insert([{
                 event_type: 'charge.dispute.created',
                 charge_id: dispute.charge,
                 amount: dispute.amount,
@@ -155,7 +183,11 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
                 status: dispute.status,
                 customer_email: customer_email
             }]);
-            console.log('Logged charge.dispute.created event');
+            if (error) {
+                console.error('Error logging charge.dispute.created event:', error);
+            } else {
+                console.log('Logged charge.dispute.created event');
+            }
             break;
         }
         default:
@@ -165,69 +197,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }): P
     return json({ received: true });
 }
 
-
-
-// fraud-detection.ts in $lib directory
-
-function isSuspiciousEmail(email: string | null): boolean {
-    if (!email) return false;
-
-    const suspiciousDomains = [
-        'example.com',
-        'spam.com',
-        'fakeemail.com',
-        'disposable.com',
-        'temporary-mail.com',
-        'guerrillamail.com',
-        'mailinator.com',
-        'throwawaymail.com',
-        'yopmail.com',
-        'trashmail.com',
-        'tempmail.org',
-        'sharklasers.com',
-        'grr.la',
-        'guerrillamailblock.com',
-        'spamgourmet.com',
-        'anonymouse.org',
-        'sendanonymousemail.com',
-        'mytemp.email',
-        '10minutemail.com',
-        'temp-mail.org',
-    ]; const emailDomain = email.split('@')[1];
-
-
-    return suspiciousDomains.includes(emailDomain);
-}
-
-function isSuspiciousIP(ipAddress: string | undefined): boolean {
-    if (!ipAddress) return false;
-
-    const suspiciousIPRanges = ['192.168.0.0/16', '10.0.0.0/8']; // Add more suspicious IP ranges as needed
-
-    return suspiciousIPRanges.some(range => isIPInRange(ipAddress, range));
-}
-
-function isHighRiskCountry(country: string | undefined): boolean {
-    if (!country) return false;
-
-    const highRiskCountries = [
-        'RU', // Russia
-        'CN', // China
-        'VN', // Vietnam
-        'ID', // Indonesia
-        'PK', // Pakistan
-        'NG', // Nigeria
-        'IR', // Iran
-        'IQ', // Iraq
-        'VE', // Venezuela
-        'EG', // Egypt
-        'UA', // Ukraine
-        'KE', // Kenya
-        'PH', // Philippines
-        'TR', // Turkey
-    ];
-    return highRiskCountries.includes(country);
-}
 
 async function isVelocityExceeded(customerId: any): Promise<boolean> {
     if (!customerId) return false;
@@ -244,9 +213,3 @@ async function isVelocityExceeded(customerId: any): Promise<boolean> {
     return transactions.data.length > maxTransactionsPerHour;
 }
 
-
-function isIPInRange(ipAddress: string, range: string): boolean {
-    const ip = new Netmask(ipAddress);
-    const subnet = new Netmask(range);
-    return subnet.contains(ip);
-}

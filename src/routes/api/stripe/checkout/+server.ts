@@ -42,7 +42,6 @@ export async function GET({ url, locals }) {
         }
     });
 
-    console.log(session)
 
     if (!session.url) {
         throw error(500, 'No session URL');

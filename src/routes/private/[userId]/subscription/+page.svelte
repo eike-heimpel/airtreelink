@@ -52,18 +52,6 @@
 		};
 	};
 
-	async function handleBasicPlanPurchase() {
-		if (!session) {
-			goto('/auth');
-			return;
-		}
-		try {
-			goto(`/api/stripe/checkout?plan=basic&quantity=${basicQuantity}`);
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-
 	function confirmUpdate() {
 		updateModal.showModal();
 	}
@@ -173,7 +161,10 @@
 				Stripe Dashboard
 			</a>. <br /><br />
 			If you have any issues, please contact our support at
-			<a href="mailto:support@myguestlink.com">support@myguestlink.com </a>
+			<a href="mailto:support@myguestlink.com">support@myguestlink.com </a>.
+			<br /><br />
+			For more details, please visit our
+			<a href="/refund-policy" class="text-primary">Refund Policy</a>.
 		</div>
 	{:else}
 		<p class="text-center text-lg mb-4">
@@ -192,99 +183,110 @@
 				class="text-primary"
 			>
 				Stripe Dashboard.
-			</a> If you still have issues, please contact support.
+			</a>
+			If you still have issues, please contact support.
+			<br /><br />
+			For more details, please visit our
+			<a href="/refund-policy" class="text-primary">Refund Policy</a> and additional
+			<a href="/payment" class="text-primary">payment info.</a>
 		</div>
 	{/if}
 </div>
 
-<dialog class="modal p-0" bind:this={updateModal}>
-	<form
-		method="post"
-		action="?/updateSubscription"
-		use:enhance={handleFormSubmit}
-		class="modal-box"
-	>
-		<h3 class="font-bold text-lg">Confirm Subscription Update</h3>
-		<p class="py-4">
-			The current price per listing is ${data.subscription.items.data[0].price.unit_amount / 100} USD
-			per {data.subscription.plan.interval}.
-		</p>
-		<p class="py-4">
-			{#if newQuantity > data.subscription.items.data[0].quantity}
-				<span class="text-xl font-bold">Increase in Quantity</span>
+{#if data.subscription}
+	<dialog class="modal p-0" bind:this={updateModal}>
+		<form
+			method="post"
+			action="?/updateSubscription"
+			use:enhance={handleFormSubmit}
+			class="modal-box"
+		>
+			<h3 class="font-bold text-lg">Confirm Subscription Update</h3>
+			<p class="py-4">
+				The current price per listing is ${data.subscription.items.data[0].price.unit_amount / 100} USD
+				per {data.subscription.plan.interval}.
+			</p>
+			<p class="py-4">
+				{#if newQuantity > data.subscription.items.data[0].quantity}
+					<span class="text-xl font-bold">Increase in Quantity</span>
 
+					<br />
+					You have increased the number of listings and will pay ${(data.subscription.items.data[0]
+						.price.unit_amount /
+						100) *
+						newQuantity} USD per {data.subscription.plan.interval}. You will instantly have access
+					to the new number of listings. For the current billing period Stripe will prorate the
+					payment based on the added number of listings and the remaining billing period.
+					<br /><br />
+					<span class="font-bold">Do you want to proceed?</span>
+				{:else}
+					<span class="text-xl font-bold">Decrease in Number of Listings</span>
+					<br />
+					You have decreased the number of listings and will pay ${(data.subscription.items.data[0]
+						.price.unit_amount /
+						100) *
+						newQuantity} USD per {data.subscription.plan.interval}. The change will reflect
+					instantly, and Stripe will adjust the payment based on the reduced number of listings and
+					the remaining billing period.
+					<br /><br />
+					<span class="font-bold">Do you want to proceed?</span>
+				{/if}
+			</p>
+
+			<input type="hidden" name="newQuantity" value={newQuantity} />
+			<div class="modal-action">
+				<button type="button" class="btn" on:click={() => updateModal.close()}>Cancel</button>
+				<button type="submit" class="btn btn-primary">Confirm</button>
+			</div>
+		</form>
+	</dialog>
+
+	<dialog class="modal" bind:this={cancelModal}>
+		<form
+			method="post"
+			action="?/cancelSubscription"
+			use:enhance={handleFormSubmit}
+			class="modal-box"
+		>
+			<h3 class="font-bold text-lg">Confirm Cancellation</h3>
+			<p class="py-4">Are you sure you want to cancel your subscription?</p>
+			<div class="modal-action">
+				<button type="button" class="btn" on:click={() => cancelModal.close()}>Cancel</button>
+				<button type="submit" class="btn btn-error">Confirm</button>
+			</div>
+		</form>
+	</dialog>
+
+	<dialog class="modal" bind:this={renewModal}>
+		<form
+			method="post"
+			action="?/renewSubscription"
+			use:enhance={handleFormSubmit}
+			class="modal-box"
+		>
+			<h3 class="font-bold text-lg">Confirm Renewal</h3>
+			<p class="py-4">
+				The current price per listing is ${data.subscription.items.data[0].price.unit_amount / 100} USD
+				per {data.subscription.plan.interval}.
+			</p>
+			<p class="py-4">
+				<span class="text-xl font-bold">Renew Subscription</span>
 				<br />
-				You have increased the number of listings and will pay ${(data.subscription.items.data[0]
-					.price.unit_amount /
+				You have selected to renew your subscription. By renewing your subscription, you will continue
+				to have access to the service and will be billed ${(data.subscription.items.data[0].price
+					.unit_amount /
 					100) *
-					newQuantity} USD per {data.subscription.plan.interval}. You will instantly have access to
-				the new number of listings. For the current billing period Stripe will prorate the payment
-				based on the added number of listings and the remaining billing period.
+					data.subscription?.items.data[0].quantity} USD per {data.subscription.plan.interval}. If
+				you want to change the number of listings, you can do so after renewing your subscription.
 				<br /><br />
 				<span class="font-bold">Do you want to proceed?</span>
-			{:else}
-				<span class="text-xl font-bold">Decrease in Number of Listings</span>
-				<br />
-				You have decreased the number of listings and will pay ${(data.subscription.items.data[0]
-					.price.unit_amount /
-					100) *
-					newQuantity} USD per {data.subscription.plan.interval}. The change will reflect instantly,
-				and Stripe will adjust the payment based on the reduced number of listings and the remaining
-				billing period.
-				<br /><br />
-				<span class="font-bold">Do you want to proceed?</span>
-			{/if}
-		</p>
+			</p>
 
-		<input type="hidden" name="newQuantity" value={newQuantity} />
-		<div class="modal-action">
-			<button type="button" class="btn" on:click={() => updateModal.close()}>Cancel</button>
-			<button type="submit" class="btn btn-primary">Confirm</button>
-		</div>
-	</form>
-</dialog>
-
-<dialog class="modal" bind:this={cancelModal}>
-	<form
-		method="post"
-		action="?/cancelSubscription"
-		use:enhance={handleFormSubmit}
-		class="modal-box"
-	>
-		<h3 class="font-bold text-lg">Confirm Cancellation</h3>
-		<p class="py-4">Are you sure you want to cancel your subscription?</p>
-		<div class="modal-action">
-			<button type="button" class="btn" on:click={() => cancelModal.close()}>Cancel</button>
-			<button type="submit" class="btn btn-error">Confirm</button>
-		</div>
-	</form>
-</dialog>
-
-<dialog class="modal" bind:this={renewModal}>
-	<form method="post" action="?/renewSubscription" use:enhance={handleFormSubmit} class="modal-box">
-		<h3 class="font-bold text-lg">Confirm Renewal</h3>
-		<p class="py-4">
-			The current price per listing is ${data.subscription.items.data[0].price.unit_amount / 100} USD
-			per {data.subscription.plan.interval}.
-		</p>
-		<p class="py-4">
-			<span class="text-xl font-bold">Renew Subscription</span>
-			<br />
-			You have selected to renew your subscription. By renewing your subscription, you will continue
-			to have access to the service and will be billed ${(data.subscription.items.data[0].price
-				.unit_amount /
-				100) *
-				data.subscription?.items.data[0].quantity} USD per {data.subscription.plan.interval}. If you
-			want to change the number of listings, you can do so after renewing your subscription.
-			<br /><br />
-			<span class="font-bold">Do you want to proceed?</span>
-		</p>
-
-		<div class="modal-action">
-			<button type="button" class="btn" on:click={() => renewModal.close()}>Cancel</button>
-			<button type="submit" class="btn btn-success">Confirm</button>
-		</div>
-	</form>
-</dialog>
-
+			<div class="modal-action">
+				<button type="button" class="btn" on:click={() => renewModal.close()}>Cancel</button>
+				<button type="submit" class="btn btn-success">Confirm</button>
+			</div>
+		</form>
+	</dialog>
+{/if}
 <Toaster />
