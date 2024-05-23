@@ -116,16 +116,24 @@
 </nav>
 <section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
 	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-8 md:mt-0">
-		<h1 class="text-5xl font-bold mb-6">Welcome to GuestLink</h1>
-		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
-		<a
-			href="#pricing"
-			on:click={(e) => scrollToSection(e, 'pricing')}
-			class="btn btn-primary btn-lg mx-auto"
-		>
-			Get Started
-		</a>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+		<h1 class="text-5xl font-bold">Welcome to GuestLink</h1>
+		<p class="text-xl">
+			The best way to share all the important info with your guests. For less than a coffee a month.
+		</p>
+		<div class="flex justify-center gap-4">
+			<a
+				href="#pricing"
+				on:click={(e) => scrollToSection(e, 'pricing')}
+				class="btn btn-primary btn-lg"
+			>
+				Get Started
+			</a>
+			<a href="#demo" on:click={(e) => scrollToSection(e, 'demo')} class="btn btn-secondary btn-lg">
+				Demo
+			</a>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 			<div class="card border shadow-md p-4">
 				<div class="card-body">
 					<h3 class="card-title text-primary">Unique Rotating Links</h3>
@@ -159,14 +167,17 @@
 	</div>
 </section>
 
-<section id="demo" class="min-h-screen bg-base-100 flex items-center justify-center p-4">
-	<div class="text-center">
-		<h2 class="text-4xl font-bold mb-6">See GuestLink in Action</h2>
-		<p class="text-lg mb-6">Check out a demo of what your guests will see</p>
-		<div class="flex justify-center">
-			<!-- Placeholder for demo content -->
-			<div class="w-3/4 p-4 rounded-lg shadow-lg">
-				<p class="text-lg">Demo content goes here...</p>
+<section
+	id="demo"
+	class="min-h-screen bg-base-100 flex flex-col items-center justify-center gap-4 p-4 text-center"
+>
+	<h2 class="text-4xl font-bold">See GuestLink in Action</h2>
+	<p class="text-lg">Check out a demo of what your guests will see</p>
+	<div class="flex justify-center">
+		<div class="mockup-phone">
+			<div class="camera"></div>
+			<div class="display h-96">
+				<img src="https://picsum.photos/200/400" alt="Demo" />
 			</div>
 		</div>
 	</div>

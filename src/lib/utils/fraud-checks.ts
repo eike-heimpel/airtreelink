@@ -51,7 +51,6 @@ export async function isSuspiciousEmail(email: string | null): Promise<boolean> 
     // Check against IPQualityScore
     try {
         const ipqsResponse = await axios.get(`https://www.ipqualityscore.com/api/json/email/${IPQS_API_KEY}/${email}`);
-        console.log(JSON.stringify(ipqsResponse.data))
         if (ipqsResponse.data.valid === false || ipqsResponse.data.suspicious) {
             return true;
         }

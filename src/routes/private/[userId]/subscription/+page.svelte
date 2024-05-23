@@ -4,6 +4,7 @@
 	import { PUBLIC_STRIPE_CUSTOMER_PORTAL } from '$env/static/public';
 	import { goto } from '$app/navigation';
 	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
+	import Tooltip from '$components/UI/Tooltip.svelte';
 
 	export let data;
 	$: ({ session } = data);
@@ -78,6 +79,17 @@
 				<span>{data.subscription.status}</span>
 			</div>
 			<div class="flex justify-between items-center mb-4">
+				<span class="font-medium">Current Payment:</span>
+				<span
+					>{(data.subscription.items.data[0].price.unit_amount / 100).toFixed(2)}
+					{data.subscription.items.data[0].price.currency.toUpperCase()}</span
+				>
+			</div>
+			<div class="flex justify-between items-center mb-4">
+				<span class="font-medium">Billing Cycle:</span>
+				<span>{data.subscription.items.data[0].price.recurring.interval}</span>
+			</div>
+			<div class="flex justify-between items-center mb-4">
 				<span class="font-medium">Next Billing Date:</span>
 				<span>
 					{#if data.subscription.cancel_at_period_end || data.subscription.status !== 'active'}
@@ -100,7 +112,12 @@
 
 		{#if !(data.subscription.cancel_at_period_end || data.subscription.status !== 'active')}
 			<div class="mb-6">
-				<label class="label mb-2" for="subscriptionQuantity">Update Subscription Quantity</label>
+				<label class="label mb-2" for="subscriptionQuantity"
+					>Update Number of Listings to Publish <Tooltip
+						tooltipText={'Remember, you can generate a new listing and only need to pay for it once you are ready to publish it.'}
+					/>
+				</label>
+
 				<div class="flex items-center justify-center space-x-2 mb-2">
 					<button
 						class="btn btn-primary"
