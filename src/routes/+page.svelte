@@ -115,10 +115,16 @@
 	{/if}
 </nav>
 <section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
-	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-6 md:mt-0">
+	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-10 mt-8 md:mt-0">
 		<h1 class="text-5xl font-bold mb-6">Welcome to GuestLink</h1>
 		<p class="text-xl mb-6">The best way to share all the important info with your guests</p>
-
+		<a
+			href="#pricing"
+			on:click={(e) => scrollToSection(e, 'pricing')}
+			class="btn btn-primary btn-lg mx-auto"
+		>
+			Get Started
+		</a>
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 			<div class="card border shadow-md p-4">
 				<div class="card-body">
@@ -150,14 +156,6 @@
 				</div>
 			</div>
 		</div>
-
-		<a
-			href="#pricing"
-			on:click={(e) => scrollToSection(e, 'pricing')}
-			class="btn btn-primary btn-lg mx-auto"
-		>
-			Get Started
-		</a>
 	</div>
 </section>
 
