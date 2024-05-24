@@ -14,17 +14,11 @@
 	let renewModal: HTMLDialogElement;
 
 	let newQuantity = data.subscription?.items.data[0].quantity || 1;
-	let basicQuantity = 1;
-	let loading = false;
 
 	function updateQuantity(type: string, change: number) {
 		if (type === 'subscription') {
 			if (newQuantity + change >= 1) {
 				newQuantity += change;
-			}
-		} else if (type === 'basic') {
-			if (basicQuantity + change >= 1) {
-				basicQuantity += change;
 			}
 		}
 	}
@@ -53,17 +47,7 @@
 		};
 	};
 
-	function confirmUpdate() {
-		updateModal.showModal();
-	}
-
-	function confirmCancel() {
-		cancelModal.showModal();
-	}
-
-	function confirmRenew() {
-		renewModal.showModal();
-	}
+	$: console.log(data.publicListingCount, newQuantity);
 </script>
 
 <div class="w-fit mx-auto mt-10 p-6 bg-base-100 shadow-md rounded-lg">
@@ -118,15 +102,31 @@
 					/>
 				</label>
 
-				<div class="flex items-center justify-center space-x-2 mb-2">
-					<button
-						class="btn btn-primary"
-						id="decreaseQuantity"
-						on:click={() => updateQuantity('subscription', -1)}
-						disabled={newQuantity <= 1}
-					>
-						-
-					</button>
+				<div class="flex items-center justify-center space-x-2 mb-2 relative">
+					{#if data.publicListingCount >= newQuantity}
+						<div
+							class="tooltip"
+							data-tip="You have {data.publicListingCount} published listings. Please unpublish a listing to decrease your subscription count."
+						>
+							<button
+								class="btn btn-primary"
+								id="decreaseQuantity"
+								on:click={() => updateQuantity('subscription', -1)}
+								disabled
+							>
+								-
+							</button>
+						</div>
+					{:else}
+						<button
+							class="btn btn-primary"
+							id="decreaseQuantity"
+							on:click={() => updateQuantity('subscription', -1)}
+							disabled={newQuantity <= 1}
+						>
+							-
+						</button>
+					{/if}
 					<div class="flex items-center justify-center">
 						<input
 							type="number"
@@ -152,19 +152,31 @@
 				<button
 					type="button"
 					class="btn btn-primary w-full"
-					on:click={confirmUpdate}
+					on:click={() => {
+						updateModal.showModal();
+					}}
 					disabled={newQuantity === data.subscription.items.data[0].quantity}>Update</button
 				>
 			</div>
 		{/if}
 
 		{#if !data.subscription.cancel_at_period_end}
-			<button type="button" class="btn btn-error btn-outline w-full" on:click={confirmCancel}>
+			<button
+				type="button"
+				class="btn btn-error btn-outline w-full"
+				on:click={() => {
+					cancelModal.showModal();
+				}}
+			>
 				Cancel Subscription
 			</button>
 		{:else}
-			<button type="button" class="btn btn-success w-full" on:click={confirmRenew}
-				>Renew Subscription</button
+			<button
+				type="button"
+				class="btn btn-success w-full"
+				on:click={() => {
+					renewModal.showModal();
+				}}>Renew Subscription</button
 			>
 		{/if}
 		<div class="mt-6 text-center text-sm italic max-w-96">
