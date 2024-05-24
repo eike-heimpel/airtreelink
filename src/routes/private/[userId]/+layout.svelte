@@ -10,8 +10,6 @@
 	import FormatListBulleted from 'virtual:icons/mdi/format-list-bulleted';
 	import CardMembership from 'virtual:icons/mdi/card-membership';
 	import LogoutVariant from 'virtual:icons/mdi/logout-variant';
-	import Close from 'virtual:icons/mdi/close';
-	import Menu from 'virtual:icons/mdi/menu';
 	import SettingsOutline from 'virtual:icons/mdi/settings-outline';
 	import EyeOutline from 'virtual:icons/mdi/eye-outline';
 	import PencilOutline from 'virtual:icons/mdi/pencil-outline';

@@ -1,4 +1,16 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { page } from '$app/stores';
+	import { navigating } from '$app/stores';
+	import { fly, slide } from 'svelte/transition';
+
+	import MenuIcon from 'virtual:icons/mdi/menu';
+	import CloseIcon from 'virtual:icons/mdi/close';
+	import HomeIcon from 'virtual:icons/mdi/home';
+	import DemoIcon from 'virtual:icons/mdi/eye';
+	import PricingIcon from 'virtual:icons/mdi/cash';
+	import AccountCircleOutline from 'virtual:icons/mdi/account-circle-outline';
+	import LoginIcon from 'virtual:icons/mdi/login';
 	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
 
 	export let data;
@@ -6,9 +18,10 @@
 
 	let mobileMenuOpen = false;
 
-	function scrollToSection(event, sectionId) {
-		event.preventDefault();
+	function scrollToSection(e, sectionId) {
+		e.preventDefault();
 		document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+		closeMobileMenu();
 	}
 
 	const closeMobileMenu = () => {
@@ -16,102 +29,97 @@
 	};
 </script>
 
-<!-- Navbar (unchanged) -->
-<nav class="navbar bg-base-200 py-2 px-8 fixed w-full z-20 shadow-lg">
+<nav class="navbar bg-base-200 py-2 px-4 md:px-8 fixed w-full z-20 shadow-lg">
 	<div class="container mx-auto flex justify-between items-center">
+		<!-- Mobile menu button and logo -->
 		<div class="md:hidden flex items-center">
-			<button class="p-4 focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
-				{#if mobileMenuOpen}
-					<!-- Close icon -->
-					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
-				{:else}
-					<!-- Hamburger icon -->
-					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16m-7 6h7"
-						/>
-					</svg>
-				{/if}
-			</button>
-			{#if session}
-				<a href="/private" class="btn btn-primary btn-sm md:btn-md">Account</a>
-			{:else}
-				<a href="/auth" class="btn btn-secondary btn-sm md:btn-md">Login/Signup</a>
-			{/if}
+			<label class="btn btn-circle btn-ghost swap swap-rotate">
+				<!-- This hidden checkbox controls the state -->
+				<input type="checkbox" bind:checked={mobileMenuOpen} />
+				<!-- Hamburger icon -->
+				<MenuIcon class="swap-off fill-current w-6 h-6" />
+				<!-- Close icon -->
+				<CloseIcon class="swap-on fill-current w-6 h-6" />
+			</label>
+			<a href="/" class="text-2xl font-bold flex items-center" on:click={closeMobileMenu}>
+				<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
+			</a>
 		</div>
-		<a href="/" class="text-2xl font-bold flex items-center md:order-1" on:click={closeMobileMenu}>
+		<!-- Desktop menu and logo -->
+		<a
+			href="/"
+			class="text-2xl font-bold flex items-center md:order-1 hidden md:flex"
+			on:click={closeMobileMenu}
+		>
 			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
 		</a>
+		{#if session}
+			<a
+				href="/private"
+				on:click={closeMobileMenu}
+				class="btn btn-primary btn-sm md:btn-md flex items-center"
+			>
+				<AccountCircleOutline class="w-6 h-6 mr-2" /> Account
+			</a>
+		{:else}
+			<a
+				href="/auth"
+				on:click={closeMobileMenu}
+				class="btn btn-secondary btn-sm md:btn-md flex items-center"
+			>
+				<LoginIcon class="w-6 h-6 mr-2" /> Login/Signup
+			</a>
+		{/if}
 		<div class="hidden md:flex gap-8 items-center text-xl">
-			{#if session}
-				<a href="/private" on:click={closeMobileMenu} class="btn btn-primary">Account</a>
-			{:else}
-				<a href="/auth" on:click={closeMobileMenu} class="btn btn-secondary">Login/Signup</a>
-			{/if}
 			<a
 				href="#home"
-				on:click={(e) => {
-					scrollToSection(e, 'home');
-					closeMobileMenu();
-				}}
-				class="hover:text-primary">Home</a
+				on:click={(e) => scrollToSection(e, 'home')}
+				class="hover:text-primary flex items-center"
 			>
+				<HomeIcon class="w-6 h-6 mr-2" /> Home
+			</a>
 			<a
 				href="#demo"
-				on:click={(e) => {
-					scrollToSection(e, 'demo');
-					closeMobileMenu();
-				}}
-				class="hover:text-primary">Demo</a
+				on:click={(e) => scrollToSection(e, 'demo')}
+				class="hover:text-primary flex items-center"
 			>
+				<DemoIcon class="w-6 h-6 mr-2" /> Demo
+			</a>
 			<a
 				href="#pricing"
-				on:click={(e) => {
-					scrollToSection(e, 'pricing');
-					closeMobileMenu();
-				}}
-				class="hover:text-primary">Pricing</a
+				on:click={(e) => scrollToSection(e, 'pricing')}
+				class="hover:text-primary flex items-center"
 			>
+				<PricingIcon class="w-6 h-6 mr-2" /> Pricing
+			</a>
 		</div>
 	</div>
+	<!-- Mobile menu -->
 	{#if mobileMenuOpen}
 		<div
-			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-10 z-10"
+			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-10 z-10 p-4 shadow-lg"
 		>
 			<a
 				href="#home"
-				on:click={(e) => {
-					scrollToSection(e, 'home');
-					closeMobileMenu();
-				}}
-				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Home</a
+				on:click={(e) => scrollToSection(e, 'home')}
+				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
 			>
+				<HomeIcon class="w-6 h-6 mr-2" /> Home
+			</a>
 			<a
 				href="#demo"
-				on:click={(e) => {
-					scrollToSection(e, 'demo');
-					closeMobileMenu();
-				}}
-				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Demo</a
+				on:click={(e) => scrollToSection(e, 'demo')}
+				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
 			>
+				<DemoIcon class="w-6 h-6 mr-2" /> Demo
+			</a>
 			<a
 				href="#pricing"
-				on:click={(e) => {
-					scrollToSection(e, 'pricing');
-					closeMobileMenu();
-				}}
-				class="block py-4 text-4xl hover:bg-base-300 w-full text-center">Pricing</a
+				on:click={(e) => scrollToSection(e, 'pricing')}
+				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
 			>
+				<PricingIcon class="w-6 h-6 mr-2" /> Pricing
+			</a>
 		</div>
 	{/if}
 </nav>
