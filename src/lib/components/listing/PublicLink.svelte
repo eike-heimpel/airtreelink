@@ -24,8 +24,8 @@
 					body: JSON.stringify({ listingId })
 				}),
 				{
-					loading: 'Updating hash...',
-					success: 'Hash updated successfully!',
+					loading: 'Updating url ...',
+					success: 'Url updated successfully!',
 					error: 'Failed to update hash'
 				}
 			);
@@ -37,7 +37,6 @@
 			}
 
 			const result = await response.json();
-			console.log($page);
 			invalidateAll();
 		} catch (error) {
 			console.error('Error updating hash:', error);

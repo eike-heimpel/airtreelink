@@ -6,6 +6,16 @@
 	import ListingView from '$components/ListingView.svelte';
 	import { fly, slide } from 'svelte/transition';
 
+	import AccountCircleOutline from 'virtual:icons/mdi/account-circle-outline';
+	import FormatListBulleted from 'virtual:icons/mdi/format-list-bulleted';
+	import CardMembership from 'virtual:icons/mdi/card-membership';
+	import LogoutVariant from 'virtual:icons/mdi/logout-variant';
+	import Close from 'virtual:icons/mdi/close';
+	import Menu from 'virtual:icons/mdi/menu';
+	import SettingsOutline from 'virtual:icons/mdi/settings-outline';
+	import EyeOutline from 'virtual:icons/mdi/eye-outline';
+	import PencilOutline from 'virtual:icons/mdi/pencil-outline';
+
 	export let data;
 
 	$: ({ session, supabase } = data);
@@ -52,41 +62,45 @@
 	{#if !$previewMode}
 		<!-- Mobile menu button and action buttons for mobile -->
 		<div
-			class="flex items-center justify-between md:hidden p-4 fixed top-0 left-0 w-full z-50 bg-base-100"
+			class="flex items-center justify-around md:hidden p-2 fixed top-0 left-0 w-full z-50 bg-base-100"
 		>
-			<button class="focus:outline-none" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
-				{#if mobileMenuOpen}
-					<!-- Close icon -->
-					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
-				{:else}
-					<!-- Hamburger icon -->
-					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16m-7 6h7"
-						/>
-					</svg>
-				{/if}
-			</button>
+			<label class="btn btn-circle swap swap-rotate">
+				<!-- this hidden checkbox controls the state -->
+				<input type="checkbox" bind:checked={mobileMenuOpen} />
+				<!-- hamburger icon -->
+				<svg
+					class="swap-off fill-current"
+					xmlns="http://www.w3.org/2000/svg"
+					width="32"
+					height="32"
+					viewBox="0 0 512 512"
+					><path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" /></svg
+				>
+				<!-- close icon -->
+				<svg
+					class="swap-on fill-current"
+					xmlns="http://www.w3.org/2000/svg"
+					width="32"
+					height="32"
+					viewBox="0 0 512 512"
+					><polygon
+						points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49"
+					/></svg
+				>
+			</label>
 			<!-- Action buttons -->
 			{#if $page.params.listingId !== undefined}
-				<button class="btn btn-sm btn-outline ml-1" on:click={startPreviewMode}>Preview</button>
-
-				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>Settings</button>
+				<button class="btn btn-sm btn-outline ml-1" on:click={startPreviewMode}>
+					<EyeOutline class="h-6 w-6" />
+				</button>
+				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>
+					<SettingsOutline class="h-6 w-6" />
+				</button>
 				<button
 					class="btn btn-sm btn-{$editMode ? 'secondary' : 'primary'} ml-1"
 					on:click={toggleEditMode}
 				>
-					{$editMode ? 'Stop' : 'Start'} Editing
+					<PencilOutline class="h-6 w-6" />
 				</button>
 			{/if}
 		</div>
@@ -107,21 +121,8 @@
 						class="flex items-center text-xl py-4 w-full justify-center"
 						on:click={closeMobileMenu}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-6 h-6 mr-2"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zM19 19c0-2.761-4.686-5-7-5s-7 2.239-7 5"
-							/>
-						</svg>
-						Profile
+						<AccountCircleOutline class="w-6 h-6 mr-2" />
+						<span class="hidden md:inline">Profile</span>
 					</a>
 				</li>
 				<li
@@ -132,21 +133,8 @@
 						class="flex items-center text-xl py-4 w-full justify-center"
 						on:click={closeMobileMenu}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-6 h-6 mr-2"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M3 7h18M3 12h18m-7 5h7"
-							/>
-						</svg>
-						Listings
+						<FormatListBulleted class="w-6 h-6 mr-2" />
+						<span class="hidden md:inline">Listings</span>
 					</a>
 				</li>
 				<li
@@ -157,21 +145,8 @@
 						class="flex items-center text-xl py-4 w-full justify-center"
 						on:click={closeMobileMenu}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-6 h-6 mr-2"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M8 7V3m8 4V3m-7 8h6m-6 4h6m-9 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2z"
-							/>
-						</svg>
-						Subscription
+						<CardMembership class="w-6 h-6 mr-2" />
+						<span class="hidden md:inline">Subscription</span>
 					</a>
 				</li>
 				<li class="mt-4">
@@ -179,45 +154,41 @@
 						class="btn btn-outline flex items-center text-xl w-full justify-center"
 						on:click={logout}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-6 h-6 mr-2"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M15 12h-3m3-2a2 2 0 110-4 2 2 0 010 4zm-2 8H5a2 2 0 01-2-2v-1a2 2 0 012-2h2m4 0h1m0 0v-1a2 2 0 114 0v1"
-							/>
-						</svg>
-						Sign Out
+						<LogoutVariant class="w-6 h-6 mr-2" />
+						<span class="hidden md:inline">Sign Out</span>
 					</button>
 				</li>
 			</ul>
 			<!-- Action buttons for desktop -->
 			{#if $page.params.listingId !== undefined}
 				<div class="hidden md:flex flex-col items-center justify-around w-full mt-4 h-48">
-					<button class="btn btn-outline mb-2" on:click={startPreviewMode}>Preview</button>
-
-					<button class="btn btn-outline mb-2" on:click={openSettingsModal}>Settings</button>
-					<button class="btn btn-{$editMode ? 'secondary' : 'primary'}" on:click={toggleEditMode}>
-						{$editMode ? 'Stop' : 'Start'} Editing
+					<button class="btn btn-outline mb-2 flex items-center" on:click={startPreviewMode}>
+						<EyeOutline class="w-6 h-6 mr-2" />
+						<span>Preview</span>
+					</button>
+					<button class="btn btn-outline mb-2 flex items-center" on:click={openSettingsModal}>
+						<SettingsOutline class="w-6 h-6 mr-2" />
+						<span>Settings</span>
+					</button>
+					<button
+						class="btn btn-{$editMode ? 'secondary' : 'primary'} flex items-center"
+						on:click={toggleEditMode}
+					>
+						<PencilOutline class="w-6 h-6 mr-2" />
+						<span>{$editMode ? 'Stop' : 'Start'} Editing</span>
 					</button>
 				</div>
 			{/if}
 		</nav>
 	{:else}
 		<button
-			class="btn btn-circle btn-info btn-sm md:btn-md btn-outline fixed top-2 left-2"
+			class="btn btn-circle btn-accent btn-md md:btn-md btn-outline fixed top-2 left-2"
 			type="button"
 			on:click={() => {
 				$previewMode = false;
 			}}
 		>
-			X
+			<EyeOutline class="h-6 w-6" />
 		</button>
 	{/if}
 	<!-- Content area -->
