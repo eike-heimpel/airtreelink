@@ -18,7 +18,13 @@
 		showModal = false;
 	}
 
-	function createListing() {
+	function createListing({ cancel }) {
+		// dont allow if they have mor ethan 5 listings already
+		if (data.listings.length >= 5) {
+			toast.error('You have reached the maximum number of listings allowed.');
+			cancel();
+			closeModal();
+		}
 		return async ({ result, update }: { result: any; update: any }) => {
 			if (result.type === 'success') {
 				toast.success('Listing created successfully!');
@@ -30,6 +36,10 @@
 				toast.error('Error creating listing. Please try again.');
 				closeModal();
 			}
+
+			name = '';
+			description = '';
+			title_image_url = '';
 		};
 	}
 </script>

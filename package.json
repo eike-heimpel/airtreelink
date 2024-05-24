@@ -46,6 +46,7 @@
 		"leaflet": "^1.9.4",
 		"netmask": "^2.0.2",
 		"postmark": "^4.0.2",
+		"qrcode": "^1.5.3",
 		"stripe": "^15.6.0",
 		"svelte-french-toast": "^1.2.0",
 		"uuid": "^9.0.1",

@@ -1,7 +1,6 @@
-import type { PageServerLoad } from "$types";
 import { error } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ locals, params, url }) => {
+export const load = async ({ locals, params, url }) => {
 
     let listing = await locals.supabase.from('Listings').select('*').eq('id', params.listingId)
 
