@@ -96,7 +96,7 @@
 </script>
 
 {#if $showListingSettings}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Edit Listing</h3>
 			<div class="mt-4">
@@ -146,7 +146,7 @@
 	</div>
 {/if}
 {#if showDeleteModal}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Deletion</h3>
 			<p class="py-4">
@@ -169,7 +169,7 @@
 {/if}
 
 {#if showUnpublishModal}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Unpublishing</h3>
 			<p class="py-4">
@@ -189,7 +189,7 @@
 {/if}
 
 {#if showPublishModal}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Publish</h3>
 			<p class="py-4">

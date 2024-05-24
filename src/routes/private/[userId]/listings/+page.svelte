@@ -20,21 +20,15 @@
 
 	function createListing() {
 		return async ({ result, update }: { result: any; update: any }) => {
-			const toastId = toast.loading('Processing...');
-			try {
-				if (result.type === 'success') {
-					closeModal();
-					invalidateAll();
-					name = '';
-					description = '';
-					title_image_url = '';
-					toast.success('Listing added successfully!', { id: toastId });
-				} else {
-					toast.error('Operation failed!', { id: toastId });
-				}
+			if (result.type === 'success') {
+				toast.success('Listing created successfully!');
 				update();
-			} catch (error) {
-				toast.error('An error occurred!', { id: toastId });
+				closeModal();
+			}
+
+			if (result.type === 'error') {
+				toast.error('Error creating listing. Please try again.');
+				closeModal();
 			}
 		};
 	}
@@ -82,7 +76,7 @@
 	</button>
 
 	{#if showModal}
-		<div class="modal modal-open">
+		<div class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h2 class="font-bold text-lg mb-4">Add New Listing</h2>
 				<form method="post" use:enhance={createListing}>

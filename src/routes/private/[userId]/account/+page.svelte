@@ -115,7 +115,7 @@
 </div>
 
 {#if showDeleteModal}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Deletion</h3>
 			<p class="py-4">

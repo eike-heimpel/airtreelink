@@ -128,7 +128,7 @@
 	</div>
 
 	{#if showAddModal}
-		<dialog class="modal modal-open">
+		<dialog class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Add Recommendation</h3>
 				<div class="form-control">
@@ -159,7 +159,7 @@
 	{/if}
 
 	{#if showDeleteModal && selectedRecommendation}
-		<dialog class="modal modal-open">
+		<dialog class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Confirm Delete</h3>
 				<p class="py-4">
@@ -174,7 +174,7 @@
 	{/if}
 
 	{#if showCardModal && selectedRecommendation}
-		<dialog class="modal modal-open">
+		<dialog class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h2 class="font-bold text-2xl">{selectedRecommendation.title}</h2>
 				<p class="py-4">{selectedRecommendation.description}</p>

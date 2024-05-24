@@ -94,7 +94,7 @@
 	</div>
 
 	{#if showAddModal}
-		<div class="modal modal-open">
+		<div class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Add New Entry</h3>
 				<div class="form-control">

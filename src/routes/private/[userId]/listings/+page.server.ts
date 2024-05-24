@@ -18,6 +18,7 @@ export const load = async ({ locals: { session }, parent }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
+
         const data = await request.formData();
         const name = data.get('name');
         const description = data.get('description');

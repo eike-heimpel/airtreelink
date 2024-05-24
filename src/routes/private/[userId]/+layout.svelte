@@ -64,7 +64,7 @@
 		<div
 			class="flex items-center justify-around md:hidden p-2 fixed top-0 left-0 w-full z-50 bg-base-100"
 		>
-			<label class="btn btn-circle swap swap-rotate">
+			<label class="btn btn-circle btn-ghost swap swap-rotate">
 				<!-- this hidden checkbox controls the state -->
 				<input type="checkbox" bind:checked={mobileMenuOpen} />
 				<!-- hamburger icon -->
@@ -107,7 +107,7 @@
 
 		<!-- Navigation menu -->
 		<nav
-			class={`navbar bg-base-200 shadow-xl w-full md:w-56 md:block fixed md:static top-12 md:top-0 left-0 z-40 ${mobileMenuOpen ? 'block' : 'hidden'} md:block`}
+			class={`navbar bg-base-100 shadow-xl w-full md:w-56 md:block fixed md:static top-12 md:top-0 left-0 z-40 ${mobileMenuOpen ? 'block h-full' : 'hidden'} md:block`}
 		>
 			<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
 				<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 mb-6" />
@@ -122,7 +122,7 @@
 						on:click={closeMobileMenu}
 					>
 						<AccountCircleOutline class="w-6 h-6 mr-2" />
-						<span class="hidden md:inline">Profile</span>
+						<span class=" md:inline">Profile</span>
 					</a>
 				</li>
 				<li
@@ -134,7 +134,7 @@
 						on:click={closeMobileMenu}
 					>
 						<FormatListBulleted class="w-6 h-6 mr-2" />
-						<span class="hidden md:inline">Listings</span>
+						<span class=" md:inline">Listings</span>
 					</a>
 				</li>
 				<li
@@ -146,7 +146,7 @@
 						on:click={closeMobileMenu}
 					>
 						<CardMembership class="w-6 h-6 mr-2" />
-						<span class="hidden md:inline">Subscription</span>
+						<span class=" md:inline">Subscription</span>
 					</a>
 				</li>
 				<li class="mt-4">
@@ -155,7 +155,7 @@
 						on:click={logout}
 					>
 						<LogoutVariant class="w-6 h-6 mr-2" />
-						<span class="hidden md:inline">Sign Out</span>
+						<span class=" md:inline">Sign Out</span>
 					</button>
 				</li>
 			</ul>
