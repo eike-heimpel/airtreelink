@@ -2,6 +2,7 @@
 	import '../app.css';
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { Toaster } from 'svelte-french-toast';
 
 	export let data;
 	$: ({ session, supabase } = data);
@@ -50,3 +51,5 @@
 </svelte:head>
 
 <slot />
+
+<Toaster />

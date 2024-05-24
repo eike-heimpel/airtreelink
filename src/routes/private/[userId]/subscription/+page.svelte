@@ -306,4 +306,3 @@
 		</form>
 	</dialog>
 {/if}
-<Toaster />
