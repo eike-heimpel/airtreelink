@@ -7,6 +7,7 @@
 	export let data;
 
 	let currentListing;
+
 	$: currentListing = data.listings.find(
 		(listing) => listing.id === parseInt($page.params.listingId)
 	);

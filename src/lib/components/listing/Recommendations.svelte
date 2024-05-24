@@ -128,7 +128,7 @@
 	</div>
 
 	{#if showAddModal}
-		<div class="modal modal-open">
+		<dialog class="modal modal-open">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Add Recommendation</h3>
 				<div class="form-control">
@@ -155,11 +155,11 @@
 					<button class="btn" on:click={() => (showAddModal = false)}>Cancel</button>
 				</div>
 			</div>
-		</div>
+		</dialog>
 	{/if}
 
 	{#if showDeleteModal && selectedRecommendation}
-		<div class="modal modal-open">
+		<dialog class="modal modal-open">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Confirm Delete</h3>
 				<p class="py-4">
@@ -170,11 +170,11 @@
 					<button class="btn" on:click={() => (showDeleteModal = false)}>Cancel</button>
 				</div>
 			</div>
-		</div>
+		</dialog>
 	{/if}
 
 	{#if showCardModal && selectedRecommendation}
-		<div class="modal modal-open">
+		<dialog class="modal modal-open">
 			<div class="modal-box">
 				<h2 class="font-bold text-2xl">{selectedRecommendation.title}</h2>
 				<p class="py-4">{selectedRecommendation.description}</p>
@@ -188,7 +188,7 @@
 					<button class="btn" on:click={() => (showCardModal = false)}>Close</button>
 				</div>
 			</div>
-		</div>
+		</dialog>
 	{/if}
 </div>
 

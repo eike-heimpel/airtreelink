@@ -7,7 +7,7 @@
 
 	export let currentListing;
 
-	let activeTab = 'links';
+	let activeTab = 'recommendations';
 </script>
 
 <div

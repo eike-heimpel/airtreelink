@@ -19,8 +19,6 @@
 	let userInputName = '';
 	let deleteConfirmed = false;
 
-	let canPublishMoreListings = false;
-
 	function onSubmit() {
 		return async ({ result, update }: { result: any; update: any }) => {
 			if (result.type === 'success') {
@@ -69,7 +67,7 @@
 		showUnpublishModal = false;
 	}
 
-	onMount(async () => {
+	async function checkPublishAllowed() {
 		const response = await fetch('/api/listing/publish-allowed', {
 			method: 'GET',
 			headers: {
@@ -85,8 +83,8 @@
 
 		const data = await response.json();
 
-		canPublishMoreListings = data.canPublishMoreListings;
-	});
+		return data.canPublishMoreListings;
+	}
 
 	function openPublishModal() {
 		showPublishModal = true;
@@ -104,27 +102,34 @@
 			<div class="mt-4">
 				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
 			</div>
-			{#if canPublishMoreListings}
-				<button
-					type="button"
-					class="btn btn-primary btn-block mt-4"
-					on:click={() => {
-						isPublic ? openUnpublishModal() : openPublishModal();
-					}}
-					disabled={!canPublishMoreListings && !isPublic}
-				>
-					{isPublic ? 'Unpublish' : 'Publish'} Listing
-				</button>
-			{:else}
-				<div class="alert mt-4">
-					<p>
-						You have reached the maximum number of published listings. Please <a
-							class="link"
-							href="/private/{$page.data.session.user.id}/subscription">update your subscription</a
-						> or unpublish one of your other listings to publish this one.
-					</p>
-				</div>
-			{/if}
+			<div class="mt-4">
+				{#await checkPublishAllowed()}
+					<div class="skeleton h-12 w-full"></div>
+				{:then canPublishMoreListings}
+					{#if canPublishMoreListings || isPublic}
+						<button
+							type="button"
+							class="btn btn-primary btn-block"
+							on:click={() => {
+								isPublic ? openUnpublishModal() : openPublishModal();
+							}}
+							disabled={!canPublishMoreListings && !isPublic}
+						>
+							{isPublic ? 'Unpublish' : 'Publish'} Listing
+						</button>
+					{:else}
+						<div class="alert">
+							<p>
+								You have reached the maximum number of published listings. Please <a
+									class="link"
+									href="/private/{$page.data.session.user.id}/subscription"
+									>update your subscription</a
+								> or unpublish one of your other listings to publish this one.
+							</p>
+						</div>
+					{/if}
+				{/await}
+			</div>
 
 			<button
 				type="button"
