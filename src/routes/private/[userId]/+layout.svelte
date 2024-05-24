@@ -54,7 +54,7 @@
 </script>
 
 <div
-	class="fixed top-0 left-0 w-full h-[1px] md:h-[2px] bg-primary transform scale-x-0 transition-transform duration-1000 ease-out"
+	class="fixed top-0 left-0 w-full h-[2px] md:h-[4px] bg-primary transform scale-x-0 transition-transform duration-1000 ease-out"
 	class:scale-x-100={$navigating}
 ></div>
 

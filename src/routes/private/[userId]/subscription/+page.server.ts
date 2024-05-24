@@ -2,6 +2,7 @@ import { STRIPE_SECRET_KEY } from '$env/static/private';
 import { PUBLIC_STRIPE_PRODUCT_ID } from '$env/static/public';
 import Stripe from 'stripe';
 import { error } from '@sveltejs/kit';
+import { form } from '../account/+page.svelte';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
@@ -73,6 +74,9 @@ export const actions = {
             throw error(400, { message: 'Invalid quantity' });
         }
 
+        const switchedFromMonthlyToYearly = formData.get('switchedFromMonthlyToYearly') === 'true';
+        const priceId = formData.get('priceId');
+
         let subscription = null;
 
         try {
@@ -96,13 +100,22 @@ export const actions = {
 
             subscription = subscriptions.data[0];
 
+            let items: any = [{
+                id: subscription.items.data[0].id,
+                quantity: newQuantity,
+            }]
+
+            if (switchedFromMonthlyToYearly && priceId) {
+                items[0]["price"] = priceId;
+            }
+
+
             await stripe.subscriptions.update(subscription.id, {
-                items: [{
-                    id: subscription.items.data[0].id,
-                    quantity: newQuantity,
-                }],
+                items: items,
                 proration_behavior: 'create_prorations',
             });
+
+
         } catch (stripeError) {
             console.error('Failed to update Stripe subscription', stripeError);
             throw error(500, { message: 'Failed to update subscription' });

@@ -49,6 +49,8 @@
 
 		const { prices } = await response.json();
 
+		console.log(prices);
+
 		monthlyPlan = prices.find((price) => price.interval === 'month');
 		yearlyPlan = prices.find((price) => price.interval === 'year');
 

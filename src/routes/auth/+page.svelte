@@ -61,7 +61,7 @@
 			})
 			.catch((err) => {
 				isSignUpInProgress = false;
-				toast.error(err.toString());
+				toast.error(err.toString(), { duration: 7000 });
 			});
 	}
 
@@ -77,14 +77,19 @@
 			})
 		});
 
+		const data = await response.json();
+
 		if (!response.ok) {
 			throw new Error('Error signing up.');
 		}
 
-		const data = await response.json();
+		if (data.message && data.message === 'Suspicious email detected')
+			throw new Error(
+				'Suspicious email detected. Please check your email address and try again. If you believe this is a mistake, contact support.'
+			);
 
 		if (data?.signedUpAlready) {
-			throw new Error('Looks like you already have an account, try to log in.');
+			throw new Error('Looks like you already have an account, please try to log in.');
 		}
 		return data;
 	}

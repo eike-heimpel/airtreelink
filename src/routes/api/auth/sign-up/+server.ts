@@ -17,7 +17,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
     // Check for suspicious email
     if (await isSuspiciousEmail(email)) {
         console.log('Suspicious email detected');
-        return json({ error: 'Suspicious email detected' }, { status: 400 });
+        return json({ message: 'Suspicious email detected' });
     }
 
     const profile = await supabaseServiceClient.from('profile').select('id').eq('email', email);
