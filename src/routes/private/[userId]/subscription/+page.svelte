@@ -195,8 +195,11 @@
 		{/if}
 		<div class="mt-6 text-center text-sm italic max-w-96">
 			We use Stripe to handle subscriptions. You can also manage your subscription from your
-			<a href={PUBLIC_STRIPE_CUSTOMER_PORTAL} target="_blank" rel="noopener noreferrer" class="link"
-				>Stripe Dashboard</a
+			<a
+				href="{PUBLIC_STRIPE_CUSTOMER_PORTAL}?prefilled_email={session.user.email}"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="link">Stripe Dashboard</a
 			>. <br /><br />
 			If you have any issues, please contact our support at
 			<a href="mailto:support@myguestlink.com" class="link">support@myguestlink.com</a>.
@@ -214,8 +217,11 @@
 		<div class="mt-6 text-center italic text-sm">
 			We use Stripe to handle subscriptions. If you think you should have a subscription, please try
 			directly on the
-			<a href={PUBLIC_STRIPE_CUSTOMER_PORTAL} target="_blank" rel="noopener noreferrer" class="link"
-				>Stripe Dashboard</a
+			<a
+				href="{PUBLIC_STRIPE_CUSTOMER_PORTAL}?prefilled_email={session.user.email}"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="link">Stripe Dashboard</a
 			>. If you still have issues, please contact support.
 			<br /><br />
 			For more details, please visit our <a href="/refund-policy" class="link">Refund Policy</a> and

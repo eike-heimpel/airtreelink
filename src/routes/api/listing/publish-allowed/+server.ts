@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 export const GET: RequestHandler = async ({ request, locals: { session, supabase } }) => {
-    if (!session) {
+    if (!session || !session.user || !session.user.email) {
         throw error(401, 'Unauthorized');
     }
 
@@ -54,7 +54,6 @@ export const GET: RequestHandler = async ({ request, locals: { session, supabase
     let subscriptionCount = 0;
 
     try {
-
         // find correct subscription in subscriptions with plan.product === PUBLIC_STRIPE_PRODUCT_ID
         const subscription = subscriptions.find(subscription => subscription.plan.product === PUBLIC_STRIPE_PRODUCT_ID) as Stripe.Subscription
         subscriptionCount = subscription.quantity;
