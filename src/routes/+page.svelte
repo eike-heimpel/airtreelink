@@ -135,7 +135,7 @@
 			>
 		</p>
 		<div class="flex flex-col md:flex-row justify-center gap-4">
-			<a href="/auth" class="btn btn-primary btn-lg"> Create Your Guest Page Now </a>
+			<a href="/auth" class="btn btn-primary btn-lg"> Create Your Guest Page Now</a>
 			<div class="grid grid-cols-2 gap-2">
 				<a
 					href="#demo"
