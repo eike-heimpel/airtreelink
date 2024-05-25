@@ -23,7 +23,7 @@
 				on:touchstart={() => (activeTab = 'getStarted')}
 			>
 				<HomeOutline class="w-6 h-6" />
-				<span class="hidden md:block">Basics</span>
+				<span class="hidden md:block">Basic 123s</span>
 			</button>
 		</li>
 		<li class="flex-1">
