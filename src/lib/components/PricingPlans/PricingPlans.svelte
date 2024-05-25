@@ -10,9 +10,7 @@
 {#if !noText}
 	<h1 class="text-4xl font-bold">Choose Your Plan</h1>
 	<p class="text-lg mb-10 text-center max-w-4xl">
-		We currently offer the Simple Plan, which includes everything you need to get started. Stay
-		tuned for our Premium Plan with additional features coming soon! Not sure yet? Pick 1 month and
-		turn off auto renewal. See what your guests think and come back if you like it.
+		We currently offer the Simple Plan, which includes everything you need to get started.
 	</p>
 {/if}
 <div class="flex justify-center items-center">

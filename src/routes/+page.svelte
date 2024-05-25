@@ -228,9 +228,27 @@
 <section id="pricing" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
 	<PricingPlans supabaseSession={session} />
 </section>
-<!-- Footer (unchanged) -->
 <footer class="bg-base-200 py-8 mt-10">
-	<!-- ... -->
+	<div
+		class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+	>
+		<div class="text-center md:text-left">
+			<h2 class="text-lg font-bold">GuestLink</h2>
+			<p class="mt-2">
+				© 2024 GuestLink. All rights reserved. GuestLink is a website by Eike Heimpel. Small
+				business according to § 19 UStG.
+			</p>
+		</div>
+		<div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
+			<a href="/imprint" class="text-gray-600 hover:text-gray-900">Imprint</a>
+			<a href="/privacy-notice" class="text-gray-600 hover:text-gray-900">Privacy Notice</a>
+			<a href="/terms-and-conditions" class="text-gray-600 hover:text-gray-900"
+				>Terms and Conditions</a
+			>
+			<a href="/disclaimer" class="text-gray-600 hover:text-gray-900">Disclaimer</a>
+			<a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a>
+		</div>
+	</div>
 </footer>
 
 <style>
