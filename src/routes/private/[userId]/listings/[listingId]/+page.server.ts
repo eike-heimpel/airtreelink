@@ -1,27 +1,20 @@
 
 import { error } from "@sveltejs/kit";
-
+import { all } from "axios";
 
 export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
-
     const lastUpdated = cookies.get('lastUpdated');
-
-    const listingId = parseInt(params.listingId)
+    const listingId = parseInt(params.listingId);
 
     const parents = await parent();
     const currentListingInfo = parents.listings.find(listing => listing.id === listingId);
 
-    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq("listing_id", listingId);
-
-    console.log(JSON.stringify
-        (listingCards))
+    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq('listing_id', listingId);
 
     if (listingCardsError) {
         throw error(500, listingCardsError);
     }
-
-
-    let modifiedCards = []
+    let modifiedCards = [];
 
     if (!lastUpdated) {
         modifiedCards = Object.values(listingCards);
@@ -29,12 +22,13 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
         modifiedCards = Object.values(listingCards).filter(card => new Date(card.last_changed) > new Date(lastUpdated));
     }
 
+    // Collect all card IDs
+    const allCardIds = listingCards.map(card => card.id);
+
     cookies.set('lastUpdated', new Date().toISOString(), { path: '/' });
 
-    return { currentListingInfo, modifiedCards, lastChanged: new Date().toISOString() };
-
+    return { currentListingInfo, modifiedCards, lastChanged: new Date().toISOString(), allCardIds };
 };
-
 
 export const actions = {
 
@@ -67,5 +61,30 @@ export const actions = {
             console.log("could not delete listing", error);
             return { error: error.message };
         }
+    },
+
+    deleteCard: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const cardId = parseInt(formData.get('cardId')?.toString() || '');
+
+        if (!cardId) {
+            error(400, { message: 'Invalid card id' });
+        }
+
+        const { data: card, error: cardError } = await locals.supabase.from('listing_cards').delete().eq('id', cardId);
+
+        if (cardError) {
+            return error(500, { message: 'Failed to delete card' });
+        }
+
+        console.log("card deleted")
+        return { success: true };
+
+
+
+    },
+    updateCard: async ({ request, locals }) => {
+    },
+    addCard: async ({ request, locals }) => {
     }
 };

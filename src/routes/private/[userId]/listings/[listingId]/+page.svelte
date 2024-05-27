@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import ListingView from '$components/ListingView.svelte';
 	import ListingSettings from '$components/listing/ListingSettings.svelte';
-	import { page } from '$app/stores';
+	import { toast } from 'svelte-french-toast';
+	import { browser } from '$app/environment';
 
 	export let data;
 
@@ -13,7 +14,7 @@
 
 	let updatedListing = {};
 
-	onMount(() => {
+	function updateListing() {
 		// Retrieve the last updated timestamp and cards from localStorage
 		const storedLastUpdated = localStorage.getItem('lastUpdated');
 		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
@@ -22,16 +23,23 @@
 			currentListing = JSON.parse(storedListing);
 		}
 
-		console.log('Stored cards:', currentListing.cards);
-		console.log('Stored lastUpdated:', storedLastUpdated);
-
 		// Update cards with new data from the server
 		const newCards = data.modifiedCards;
 
-		console.log('New cards:', Object.keys(newCards));
-
 		for (const card of newCards) {
 			currentListing.cards[card.id] = card;
+		}
+
+		// Remove deleted cards from local storage
+		const allCardIds = data.allCardIds;
+
+		for (const id of Object.keys(currentListing.cards)) {
+			if (!allCardIds.includes(parseInt(id))) {
+				const cardName = currentListing.cards[id].title;
+				delete currentListing.cards[id];
+				console.log('Deleted card:', id);
+				toast('Deleted card: ' + cardName);
+			}
 		}
 
 		// Update the lastUpdated timestamp in localStorage
@@ -40,10 +48,17 @@
 		// Save the updated cards back to localStorage
 		localStorage.setItem(data.currentListingInfo.hash, JSON.stringify(currentListing));
 
-		console.log('all ids: ', Object.keys(currentListing.cards));
+		// Trigger reactivity by reassigning currentListing
+		currentListing = { ...currentListing };
+	}
 
-		console.log('listing: ', currentListing);
+	onMount(() => {
+		updateListing();
 	});
+
+	$: if (data && browser) {
+		updateListing();
+	}
 
 	$: updatedListing = currentListing;
 </script>

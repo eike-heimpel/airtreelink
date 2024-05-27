@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { editMode } from '$lib/stores/store';
+	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-french-toast';
 
 	type ContentField = {
 		type: string;
@@ -22,6 +24,8 @@
 
 	export let card: CardData;
 
+	let formLoading = false;
+
 	let showDeleteModal = false;
 	let showCardModal = false;
 
@@ -33,10 +37,9 @@
 		showDeleteModal = true;
 	}
 
-	function deleteRecommendation() {
+	function deleteCard() {
+		// send delte stuff
 		showDeleteModal = false;
-		const event = new CustomEvent('delete');
-		dispatchEvent(event);
 	}
 
 	function openDirections(address: string) {
@@ -60,10 +63,25 @@
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Delete</h3>
 			<p class="py-4">
-				Are you sure you want to delete the recommendation "{card.title}"?
+				Are you sure you want to delete your "{card.title}" card?
 			</p>
 			<div class="modal-action">
-				<button class="btn btn-error" on:click={deleteRecommendation}>Delete</button>
+				<form
+					method="POST"
+					action="?/deleteCard"
+					use:enhance={() => {
+						formLoading = true;
+						const toastId = toast.loading('Deleting card...');
+						return async ({ update }) => {
+							formLoading = false;
+							toast.success('Card deleted.', { id: toastId });
+							update();
+						};
+					}}
+				>
+					<input hidden name="cardId" value={card.id} />
+					<button class="btn btn-error">Delete</button>
+				</form>
 				<button class="btn" on:click={() => (showDeleteModal = false)}>Cancel</button>
 			</div>
 		</div>
