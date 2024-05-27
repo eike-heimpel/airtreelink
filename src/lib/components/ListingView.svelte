@@ -7,7 +7,9 @@
 
 	export let currentListing;
 
-	let activeTab = '';
+	console.log(currentListing);
+
+	let activeTab = 'home';
 </script>
 
 <div
@@ -30,7 +32,7 @@
 				<Recommendations />
 			{:else if activeTab === 'links'}
 				<Links />
-			{:else if activeTab === 'getStarted'}
+			{:else if activeTab === 'home'}
 				<BasicInfo />
 			{/if}
 		</div>

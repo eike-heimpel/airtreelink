@@ -7,20 +7,22 @@
 	export let data;
 
 	let cards = {};
-	let currentListing = data.currentListing;
-	let listing = JSON.parse(JSON.stringify(currentListing));
-	listing.cards = {};
+	let currentListingInfo = data.currentListingInfo;
+	let currentListing = JSON.parse(JSON.stringify(currentListingInfo));
+	currentListing.cards = {};
+
+	let updatedListing = {};
 
 	onMount(() => {
 		// Retrieve the last updated timestamp and cards from localStorage
 		const storedLastUpdated = localStorage.getItem('lastUpdated');
-		const storedListing = localStorage.getItem(data.currentListing.hash);
+		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
 
 		if (storedListing) {
-			listing = JSON.parse(storedListing);
+			currentListing = JSON.parse(storedListing);
 		}
 
-		console.log('Stored cards:', listing.cards);
+		console.log('Stored cards:', currentListing.cards);
 		console.log('Stored lastUpdated:', storedLastUpdated);
 
 		// Update cards with new data from the server
@@ -29,20 +31,22 @@
 		console.log('New cards:', Object.keys(newCards));
 
 		for (const card of newCards) {
-			listing.cards[card.id] = card;
+			currentListing.cards[card.id] = card;
 		}
 
 		// Update the lastUpdated timestamp in localStorage
 		localStorage.setItem('lastUpdated', data.lastChanged);
 
 		// Save the updated cards back to localStorage
-		localStorage.setItem(data.currentListing.hash, JSON.stringify(listing));
+		localStorage.setItem(data.currentListingInfo.hash, JSON.stringify(currentListing));
 
-		console.log('all ids: ', Object.keys(listing.cards));
+		console.log('all ids: ', Object.keys(currentListing.cards));
 
-		console.log('listing: ', listing);
+		console.log('listing: ', currentListing);
 	});
+
+	$: updatedListing = currentListing;
 </script>
 
-<ListingView {currentListing} />
-<ListingSettings {currentListing} />
+<ListingView currentListing={updatedListing} />
+<ListingSettings currentListing={updatedListing} />

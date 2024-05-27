@@ -26,26 +26,26 @@
 		<li class="flex-1">
 			<button
 				class="w-full py-2 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				'getStarted'
+				'home'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
 				on:click={() => {
-					activeTab = 'getStarted';
-					updateQueryParam('getStarted');
+					activeTab = 'home';
+					updateQueryParam('home');
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'getStarted';
-						updateQueryParam('getStarted');
+						activeTab = 'home';
+						updateQueryParam('home');
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'getStarted';
-					updateQueryParam('getStarted');
+					activeTab = 'home';
+					updateQueryParam('home');
 				}}
 			>
 				<HomeOutline class="w-6 h-6" />
-				<span class="hidden md:block">Basic 123s</span>
+				<span class="hidden md:block">Basic</span>
 			</button>
 		</li>
 		<li class="flex-1">

@@ -9,7 +9,7 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
     const listingId = parseInt(params.listingId)
 
     const parents = await parent();
-    const currentListing = parents.listings.find(listing => listing.id === listingId);
+    const currentListingInfo = parents.listings.find(listing => listing.id === listingId);
 
     const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq("listing_id", listingId);
 
@@ -25,11 +25,10 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
     } else {
         modifiedCards = Object.values(listingCards).filter(card => new Date(card.last_changed) > new Date(lastUpdated));
     }
-    console.log("Modified cards", modifiedCards.length)
 
     cookies.set('lastUpdated', new Date().toISOString(), { path: '/' });
 
-    return { currentListing, modifiedCards, lastChanged: new Date().toISOString() };
+    return { currentListingInfo, modifiedCards, lastChanged: new Date().toISOString() };
 
 };
 
