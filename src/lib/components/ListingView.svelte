@@ -7,8 +7,6 @@
 
 	export let currentListing;
 
-	$: console.log('Current listing:', currentListing);
-
 	let activeTab = 'home';
 </script>
 

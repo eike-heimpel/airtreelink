@@ -29,13 +29,13 @@
 	}
 </script>
 
-<div class="container mx-auto px-4">
+<div class="container mx-auto">
 	{#if $editMode}
 		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add</button>
 	{/if}
 
 	<div
-		class="grid grid-cols-1 md:grid-cols-2 gap-4"
+		class="grid grid-cols-1 md:grid-cols-2 gap-2"
 		use:dndzone={{
 			items: cards,
 			flipDurationMs: 200,
@@ -47,21 +47,23 @@
 	>
 		{#if type === 'recommendations'}
 			{#each cards as card (card.id)}
-				<div class="card bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
-					<ListingCard {card} />
+				<div class="bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+					<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
+						<ListingCard {card} />
+					</button>
 				</div>
 			{/each}
 		{:else if type === 'infos'}
 			{#each cards as card (card.id)}
-				<div class="card bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+				<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
 					<ListingCard {card} />
-				</div>
+				</button>
 			{/each}
 		{:else if type === 'home'}
 			{#each cards as card (card.id)}
-				<div class="card bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+				<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
 					<ListingCard {card} />
-				</div>
+				</button>
 			{/each}
 		{/if}
 	</div>

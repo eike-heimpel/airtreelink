@@ -37,9 +37,8 @@
 		showDeleteModal = true;
 	}
 
-	function deleteCard() {
-		// send delte stuff
-		showDeleteModal = false;
+	function openEditModal() {
+		// open edit modal
 	}
 
 	function openDirections(address: string) {
@@ -48,14 +47,42 @@
 	}
 </script>
 
-<div class="card-body">
-	<h2 class="card-title text-2xl font-bold">{card.title}</h2>
-	<div class="card-actions justify-end">
-		<button class="btn btn-primary" on:click={openCardModal}>View</button>
-		{#if $editMode}
-			<button class="btn btn-error" on:click={openDeleteModal}>Delete</button>
+<input type="checkbox" />
+
+<div class="collapse-title text-xl font-medium">
+	{card.title}
+</div>
+<div class="collapse-content flex flex-col gap-2">
+	{#each card.content_fields as field}
+		{#if field.type === 'text'}
+			<p class="mt-2 text-neutral">{field.content}</p>
+		{:else if field.type === 'video' && field.url}
+			<div class="mt-4">
+				<iframe
+					class="w-full aspect-video"
+					src={field.url}
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen
+					title="Video"
+				></iframe>
+			</div>
+		{:else if field.type === 'address'}
+			<address class="mt-2 not-italic text-secondary">
+				<button
+					class="btn btn-primary"
+					on:click={() =>
+						openDirections(
+							card.content_fields.find((field) => field.type === 'address')?.content || ''
+						)}
+				>
+					Get Directions
+				</button>
+			</address>
+		{:else if field.type === 'link' && field.url}
+			<a class="link" href={field.url} target="_blank" rel="noopener noreferrer">{field.content}</a>
 		{/if}
-	</div>
+	{/each}
 </div>
 
 {#if showDeleteModal}
