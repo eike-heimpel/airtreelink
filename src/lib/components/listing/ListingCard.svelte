@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { editMode } from '$lib/stores/store';
-	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-french-toast';
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
-	import type { Database } from '$lib/types/supabase';
 	import type { ContentField } from '$lib/types/fields';
+	import type { Database } from '$lib/types/supabase';
 
-	import TextFieldComponent from '$components/fields/TextField.svelte';
-	import VideoFieldComponent from '$components/fields/VideoField.svelte';
-	import AddressFieldComponent from '$components/fields/AddressField.svelte';
-	import LinkFieldComponent from '$components/fields/LinkField.svelte';
+	import TextFieldComponent from '$components/listing/cards/fields/TextField.svelte';
+	import VideoFieldComponent from '$components/listing/cards/fields/VideoField.svelte';
+	import AddressFieldComponent from '$components/listing/cards/fields/AddressField.svelte';
+	import LinkFieldComponent from '$components/listing/cards/fields/LinkField.svelte';
+	import Title from '$components/listing/cards/Title.svelte';
 
 	type ListingCard = Omit<
 		Database['public']['Tables']['listing_cards']['Row'],
@@ -22,26 +22,14 @@
 	export let card: ListingCard;
 
 	let formLoading = false;
-	let showDeleteModal = false;
-	let showEditModal = false;
 	let editedCard: ListingCard = { ...card };
 
-	function openDeleteModal() {
-		showDeleteModal = true;
+	function updateField(index: number, eventDetail) {
+		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
-	function openEditModal() {
-		editedCard = { ...card };
-		showEditModal = true;
-	}
-
-	function saveEdit() {
+	async function saveEdit() {
 		editedCard.last_changed = new Date().toISOString();
-		updateCard();
-		showEditModal = false;
-	}
-
-	async function updateCard() {
 		const toastId = toast.loading('Updating card...');
 
 		const resp = await fetch('/api/listing/card', {
@@ -63,138 +51,35 @@
 		}, $toastPromiseDelayMs);
 
 		invalidateAll();
+		$editMode = false;
 	}
 </script>
 
 <input type="radio" name="my-accordion-1" />
 
-<div class="collapse-title text-xl font-medium">
-	{card.title}
+<div class="collapse-title">
+	<Title bind:title={editedCard.title} />
 </div>
 
 <div class="collapse-content flex flex-col gap-2">
-	{#each card.content_fields as field}
+	{#each editedCard.content_fields as field, index}
 		{#if field.type === 'text'}
-			<TextFieldComponent {field} />
+			<TextFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
 		{:else if field.type === 'video'}
-			<VideoFieldComponent {field} />
+			<VideoFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
 		{:else if field.type === 'address'}
-			<AddressFieldComponent {field} />
+			<AddressFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
 		{:else if field.type === 'link'}
-			<LinkFieldComponent {field} />
+			<LinkFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
 		{/if}
 	{/each}
 
 	{#if $editMode}
 		<div class="flex justify-end gap-4 p-4">
-			<button class="btn btn-accent" on:click={openEditModal}>Edit</button>
-			<button class="btn btn-error" on:click={openDeleteModal}>Delete</button>
+			<button class="btn btn-primary" on:click={saveEdit}>Save All</button>
 		</div>
 	{/if}
 </div>
-
-{#if showDeleteModal}
-	<dialog class="modal modal-open modal-bottom sm:modal-middle">
-		<div class="modal-box">
-			<h3 class="font-bold text-lg">Confirm Delete</h3>
-			<p class="py-4">Are you sure you want to delete your "{card.title}" card?</p>
-			<div class="modal-action">
-				<form
-					method="POST"
-					action="?/deleteCard"
-					use:enhance={() => {
-						formLoading = true;
-						const toastId = toast.loading('Deleting card...');
-						return async ({ update }) => {
-							formLoading = false;
-							setTimeout(() => {
-								toast.success('Card deleted.', { id: toastId });
-							}, $toastPromiseDelayMs);
-							update();
-						};
-					}}
-				>
-					<input hidden name="cardId" value={card.id} />
-					<button class="btn btn-error">Delete</button>
-				</form>
-				<button class="btn" on:click={() => (showDeleteModal = false)}>Cancel</button>
-			</div>
-		</div>
-	</dialog>
-{/if}
-
-{#if showEditModal}
-	<dialog class="modal modal-open modal-bottom sm:modal-middle">
-		<div class="modal-box">
-			<h3 class="font-bold text-lg">Edit Card</h3>
-			<div class="form-control">
-				<label class="label">
-					<span class="label-text">Title</span>
-				</label>
-				<input type="text" class="input input-bordered" bind:value={editedCard.title} />
-			</div>
-
-			{#each editedCard.content_fields as field, index (field.type)}
-				{#if field.type === 'text'}
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Text Content</span>
-						</label>
-						<textarea
-							class="textarea textarea-bordered"
-							bind:value={editedCard.content_fields[index].content}
-						></textarea>
-					</div>
-				{:else if field.type === 'video'}
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Video URL</span>
-						</label>
-						<input
-							type="text"
-							class="input input-bordered"
-							bind:value={editedCard.content_fields[index].url}
-						/>
-					</div>
-				{:else if field.type === 'address'}
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Address</span>
-						</label>
-						<input
-							type="text"
-							class="input input-bordered"
-							bind:value={editedCard.content_fields[index].content}
-						/>
-					</div>
-				{:else if field.type === 'link'}
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Link Text</span>
-						</label>
-						<input
-							type="text"
-							class="input input-bordered"
-							bind:value={editedCard.content_fields[index].content}
-						/>
-						<label class="label">
-							<span class="label-text">Link URL</span>
-						</label>
-						<input
-							type="text"
-							class="input input-bordered"
-							bind:value={editedCard.content_fields[index].url}
-						/>
-					</div>
-				{/if}
-			{/each}
-			<div class="modal-action">
-				<button class="btn btn-primary" on:click={saveEdit}>Save</button>
-				<button class="btn" on:click={() => (showEditModal = false)}>Cancel</button>
-			</div>
-		</div>
-	</dialog>
-{/if}
 
 <style>
 	.line-clamp-3 {

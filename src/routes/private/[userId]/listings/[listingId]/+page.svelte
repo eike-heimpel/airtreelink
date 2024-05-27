@@ -27,6 +27,8 @@
 
 		// Update cards with new data from the server
 		const newCards = data.modifiedCards;
+		console.log('-----');
+		console.log(newCards);
 
 		for (const card of newCards) {
 			currentListing.cards[card.id] = card;
