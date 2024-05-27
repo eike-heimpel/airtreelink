@@ -1,4 +1,7 @@
 import { error } from "@sveltejs/kit";
+import type { Database } from '$lib/types/supabase';
+
+type Listing = Database['public']['Tables']['Listings']['Row'];
 
 export const load = async ({ locals, params, url }) => {
 
@@ -14,6 +17,6 @@ export const load = async ({ locals, params, url }) => {
     }
 
     return {
-        listing: listing.data[0]
+        listing: listing.data[0] as Listing
     }
 }

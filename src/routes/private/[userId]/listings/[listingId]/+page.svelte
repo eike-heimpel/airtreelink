@@ -1,15 +1,18 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import ListingView from '$components/ListingView.svelte';
 	import ListingSettings from '$components/listing/ListingSettings.svelte';
 	import { toast } from 'svelte-french-toast';
 	import { browser } from '$app/environment';
+	import type { Database } from '$lib/types/supabase';
+
+	type Listing = Database['public']['Tables']['Listings']['Row'];
 
 	export let data;
 
-	let cards = {};
-	let currentListingInfo = data.currentListingInfo;
-	let currentListing = JSON.parse(JSON.stringify(currentListingInfo));
+	let currentListingInfo: Listing = data.currentListingInfo;
+	let currentListing: Listing = JSON.parse(JSON.stringify(currentListingInfo));
+
 	currentListing.cards = {};
 
 	let updatedListing = {};
@@ -18,7 +21,6 @@
 		// Retrieve the last updated timestamp and cards from localStorage
 		const storedLastUpdated = localStorage.getItem('lastUpdated');
 		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
-
 		if (storedListing) {
 			currentListing = JSON.parse(storedListing);
 		}
@@ -32,6 +34,9 @@
 
 		// Remove deleted cards from local storage
 		const allCardIds = data.allCardIds;
+
+		console.log('All card IDs:', allCardIds);
+		console.log(Object.keys(currentListing.cards));
 
 		for (const id of Object.keys(currentListing.cards)) {
 			if (!allCardIds.includes(parseInt(id))) {

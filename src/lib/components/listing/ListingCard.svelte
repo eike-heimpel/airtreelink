@@ -4,33 +4,27 @@
 	import { toast } from 'svelte-french-toast';
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
+	import type { Database } from '$lib/types/supabase';
+	import type { ContentField } from '$lib/types/fields';
 
-	type ContentField = {
-		type: string;
-		content: string;
-		url?: string;
-	};
+	import TextFieldComponent from '$components/fields/TextField.svelte';
+	import VideoFieldComponent from '$components/fields/VideoField.svelte';
+	import AddressFieldComponent from '$components/fields/AddressField.svelte';
+	import LinkFieldComponent from '$components/fields/LinkField.svelte';
 
-	type CardData = {
-		id: number;
-		created_at: string;
-		last_changed: string;
-		title: string;
-		description: string | null;
-		listing_id: number;
+	type ListingCard = Omit<
+		Database['public']['Tables']['listing_cards']['Row'],
+		'content_fields'
+	> & {
 		content_fields: ContentField[];
-		type: string | null;
-		is_recommended: boolean;
-		user_id: string;
 	};
 
-	export let card: CardData;
+	export let card: ListingCard;
 
 	let formLoading = false;
 	let showDeleteModal = false;
-	let showCardModal = false;
 	let showEditModal = false;
-	let editedCard: CardData = { ...card };
+	let editedCard: ListingCard = { ...card };
 
 	function openDeleteModal() {
 		showDeleteModal = true;
@@ -42,8 +36,6 @@
 	}
 
 	function saveEdit() {
-		// Placeholder function for updating the card
-
 		editedCard.last_changed = new Date().toISOString();
 		updateCard();
 		showEditModal = false;
@@ -68,14 +60,9 @@
 
 		setTimeout(() => {
 			toast.success('Card updated.', { id: toastId });
-		}, $toastPromiseDelayMs); // give the site some time to update
+		}, $toastPromiseDelayMs);
 
 		invalidateAll();
-	}
-
-	function openDirections(address: string) {
-		const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-		window.open(url, '_blank');
 	}
 </script>
 
@@ -88,34 +75,16 @@
 <div class="collapse-content flex flex-col gap-2">
 	{#each card.content_fields as field}
 		{#if field.type === 'text'}
-			<p class="mt-2 text-neutral">{field.content}</p>
-		{:else if field.type === 'video' && field.url}
-			<div class="mt-4">
-				<iframe
-					class="w-full aspect-video"
-					src={field.url}
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-					allowfullscreen
-					title="Video"
-				></iframe>
-			</div>
+			<TextFieldComponent {field} />
+		{:else if field.type === 'video'}
+			<VideoFieldComponent {field} />
 		{:else if field.type === 'address'}
-			<address class="mt-2 not-italic text-secondary">
-				<button
-					class="btn btn-primary"
-					on:click={() =>
-						openDirections(
-							card.content_fields.find((field) => field.type === 'address')?.content || ''
-						)}
-				>
-					Get Directions
-				</button>
-			</address>
-		{:else if field.type === 'link' && field.url}
-			<a class="link" href={field.url} target="_blank" rel="noopener noreferrer">{field.content}</a>
+			<AddressFieldComponent {field} />
+		{:else if field.type === 'link'}
+			<LinkFieldComponent {field} />
 		{/if}
 	{/each}
+
 	{#if $editMode}
 		<div class="flex justify-end gap-4 p-4">
 			<button class="btn btn-accent" on:click={openEditModal}>Edit</button>
@@ -128,9 +97,7 @@
 	<dialog class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Delete</h3>
-			<p class="py-4">
-				Are you sure you want to delete your "{card.title}" card?
-			</p>
+			<p class="py-4">Are you sure you want to delete your "{card.title}" card?</p>
 			<div class="modal-action">
 				<form
 					method="POST"

@@ -7,48 +7,52 @@
 
 	export let currentListing;
 
+	$: console.log(currentListing);
+
 	let activeTab = 'home';
 </script>
 
-<div
-	class="hero min-h-screen w-full"
-	style="background-image: url({currentListing.title_image_url});"
->
-	<div class="hero-overlay bg-opacity-60"></div>
+{#if currentListing}
+	<div
+		class="hero min-h-screen w-full"
+		style="background-image: url({currentListing.title_image_url});"
+	>
+		<div class="hero-overlay bg-opacity-60"></div>
 
-	<div class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ? 'pt-4' : 'pt-20'}">
-		<div class="w-full flex justify-center items-center pb-4">
-			<h1
-				class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
-			>
-				{currentListing.name}
-			</h1>
+		<div class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ? 'pt-4' : 'pt-20'}">
+			<div class="w-full flex justify-center items-center pb-4">
+				<h1
+					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
+				>
+					{currentListing.name}
+				</h1>
+			</div>
+
+			<div class="text-center flex justify-center">
+				{#if activeTab === 'recommendations'}
+					<ListingTab
+						cards={Object.values(currentListing.cards).filter(
+							(card) => card.type === 'recommendation'
+						)}
+						type="recommendations"
+					/>
+				{:else if activeTab === 'links'}
+					<ListingTab
+						cards={Object.values(currentListing.cards).filter((card) => card.type === 'info')}
+						type="infos"
+					/>
+				{:else if activeTab === 'home'}
+					<ListingTab
+						cards={Object.values(currentListing.cards).filter((card) => card.type === 'home')}
+						type="home"
+					/>
+				{/if}
+			</div>
 		</div>
 
-		<div class="text-center flex justify-center">
-			{#if activeTab === 'recommendations'}
-				<ListingTab
-					cards={Object.values(currentListing.cards).filter(
-						(card) => card.type === 'recommendation'
-					)}
-					type="recommendations"
-				/>
-			{:else if activeTab === 'links'}
-				<ListingTab
-					cards={Object.values(currentListing.cards).filter((card) => card.type === 'info')}
-					type="infos"
-				/>
-			{:else if activeTab === 'home'}
-				<ListingTab
-					cards={Object.values(currentListing.cards).filter((card) => card.type === 'home')}
-					type="home"
-				/>
-			{/if}
-		</div>
+		<NavigationMenu bind:activeTab />
 	</div>
-
-	<NavigationMenu bind:activeTab />
-</div>
+{/if}
 
 <style>
 	.listing-info {
