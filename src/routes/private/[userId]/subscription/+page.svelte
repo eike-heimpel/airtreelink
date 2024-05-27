@@ -6,6 +6,7 @@
 	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
 	import Tooltip from '$components/UI/Tooltip.svelte';
 	import { onMount } from 'svelte';
+	import { toastPromiseDelayMs } from '$lib/stores/store';
 
 	export let data;
 	$: ({ session } = data);
@@ -41,12 +42,11 @@
 				toast.error('Operation failed!', { id: toastId });
 			} finally {
 				setTimeout(() => {
-					// give the UI some time to update from the new stripe info
 					updateModal.close();
 					cancelModal.close();
 					renewModal.close();
 					switchToYearlyModal.close();
-				}, 1000);
+				}, $toastPromiseDelayMs);
 			}
 		};
 	};

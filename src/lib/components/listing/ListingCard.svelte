@@ -2,6 +2,8 @@
 	import { editMode } from '$lib/stores/store';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-french-toast';
+	import { invalidateAll } from '$app/navigation';
+	import { toastPromiseDelayMs } from '$lib/stores/store';
 
 	type ContentField = {
 		type: string;
@@ -25,20 +27,50 @@
 	export let card: CardData;
 
 	let formLoading = false;
-
 	let showDeleteModal = false;
 	let showCardModal = false;
-
-	function openCardModal() {
-		showCardModal = true;
-	}
+	let showEditModal = false;
+	let editedCard: CardData = { ...card };
 
 	function openDeleteModal() {
 		showDeleteModal = true;
 	}
 
 	function openEditModal() {
-		// open edit modal
+		editedCard = { ...card };
+		showEditModal = true;
+	}
+
+	function saveEdit() {
+		// Placeholder function for updating the card
+
+		editedCard.last_changed = new Date().toISOString();
+		updateCard();
+		showEditModal = false;
+	}
+
+	async function updateCard() {
+		const toastId = toast.loading('Updating card...');
+
+		const resp = await fetch('/api/listing/card', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ card: editedCard })
+		});
+
+		if (!resp.ok) {
+			console.error('Error updating card:', resp.statusText);
+			toast.error('Error updating card.', { id: toastId });
+			return;
+		}
+
+		setTimeout(() => {
+			toast.success('Card updated.', { id: toastId });
+		}, $toastPromiseDelayMs); // give the site some time to update
+
+		invalidateAll();
 	}
 
 	function openDirections(address: string) {
@@ -47,11 +79,12 @@
 	}
 </script>
 
-<input type="checkbox" />
+<input type="radio" name="my-accordion-1" />
 
 <div class="collapse-title text-xl font-medium">
 	{card.title}
 </div>
+
 <div class="collapse-content flex flex-col gap-2">
 	{#each card.content_fields as field}
 		{#if field.type === 'text'}
@@ -83,6 +116,12 @@
 			<a class="link" href={field.url} target="_blank" rel="noopener noreferrer">{field.content}</a>
 		{/if}
 	{/each}
+	{#if $editMode}
+		<div class="flex justify-end gap-4 p-4">
+			<button class="btn btn-accent" on:click={openEditModal}>Edit</button>
+			<button class="btn btn-error" on:click={openDeleteModal}>Delete</button>
+		</div>
+	{/if}
 </div>
 
 {#if showDeleteModal}
@@ -101,7 +140,9 @@
 						const toastId = toast.loading('Deleting card...');
 						return async ({ update }) => {
 							formLoading = false;
-							toast.success('Card deleted.', { id: toastId });
+							setTimeout(() => {
+								toast.success('Card deleted.', { id: toastId });
+							}, $toastPromiseDelayMs);
 							update();
 						};
 					}}
@@ -115,46 +156,74 @@
 	</dialog>
 {/if}
 
-{#if showCardModal}
+{#if showEditModal}
 	<dialog class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
-			<h2 class="font-bold text-2xl">{card.title}</h2>
-			<div class="flex flex-col gap-2">
-				{#each card.content_fields as field}
-					{#if field.type === 'text'}
-						<p class="mt-2 text-neutral">{field.content}</p>
-					{:else if field.type === 'video' && field.url}
-						<div class="mt-4">
-							<iframe
-								class="w-full aspect-video"
-								src={field.url}
-								frameborder="0"
-								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-								allowfullscreen
-								title="Video"
-							></iframe>
-						</div>
-					{:else if field.type === 'address'}
-						<address class="mt-2 not-italic text-secondary">
-							<button
-								class="btn btn-primary"
-								on:click={() =>
-									openDirections(
-										card.content_fields.find((field) => field.type === 'address')?.content || ''
-									)}
-							>
-								Get Directions
-							</button>
-						</address>
-					{:else if field.type === 'link' && field.url}
-						<a class="link" href={field.url} target="_blank" rel="noopener noreferrer"
-							>{field.content}</a
-						>
-					{/if}
-				{/each}
-				<div class="modal-action">
-					<button class="btn" on:click={() => (showCardModal = false)}>Close</button>
-				</div>
+			<h3 class="font-bold text-lg">Edit Card</h3>
+			<div class="form-control">
+				<label class="label">
+					<span class="label-text">Title</span>
+				</label>
+				<input type="text" class="input input-bordered" bind:value={editedCard.title} />
+			</div>
+
+			{#each editedCard.content_fields as field, index (field.type)}
+				{#if field.type === 'text'}
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Text Content</span>
+						</label>
+						<textarea
+							class="textarea textarea-bordered"
+							bind:value={editedCard.content_fields[index].content}
+						></textarea>
+					</div>
+				{:else if field.type === 'video'}
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Video URL</span>
+						</label>
+						<input
+							type="text"
+							class="input input-bordered"
+							bind:value={editedCard.content_fields[index].url}
+						/>
+					</div>
+				{:else if field.type === 'address'}
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Address</span>
+						</label>
+						<input
+							type="text"
+							class="input input-bordered"
+							bind:value={editedCard.content_fields[index].content}
+						/>
+					</div>
+				{:else if field.type === 'link'}
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Link Text</span>
+						</label>
+						<input
+							type="text"
+							class="input input-bordered"
+							bind:value={editedCard.content_fields[index].content}
+						/>
+						<label class="label">
+							<span class="label-text">Link URL</span>
+						</label>
+						<input
+							type="text"
+							class="input input-bordered"
+							bind:value={editedCard.content_fields[index].url}
+						/>
+					</div>
+				{/if}
+			{/each}
+			<div class="modal-action">
+				<button class="btn btn-primary" on:click={saveEdit}>Save</button>
+				<button class="btn" on:click={() => (showEditModal = false)}>Cancel</button>
 			</div>
 		</div>
 	</dialog>

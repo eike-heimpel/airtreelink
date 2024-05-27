@@ -19,6 +19,7 @@
 	}
 
 	function handleDndConsider(event: CustomEvent<DndEvent>) {
+		console.log(event.detail);
 		const { items: newItems } = event.detail;
 		cards = newItems;
 	}
@@ -30,42 +31,31 @@
 </script>
 
 <div class="container mx-auto">
-	{#if $editMode}
+	{#if editMode}
 		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add</button>
 	{/if}
 
 	<div
-		class="grid grid-cols-1 md:grid-cols-2 gap-2"
+		class="grid grid-cols-1 md:grid-cols-2 gap-4"
 		use:dndzone={{
 			items: cards,
 			flipDurationMs: 200,
 			dropTargetStyle: {},
-			dragDisabled: !$editMode
+			dragDisabled: !editMode
 		}}
 		on:consider={handleDndConsider}
 		on:finalize={handleDndFinalize}
 	>
-		{#if type === 'recommendations'}
-			{#each cards as card (card.id)}
-				<div class="bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
-					<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
-						<ListingCard {card} />
-					</button>
-				</div>
-			{/each}
-		{:else if type === 'infos'}
-			{#each cards as card (card.id)}
-				<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
+		{#each cards as card (card.id)}
+			<div class="col-span-1">
+				<button
+					tabindex="0"
+					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full"
+				>
 					<ListingCard {card} />
 				</button>
-			{/each}
-		{:else if type === 'home'}
-			{#each cards as card (card.id)}
-				<button tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-200">
-					<ListingCard {card} />
-				</button>
-			{/each}
-		{/if}
+			</div>
+		{/each}
 	</div>
 
 	{#if showAddModal}

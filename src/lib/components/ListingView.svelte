@@ -25,7 +25,7 @@
 			</h1>
 		</div>
 
-		<div class="text-center flex items-center justify-center">
+		<div class="text-center flex justify-center">
 			{#if activeTab === 'recommendations'}
 				<ListingTab
 					cards={Object.values(currentListing.cards).filter(
