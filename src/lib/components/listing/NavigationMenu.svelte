@@ -1,9 +1,24 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import HomeOutline from 'virtual:icons/mdi/home-outline';
 	import InfoOutline from 'virtual:icons/mdi/information-outline';
 	import StarOutline from 'virtual:icons/mdi/star-outline';
+	import { goto } from '$app/navigation';
 
-	export let activeTab = 'recommendations';
+	export let activeTab = '';
+
+	const queryPage = get(page).url.searchParams.get('page');
+	if (queryPage) {
+		activeTab = queryPage;
+	}
+
+	function updateQueryParam(tab: string) {
+		const url = new URL(window.location.href);
+		url.searchParams.set('page', tab);
+		goto(url.toString(), { replaceState: true });
+	}
 </script>
 
 <div class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center">
@@ -14,13 +29,20 @@
 				'getStarted'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
-				on:click={() => (activeTab = 'getStarted')}
+				on:click={() => {
+					activeTab = 'getStarted';
+					updateQueryParam('getStarted');
+				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
 						activeTab = 'getStarted';
+						updateQueryParam('getStarted');
 					}
 				}}
-				on:touchstart={() => (activeTab = 'getStarted')}
+				on:touchstart={() => {
+					activeTab = 'getStarted';
+					updateQueryParam('getStarted');
+				}}
 			>
 				<HomeOutline class="w-6 h-6" />
 				<span class="hidden md:block">Basic 123s</span>
@@ -32,13 +54,20 @@
 				'links'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
-				on:click={() => (activeTab = 'links')}
+				on:click={() => {
+					activeTab = 'links';
+					updateQueryParam('links');
+				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
 						activeTab = 'links';
+						updateQueryParam('links');
 					}
 				}}
-				on:touchstart={() => (activeTab = 'links')}
+				on:touchstart={() => {
+					activeTab = 'links';
+					updateQueryParam('links');
+				}}
 			>
 				<InfoOutline class="w-6 h-6" />
 				<span class="hidden md:block">House Info</span>
@@ -50,13 +79,20 @@
 				'recommendations'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
-				on:click={() => (activeTab = 'recommendations')}
+				on:click={() => {
+					activeTab = 'recommendations';
+					updateQueryParam('recommendations');
+				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
 						activeTab = 'recommendations';
+						updateQueryParam('recommendations');
 					}
 				}}
-				on:touchstart={() => (activeTab = 'recommendations')}
+				on:touchstart={() => {
+					activeTab = 'recommendations';
+					updateQueryParam('recommendations');
+				}}
 			>
 				<StarOutline class="w-6 h-6" />
 				<span class="hidden md:block">Recs</span>

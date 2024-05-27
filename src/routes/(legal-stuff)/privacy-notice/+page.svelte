@@ -57,6 +57,19 @@
 		in the US-East region. We have ensured that Supabase provides an adequate level of data protection.
 	</p>
 	<p class="mt-4">
+		<strong>Anonymous Data Collection</strong> <br />
+		We collect anonymous click and behavior data to optimize our services. For example, we may log clicks
+		on buttons like "Home" to understand usage patterns and improve the user interface. This data does
+		not contain any personal information and is not linked to any individual.
+	</p>
+	<p class="mt-4">
+		<strong>Cookies</strong> <br />
+		We use cookies to enhance your experience and ensure you have the latest information available. Specifically,
+		we use a cookie to store the last update timestamp of your data, ensuring you always receive the
+		most up-to-date information efficiently. These cookies are essential for the proper functioning of
+		our service and do not track you for advertising purposes.
+	</p>
+	<p class="mt-4">
 		<strong>Your Rights</strong> <br />
 		Under the GDPR, you have the following rights regarding your personal data:
 	</p>
@@ -132,6 +145,21 @@
 		Ihre Daten werden sicher in Supabase gespeichert, einem Dienst, den wir für unsere Datenbankanforderungen
 		nutzen. Die Daten werden in der Region US-East gespeichert. Wir haben sichergestellt, dass Supabase
 		ein angemessenes Datenschutzniveau bietet.
+	</p>
+	<p class="mt-4">
+		<strong>Erhebung anonymer Daten</strong> <br />
+		Wir sammeln anonyme Klick- und Verhaltensdaten, um unsere Dienste zu optimieren. Zum Beispiel können
+		wir Klicks auf Schaltflächen wie "Startseite" protokollieren, um Nutzungsmuster zu verstehen und
+		die Benutzeroberfläche zu verbessern. Diese Daten enthalten keine persönlichen Informationen und
+		sind nicht mit einzelnen Benutzern verknüpft.
+	</p>
+	<p class="mt-4">
+		<strong>Cookies</strong> <br />
+		Wir verwenden Cookies, um Ihre Erfahrung zu verbessern und sicherzustellen, dass Sie die neuesten
+		Informationen erhalten. Insbesondere verwenden wir ein Cookie, um den Zeitpunkt der letzten Aktualisierung
+		Ihrer Daten zu speichern und sicherzustellen, dass Sie stets die aktuellsten Informationen effizient
+		erhalten. Diese Cookies sind für das ordnungsgemäße Funktionieren unseres Dienstes unerlässlich und
+		verfolgen Sie nicht zu Werbezwecken.
 	</p>
 	<p class="mt-4">
 		<strong>Ihre Rechte</strong> <br />

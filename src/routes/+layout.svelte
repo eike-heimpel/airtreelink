@@ -48,6 +48,7 @@
 
 <svelte:head>
 	<meta name="robots" content="noindex, nofollow" />
+	<title>GuestLink</title>
 </svelte:head>
 
 <slot />
