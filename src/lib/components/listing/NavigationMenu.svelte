@@ -45,7 +45,7 @@
 				}}
 			>
 				<HomeOutline class="w-6 h-6" />
-				<span class="hidden md:block">Basic</span>
+				<span class="hidden md:block">Home</span>
 			</button>
 		</li>
 		<li class="flex-1">

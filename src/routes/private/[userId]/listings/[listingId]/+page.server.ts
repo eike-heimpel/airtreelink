@@ -13,6 +13,9 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
 
     const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq("listing_id", listingId);
 
+    console.log(JSON.stringify
+        (listingCards))
+
     if (listingCardsError) {
         throw error(500, listingCardsError);
     }

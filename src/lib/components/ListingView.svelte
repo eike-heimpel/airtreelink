@@ -1,13 +1,11 @@
 <script lang="ts">
 	import Links from '$components/listing/Links.svelte';
-	import Recommendations from '$components/listing/Recommendations.svelte';
+	import ListingTab from '$components/listing/ListingTab.svelte';
 	import NavigationMenu from '$components/listing/NavigationMenu.svelte';
 	import BasicInfo from '$components/listing/BasicInfo.svelte';
 	import { previewMode } from '$lib/stores/store';
 
 	export let currentListing;
-
-	console.log(currentListing);
 
 	let activeTab = 'home';
 </script>
@@ -29,11 +27,22 @@
 
 		<div class="text-center flex items-center justify-center">
 			{#if activeTab === 'recommendations'}
-				<Recommendations />
+				<ListingTab
+					cards={Object.values(currentListing.cards).filter(
+						(card) => card.type === 'recommendation'
+					)}
+					type="recommendations"
+				/>
 			{:else if activeTab === 'links'}
-				<Links />
+				<ListingTab
+					cards={Object.values(currentListing.cards).filter((card) => card.type === 'info')}
+					type="infos"
+				/>
 			{:else if activeTab === 'home'}
-				<BasicInfo />
+				<ListingTab
+					cards={Object.values(currentListing.cards).filter((card) => card.type === 'home')}
+					type="home"
+				/>
 			{/if}
 		</div>
 	</div>

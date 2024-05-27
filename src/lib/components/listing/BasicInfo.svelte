@@ -1,115 +1,113 @@
 <script lang="ts">
-	import { editMode } from '$lib/stores/store';
 	import { onMount } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { dndzone } from 'svelte-dnd-action';
+	import { editMode } from '$lib/stores/store';
+	import ListingCard from './ListingCard.svelte';
 
-	let address = '123 Main St, City, State, ZIP';
-	let description = 'Welcome to our beautiful home! We hope you enjoy your stay.';
-	let contact = {
-		name: 'John Doe',
-		phone: '(123) 456-7890',
-		email: 'john.doe@example.com'
+	export let infos = [];
+
+	let showAddModal = false;
+	let newRecommendation = {
+		id: 0,
+		title: '',
+		description: '',
+		address: ''
 	};
 
-	function openGoogleMaps() {
-		const encodedAddress = encodeURIComponent(address);
-		const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
-		window.open(mapsUrl, '_blank');
+	function openAddModal() {
+		newRecommendation = {
+			id: recommendations.length + 1,
+			title: '',
+			description: '',
+			address: ''
+		};
+		showAddModal = true;
+	}
+
+	function addRecommendation() {
+		recommendations = [...recommendations, newRecommendation];
+		showAddModal = false;
+	}
+
+	function handleDndConsider(event: CustomEvent<DndEvent>) {
+		const { items: newItems } = event.detail;
+		recommendations = newItems;
+	}
+
+	function handleDndFinalize(event: CustomEvent<DndEvent>) {
+		const { items: newItems } = event.detail;
+		recommendations = newItems;
 	}
 </script>
 
-<div
-	class="container mx-auto px-4 py-8 text-shadow flex flex-col items-center justify-around gap-4"
->
-	<div class="divider divider-accent">
-		<h2 class="text-xl font-semibold text-accent">Description</h2>
-	</div>
-	<div class="">
-		{#if $editMode}
-			<textarea class="textarea textarea-bordered text-black w-96 max-w-xs" bind:value={description}
-			></textarea>
-		{:else}
-			<p class="text-lg">{description}</p>
-		{/if}
-		<div class="flex justify-end mt-4">
-			{#if $editMode}
-				<button class="btn btn-secondary mr-2">
-					{$editMode ? 'Save' : 'Edit'}
-				</button>
-				<button class="btn btn-error">Remove</button>
-			{/if}
-		</div>
-	</div>
-	<div class="divider divider-accent">
-		<h2 class="text-xl font-semibold text-accent">Address</h2>
+<div class="container mx-auto px-4">
+	{#if $editMode}
+		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add Recommendation</button>
+	{/if}
+
+	<div
+		class="grid grid-cols-1 md:grid-cols-2 gap-4"
+		use:dndzone={{
+			items: recommendations,
+			flipDurationMs: 200,
+			dropTargetStyle: {},
+			dragDisabled: !$editMode
+		}}
+		on:consider={handleDndConsider}
+		on:finalize={handleDndFinalize}
+	>
+		{#each recommendations as recommendation (recommendation.id)}
+			<div class="card bg-base-100 bg-opacity-75 shadow-2xl m-2" animate:flip={{ duration: 200 }}>
+				<ListingCard card={recommendation} />
+			</div>
+		{/each}
 	</div>
 
-	<div class="">
-		{#if $editMode}
-			<input
-				class="input input-bordered text-black w-96 max-w-xs"
-				type="text"
-				bind:value={address}
-			/>
-		{:else}
-			<p class="text-lg">{address}</p>
-		{/if}
-		<div class="flex justify-center mt-4">
-			<button
-				class="btn btn-primary btn-outline mr-2"
-				class:hidden={$editMode}
-				on:click={openGoogleMaps}>Get Directions</button
-			>
-			{#if $editMode}
-				<button class="btn btn-secondary mr-2">
-					{$editMode ? 'Save' : 'Edit'}
-				</button>
-				<button class="btn btn-error">Remove</button>
-			{/if}
-		</div>
-	</div>
-
-	<div class="divider divider-accent">
-		<h2 class="text-xl font-semibold text-accent">Contact Information</h2>
-	</div>
-	<div class="">
-		{#if $editMode}
-			<input
-				class="input input-bordered text-black w-96 max-w-xs mb-2"
-				type="text"
-				bind:value={contact.name}
-				placeholder="Name"
-			/>
-			<input
-				class="input input-bordered text-black w-96 max-w-xs mb-2"
-				type="text"
-				bind:value={contact.phone}
-				placeholder="Phone Number"
-			/>
-			<input
-				class="input input-bordered text-black w-96 max-w-xs mb-2"
-				type="text"
-				bind:value={contact.email}
-				placeholder="Email"
-			/>
-		{:else}
-			<p class="text-lg"><strong>Name:</strong> {contact.name}</p>
-			<p class="text-lg"><strong>Phone:</strong> {contact.phone}</p>
-			<p class="text-lg"><strong>Email:</strong> {contact.email}</p>
-		{/if}
-		<div class="flex justify-end mt-4">
-			{#if $editMode}
-				<button class="btn btn-secondary mr-2">
-					{$editMode ? 'Save' : 'Edit'}
-				</button>
-				<button class="btn btn-error">Remove</button>
-			{/if}
-		</div>
-	</div>
+	{#if showAddModal}
+		<dialog class="modal modal-open modal-bottom sm:modal-middle">
+			<div class="modal-box">
+				<h3 class="font-bold text-lg">Add Recommendation</h3>
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text">Title</span>
+					</label>
+					<input type="text" class="input input-bordered" bind:value={newRecommendation.title} />
+				</div>
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text">Description</span>
+					</label>
+					<textarea class="textarea textarea-bordered" bind:value={newRecommendation.description}
+					></textarea>
+				</div>
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text">Address</span>
+					</label>
+					<input type="text" class="input input-bordered" bind:value={newRecommendation.address} />
+				</div>
+				<div class="modal-action">
+					<button class="btn btn-primary" on:click={addRecommendation}>Add</button>
+					<button class="btn" on:click={() => (showAddModal = false)}>Cancel</button>
+				</div>
+			</div>
+		</dialog>
+	{/if}
 </div>
 
 <style>
-	.text-shadow {
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-		color: white; /* Ensure text is readable on dark backgrounds */
+	.line-clamp-3 {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.line-clamp-4 {
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 </style>
