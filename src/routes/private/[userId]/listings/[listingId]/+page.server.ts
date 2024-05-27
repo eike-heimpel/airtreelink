@@ -1,12 +1,38 @@
 
-export const load = async ({ parent }) => {
+import { error } from "@sveltejs/kit";
 
-    const parentData = await parent();
 
-    return {
-        listings: parentData.listings
-    };
+export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
+
+    const lastUpdated = cookies.get('lastUpdated');
+
+    const listingId = parseInt(params.listingId)
+
+    const parents = await parent();
+    const currentListing = parents.listings.find(listing => listing.id === listingId);
+
+    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq("listing_id", listingId);
+
+    if (listingCardsError) {
+        throw error(500, listingCardsError);
+    }
+
+
+    let modifiedCards = []
+
+    if (!lastUpdated) {
+        modifiedCards = Object.values(listingCards);
+    } else {
+        modifiedCards = Object.values(listingCards).filter(card => new Date(card.last_changed) > new Date(lastUpdated));
+    }
+    console.log("Modified cards", modifiedCards.length)
+
+    cookies.set('lastUpdated', new Date().toISOString(), { path: '/' });
+
+    return { currentListing, modifiedCards, lastChanged: new Date().toISOString() };
+
 };
+
 
 export const actions = {
 
