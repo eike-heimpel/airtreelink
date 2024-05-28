@@ -30,4 +30,6 @@ export type LinkField = {
 
 export type ContentField = TextField | VideoField | AddressField | LinkField;
 
+export type FieldTypes = 'text' | 'video' | 'address' | 'link';
+
 

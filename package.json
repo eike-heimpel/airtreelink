@@ -49,6 +49,7 @@
 		"@sveltejs/adapter-vercel": "^5.3.0",
 		"axios": "^1.7.2",
 		"leaflet": "^1.9.4",
+		"nanoid": "^5.0.7",
 		"netmask": "^2.0.2",
 		"postmark": "^4.0.2",
 		"qrcode": "^1.5.3",

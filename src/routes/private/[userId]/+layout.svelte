@@ -5,7 +5,6 @@
 	import { editMode, showListingSettings, previewMode } from '$lib/stores/store';
 	import ListingView from '$components/ListingView.svelte';
 	import { fly, slide } from 'svelte/transition';
-
 	import AccountCircleOutline from 'virtual:icons/mdi/account-circle-outline';
 	import FormatListBulleted from 'virtual:icons/mdi/format-list-bulleted';
 	import CardMembership from 'virtual:icons/mdi/card-membership';
@@ -13,6 +12,7 @@
 	import SettingsOutline from 'virtual:icons/mdi/settings-outline';
 	import EyeOutline from 'virtual:icons/mdi/eye-outline';
 	import PencilOutline from 'virtual:icons/mdi/pencil-outline';
+	import { invalidate, invalidateAll } from '$app/navigation';
 
 	export let data;
 
@@ -24,17 +24,33 @@
 	};
 
 	let mobileMenuOpen = false;
+	let confirmModalOpen = false;
 
 	const closeMobileMenu = () => {
 		mobileMenuOpen = false;
 	};
 
+	const closeConfirmModal = () => {
+		confirmModalOpen = false;
+	};
+
 	function toggleEditMode() {
 		if (session) {
-			$editMode = !$editMode;
+			if ($editMode) {
+				confirmModalOpen = true;
+			} else {
+				$editMode = !$editMode;
+			}
 		} else {
 			console.log('unauthorized attempt to edit listing by user');
 		}
+	}
+
+	function confirmDisableEditMode() {
+		$editMode = false;
+		console.log('invalidate all');
+		invalidateAll();
+		confirmModalOpen = false;
 	}
 
 	function openSettingsModal() {
@@ -194,3 +210,19 @@
 		<slot></slot>
 	</div>
 </div>
+
+<!-- Confirm Disable Edit Mode Modal -->
+{#if confirmModalOpen}
+	<dialog class="modal modal-open modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Confirm Disable Edit Mode</h3>
+			<p class="py-4">
+				Are you sure you want to disable edit mode? All unsaved changes will be lost.
+			</p>
+			<div class="modal-action justify-end align-center">
+				<button class="btn mr-2" on:click={closeConfirmModal}>Cancel</button>
+				<button class="btn btn-primary" on:click={confirmDisableEditMode}>Confirm</button>
+			</div>
+		</div>
+	</dialog>
+{/if}

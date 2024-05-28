@@ -31,8 +31,6 @@
 				}
 			}
 		});
-
-		console.log(sortable);
 	});
 
 	function updateSortable(editMode: any) {

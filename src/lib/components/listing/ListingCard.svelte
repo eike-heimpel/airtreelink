@@ -8,6 +8,10 @@
 	import type { Database } from '$lib/types/supabase';
 	import Sortable from 'sortablejs';
 	import DragIcon from 'virtual:icons/mdi/drag';
+	import { createEventDispatcher } from 'svelte';
+	import { nanoid } from 'nanoid';
+	import type { FieldTypes } from '$lib/types/fields';
+	import { fade } from 'svelte/transition';
 
 	import TextFieldComponent from '$components/listing/cards/fields/TextField.svelte';
 	import VideoFieldComponent from '$components/listing/cards/fields/VideoField.svelte';
@@ -24,16 +28,33 @@
 
 	export let card: ListingCard;
 
-	let formLoading = false;
 	let editedCard: ListingCard = { ...card };
 	let checked = false;
+	let addingOtherField = false;
+
+	function resetEditedCard(_) {
+		editedCard = { ...card };
+	}
+
+	$: resetEditedCard(card); // needed for reactivity if the card changes from load function
 
 	function updateField(index: number, eventDetail) {
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
+	function addField(type: any) {
+		const newField: ContentField = {
+			id: nanoid(10), // Generates a shorter ID
+			type,
+			content: ''
+		};
+		editedCard.content_fields.push(newField);
+		editedCard = { ...editedCard };
+	}
+
 	async function saveEdit() {
 		editedCard.last_changed = new Date().toISOString();
+
 		const toastId = toast.loading('Updating card...');
 
 		const resp = await fetch('/api/listing/card', {
@@ -56,6 +77,10 @@
 
 		invalidateAll();
 		$editMode = false;
+	}
+
+	function deleteField(fieldId: string) {
+		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
 
 	let sortable;
@@ -88,7 +113,6 @@
 	name="my-accordion-1"
 	{checked}
 	on:click={() => {
-		console.log('checked');
 		checked = !checked;
 	}}
 />
@@ -112,15 +136,42 @@
 				{/if}
 			</div>
 			{#if $editMode}
-				<div class="drag-handle cursor-grab">
-					<DragIcon />
+				<div class="flex items-center gap-2">
+					<div class="drag-handle cursor-grab">
+						<DragIcon />
+					</div>
+					<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}>
+						X
+					</button>
 				</div>
 			{/if}
 		</div>
 	{/each}
 
 	{#if $editMode}
-		<div class="flex justify-end gap-4 p-4">
+		<div class="flex justify-between gap-4 p-4">
+			{#if addingOtherField}
+				<button
+					class="btn btn-outline btn-primary"
+					on:click={() => {
+						addingOtherField = false;
+					}}
+				>
+					&lt;
+				</button>
+
+				<button class="btn btn-outline" on:click={() => addField('link')}>Link Field</button>
+				<button class="btn btn-outline" on:click={() => addField('address')}>Address Field</button>
+				<button class="btn btn-outline" on:click={() => addField('video')}>Video Field</button>
+			{:else}
+				<button class="btn btn-outline" on:click={() => addField('text')}>Add Text Field</button>
+				<button
+					class="btn btn-outline"
+					on:click={() => {
+						addingOtherField = true;
+					}}>Add Other Field</button
+				>
+			{/if}
 			<button class="btn btn-primary" on:click={saveEdit}>Save All</button>
 		</div>
 	{/if}
