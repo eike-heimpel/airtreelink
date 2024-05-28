@@ -12,6 +12,7 @@
 	import { nanoid } from 'nanoid';
 	import type { FieldTypes } from '$lib/types/fields';
 	import { fade } from 'svelte/transition';
+	import { enhance } from '$app/forms';
 
 	import TextFieldComponent from '$components/listing/cards/fields/TextField.svelte';
 	import VideoFieldComponent from '$components/listing/cards/fields/VideoField.svelte';
@@ -31,6 +32,8 @@
 	let editedCard: ListingCard = { ...card };
 	let checked = false;
 	let addingOtherField = false;
+	let showDeleteModal = false;
+	let formLoading = false;
 
 	function resetEditedCard(_) {
 		editedCard = { ...card };
@@ -105,6 +108,10 @@
 		if (sortable) sortable.options.disabled = !editMode;
 	}
 
+	function openDeleteModal() {
+		showDeleteModal = true;
+	}
+
 	$: updateSortable($editMode);
 </script>
 
@@ -173,6 +180,37 @@
 				>
 			{/if}
 			<button class="btn btn-primary" on:click={saveEdit}>Save All</button>
+			<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
 		</div>
 	{/if}
 </div>
+
+{#if showDeleteModal}
+	<dialog class="modal modal-open modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Confirm Delete</h3>
+			<p class="py-4">Are you sure you want to delete your "{card.title}" card?</p>
+			<div class="modal-action">
+				<form
+					method="POST"
+					action="?/deleteCard"
+					use:enhance={() => {
+						formLoading = true;
+						const toastId = toast.loading('Deleting card...');
+						return async ({ update }) => {
+							formLoading = false;
+							setTimeout(() => {
+								toast.success('Card deleted.', { id: toastId });
+							}, $toastPromiseDelayMs);
+							update();
+						};
+					}}
+				>
+					<input hidden name="cardId" value={card.id} />
+					<button class="btn btn-error">Delete</button>
+				</form>
+				<button class="btn" on:click={() => (showDeleteModal = false)}>Cancel</button>
+			</div>
+		</div>
+	</dialog>
+{/if}
