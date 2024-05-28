@@ -9,7 +9,7 @@
 	import Sortable from 'sortablejs';
 	import DragIcon from 'virtual:icons/mdi/drag';
 	import { createEventDispatcher } from 'svelte';
-	import { nanoid } from 'nanoid';
+	import { createEmptyField } from '$lib/types/fields';
 	import type { FieldTypes } from '$lib/types/fields';
 	import { fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
@@ -45,12 +45,8 @@
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
-	function addField(type: any) {
-		const newField: ContentField = {
-			id: nanoid(10), // Generates a shorter ID
-			type,
-			content: ''
-		};
+	function addField(type: FieldTypes) {
+		const newField = createEmptyField(type);
 		editedCard.content_fields.push(newField);
 		editedCard = { ...editedCard };
 	}

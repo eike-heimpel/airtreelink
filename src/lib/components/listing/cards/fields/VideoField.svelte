@@ -8,7 +8,39 @@
 	const dispatch = createEventDispatcher();
 
 	function updateContent(event) {
-		dispatch('updateField', { key: 'url', value: event.target.value });
+		let url = event.target.value;
+
+		// Function to extract video ID and convert to embed URL
+		function convertToEmbedUrl(url) {
+			let videoId = null;
+
+			// Extract video ID for various YouTube URL formats
+			if (url.includes('youtu.be/')) {
+				videoId = url.split('youtu.be/')[1];
+			} else if (url.includes('youtube.com/watch?v=')) {
+				videoId = url.split('youtube.com/watch?v=')[1];
+				const ampersandPosition = videoId.indexOf('&');
+				if (ampersandPosition !== -1) {
+					videoId = videoId.substring(0, ampersandPosition);
+				}
+			} else if (url.includes('youtube.com/embed/')) {
+				videoId = url.split('youtube.com/embed/')[1];
+			} else if (url.includes('youtube.com/v/')) {
+				videoId = url.split('youtube.com/v/')[1];
+			} else {
+				const videoIdMatch = url.match(/[?&]v=([^&]+)/);
+				videoId = videoIdMatch ? videoIdMatch[1] : null;
+			}
+
+			if (videoId) {
+				return `https://www.youtube.com/embed/${videoId}`;
+			}
+			return url; // Return the original URL if it doesn't match
+		}
+
+		url = convertToEmbedUrl(url);
+
+		dispatch('updateField', { key: 'url', value: url });
 	}
 </script>
 

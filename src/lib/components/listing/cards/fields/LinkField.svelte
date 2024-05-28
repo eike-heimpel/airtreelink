@@ -30,7 +30,5 @@
 		<input type="text" class="input input-primary" value={field.url} on:input={updateUrl} />
 	</div>
 {:else if field.url}
-	<a class="link link-primary" href={field.url} target="_blank" rel="noopener noreferrer"
-		>{field.content}</a
-	>
+	<a class="link" href={field.url} target="_blank" rel="noopener noreferrer">{field.content}</a>
 {/if}

@@ -4,7 +4,7 @@ import { all } from "axios";
 
 export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
     const lastUpdated = cookies.get('lastUpdated');
-    console.log(lastUpdated)
+    console.log("lastUpdated", lastUpdated);
     const listingId = parseInt(params.listingId);
 
     const parents = await parent();
