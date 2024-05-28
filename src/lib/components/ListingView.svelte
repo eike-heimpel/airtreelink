@@ -4,6 +4,7 @@
 	import NavigationMenu from '$components/listing/NavigationMenu.svelte';
 	import BasicInfo from '$components/listing/BasicInfo.svelte';
 	import { previewMode } from '$lib/stores/store';
+	import { page } from '$app/stores';
 
 	export let currentListing;
 
@@ -18,7 +19,10 @@
 		<div class="hero-overlay bg-opacity-60"></div>
 
 		<div
-			class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ? 'pt-4' : 'pt-20'} mb-10"
+			class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ||
+			$page.route.id?.includes('public')
+				? 'pt-10'
+				: 'pt-20'} mb-10"
 		>
 			<div class="w-full flex justify-center items-center pb-4">
 				<h1
