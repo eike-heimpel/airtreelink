@@ -53,9 +53,19 @@
 		invalidateAll();
 		$editMode = false;
 	}
+
+	let checked = false;
 </script>
 
-<input type="radio" name="my-accordion-1" />
+<input
+	type="radio"
+	name="my-accordion-1"
+	{checked}
+	on:click={() => {
+		console.log('checked');
+		checked = !checked;
+	}}
+/>
 
 <div class="collapse-title">
 	<Title bind:title={editedCard.title} />

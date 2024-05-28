@@ -25,7 +25,7 @@
 	<ul class="flex w-full">
 		<li class="flex-1">
 			<button
-				class="w-full py-2 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'home'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -44,13 +44,13 @@
 					updateQueryParam('home');
 				}}
 			>
-				<HomeOutline class="w-6 h-6" />
+				<HomeOutline class="w-7 h-7" />
 				<span class="hidden md:block">Home</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-2 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'links'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -69,13 +69,13 @@
 					updateQueryParam('links');
 				}}
 			>
-				<InfoOutline class="w-6 h-6" />
+				<InfoOutline class="w-7 h-7" />
 				<span class="hidden md:block">House Info</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-2 flex flex-col items-center justify-center lg:text-lg {activeTab ===
+				class="w-full py-3 flex flex-col items-center justify-center lg:text-lg {activeTab ===
 				'recommendations'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
@@ -94,7 +94,7 @@
 					updateQueryParam('recommendations');
 				}}
 			>
-				<StarOutline class="w-6 h-6" />
+				<StarOutline class="w-7 h-7" />
 				<span class="hidden md:block">Recs</span>
 			</button>
 		</li>

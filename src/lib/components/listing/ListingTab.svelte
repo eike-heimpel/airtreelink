@@ -36,7 +36,7 @@
 	{/if}
 
 	<div
-		class="grid grid-cols-1 md:grid-cols-2 gap-4"
+		class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 md:mt-10"
 		use:dndzone={{
 			items: cards,
 			flipDurationMs: 200,

@@ -69,7 +69,10 @@
 	{/if}
 	{#if showDirections}
 		<address class="mt-2 not-italic text-secondary">
-			<button class="btn btn-primary" on:click={() => openDirections(field.content)}>
+			<button
+				class="btn btn-sm btn-primary btn-outline"
+				on:click={() => openDirections(field.content)}
+			>
 				Get Directions
 			</button>
 		</address>
