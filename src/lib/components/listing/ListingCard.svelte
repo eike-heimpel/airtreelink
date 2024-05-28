@@ -100,16 +100,13 @@
 	}
 
 	$: updateSortable($editMode);
+
+	function toggleChecked() {
+		checked = !checked;
+	}
 </script>
 
-<input
-	type="radio"
-	name="my-accordion-1"
-	{checked}
-	on:click={() => {
-		checked = !checked;
-	}}
-/>
+<input type="radio" name="my-accordion-1" {checked} on:click={toggleChecked} />
 
 <div class="collapse-title">
 	<Title bind:title={editedCard.title} />

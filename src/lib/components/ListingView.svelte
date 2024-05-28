@@ -22,7 +22,7 @@
 			class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ||
 			$page.route.id?.includes('public')
 				? 'pt-10'
-				: 'pt-20'} mb-10"
+				: 'pt-24'} mb-10"
 		>
 			<div class="w-full flex justify-center items-center pb-4">
 				<h1
