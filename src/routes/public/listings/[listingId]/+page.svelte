@@ -1,46 +1,61 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import ListingView from '$components/ListingView.svelte';
+	import ListingSettings from '$components/listing/ListingSettings.svelte';
+	import { toast } from 'svelte-french-toast';
+	import { browser } from '$app/environment';
+	import type { Database } from '$lib/types/supabase';
+
+	type Listing = Database['public']['Tables']['Listings']['Row'];
+
 	export let data;
 
-	let showModal = false;
-	let currentDetail = null;
+	let currentListingInfo: Listing = data.currentListingInfo;
+	let currentListing: Listing = JSON.parse(JSON.stringify(currentListingInfo));
 
-	// Function to handle modal opening
-	function openModal(detail) {
-		currentDetail = detail;
-		showModal = true;
+	currentListing.cards = {};
+
+	let updatedListing = {};
+
+	function updateListing() {
+		// Retrieve the last updated timestamp and cards from localStorage
+		const storedLastUpdated = localStorage.getItem('lastUpdated');
+		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
+		if (storedListing) {
+			currentListing = JSON.parse(storedListing);
+		}
+		// Update cards with new data from the server
+		const newCards = data.modifiedCards;
+		for (const card of newCards) {
+			currentListing.cards[card.id] = card;
+		}
+		// Remove deleted cards from local storage
+		const allCardIds = data.allCardIds;
+		for (const id of Object.keys(currentListing.cards)) {
+			if (!allCardIds.includes(parseInt(id))) {
+				const cardName = currentListing.cards[id].title;
+				delete currentListing.cards[id];
+				console.log('Deleted card:', id);
+				toast('Deleted card: ' + cardName);
+			}
+		}
+		// Update the lastUpdated timestamp in localStorage
+		localStorage.setItem('lastUpdated', data.lastChanged);
+		// Save the updated cards back to localStorage
+		localStorage.setItem(data.currentListingInfo.hash, JSON.stringify(currentListing));
+		// Trigger reactivity by reassigning currentListing
+		currentListing = { ...currentListing };
 	}
 
-	// Function to close the modal
-	function closeModal() {
-		showModal = false;
+	onMount(() => {
+		updateListing();
+	});
+
+	$: if (data && browser) {
+		updateListing();
 	}
+
+	$: updatedListing = currentListing;
 </script>
 
-<div class="p-4">
-	<div class="max-w-4xl mx-auto">
-		<h1 class="text-3xl font-bold text-center mb-4">{data.listing.name}</h1>
-		<p class="text-gray-600 text-center mb-6">{data.listing.description}</p>
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-			<div
-				class="card bg-base-100 shadow-xl cursor-pointer"
-				on:click={() => openModal(data.listing.listings_data.link)}
-			></div>
-		</div>
-	</div>
-
-	{#if showModal}
-		<div class="modal modal-open modal-bottom sm:modal-middle">
-			<div class="modal-box">
-				<h3 class="font-bold text-lg">{currentDetail.title}</h3>
-				<p class="py-4">{currentDetail.description}</p>
-				<div class="modal-action">
-					<button class="btn" on:click={closeModal}>Close</button>
-				</div>
-			</div>
-		</div>
-	{/if}
-</div>
-
-<style>
-	/* Additional styles if needed */
-</style>
+<ListingView currentListing={updatedListing} />
