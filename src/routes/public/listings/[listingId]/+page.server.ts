@@ -27,7 +27,6 @@ export const load = async ({ request, cookies, params, url, locals: { supabase }
     }
 
     const { data: listingCards, error: listingCardsError } = await supabaseServiceClient.from('listing_cards').select('*').eq('listing_id', listingId);
-    console.log(listingCards)
 
     if (listingCardsError) {
         throw error(500, "could not find listing info");
