@@ -13,10 +13,9 @@
 </script>
 
 {#if $editMode}
-	<div class="form-control">
-		<label class="label">
-			<span class="label-text">Text Content</span>
-		</label>
+	<div class="form-control p-4 bg-base-100">
+		<h3 class="label-text text-primary mb-2 text-xl">Text Field</h3>
+
 		<textarea class="textarea textarea-bordered" value={field.content} on:input={updateContent}
 		></textarea>
 	</div>

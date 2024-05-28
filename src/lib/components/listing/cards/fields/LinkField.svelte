@@ -17,7 +17,9 @@
 </script>
 
 {#if $editMode}
-	<div class="form-control">
+	<div class="form-control p-4 bg-base-100">
+		<h3 class="label-text text-primary mb-2 text-xl">Link Field</h3>
+
 		<label class="label">
 			<span class="label-text">Link Text</span>
 		</label>
@@ -27,11 +29,13 @@
 			value={field.content}
 			on:input={updateContent}
 		/>
-		<label class="label">
+		<label class="label mt-4">
 			<span class="label-text">Link URL</span>
 		</label>
 		<input type="text" class="input input-bordered" value={field.url} on:input={updateUrl} />
 	</div>
 {:else if field.url}
-	<a class="link" href={field.url} target="_blank" rel="noopener noreferrer">{field.content}</a>
+	<a class="link link-primary" href={field.url} target="_blank" rel="noopener noreferrer"
+		>{field.content}</a
+	>
 {/if}

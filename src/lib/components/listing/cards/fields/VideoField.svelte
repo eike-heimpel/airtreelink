@@ -8,19 +8,24 @@
 	const dispatch = createEventDispatcher();
 
 	function updateContent(event) {
-		dispatch('updateField', { key: 'content', value: event.target.value });
+		dispatch('updateField', { key: 'url', value: event.target.value });
 	}
 </script>
 
 {#if $editMode}
-	<div class="form-control">
+	<div class="form-control p-4 border rounded-lg bg-base-100">
 		<label class="label">
 			<span class="label-text">Video URL</span>
 		</label>
-		<input type="text" class="input input-bordered" value={field.url} on:input={updateContent} />
+		<input
+			type="text"
+			class="input input-bordered w-full"
+			value={field.url}
+			on:input={updateContent}
+		/>
 	</div>
 {:else if field.url}
-	<div class="mt-4">
+	<div class="p-4 border rounded-lg bg-base-100 mt-4">
 		<iframe
 			class="w-full aspect-video"
 			src={field.url}

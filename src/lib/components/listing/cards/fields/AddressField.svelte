@@ -32,49 +32,51 @@
 </script>
 
 {#if $editMode}
-	<div class="form-control">
-		<label class="label">
-			<span class="label-text">Address</span>
-		</label>
+	<div class="form-control p-4 bg-base-100">
+		<h3 class="label-text text-primary mb-2 text-xl">Address Field</h3>
 		<input
 			type="text"
-			class="input input-bordered"
+			class="input input-bordered w-full"
 			value={field.content}
 			on:input={updateContent}
 		/>
 
-		<label class="label mt-2">
-			<input
-				type="checkbox"
-				class="checkbox"
-				bind:checked={showAddressAsText}
-				on:input={updateShowAddressAsText}
-			/>
-			<span class="label-text">Show address as text</span>
-		</label>
+		<div class="flex items-center mt-4 space-x-4">
+			<label class="cursor-pointer flex items-center">
+				<input
+					type="checkbox"
+					class="checkbox checkbox-primary mr-2"
+					bind:checked={showAddressAsText}
+					on:input={updateShowAddressAsText}
+				/>
+				<span class="label-text">Show address as text</span>
+			</label>
 
-		<label class="label mt-2">
-			<input
-				type="checkbox"
-				class="checkbox"
-				bind:checked={showDirections}
-				on:input={updateShowDirections}
-			/>
-			<span class="label-text">Show directions button</span>
-		</label>
+			<label class="cursor-pointer flex items-center">
+				<input
+					type="checkbox"
+					class="checkbox checkbox-primary mr-2"
+					bind:checked={showDirections}
+					on:input={updateShowDirections}
+				/>
+				<span class="label-text">Show directions button</span>
+			</label>
+		</div>
 	</div>
 {:else}
-	{#if showAddressAsText}
-		<p class="mt-2 text-neutral">{field.content}</p>
-	{/if}
-	{#if showDirections}
-		<address class="mt-2 not-italic text-secondary">
-			<button
-				class="btn btn-sm btn-primary btn-outline"
-				on:click={() => openDirections(field.content)}
-			>
-				Get Directions
-			</button>
-		</address>
-	{/if}
+	<div class="p-4">
+		{#if showAddressAsText}
+			<p class="mt-2 text-neutral">{field.content}</p>
+		{/if}
+		{#if showDirections}
+			<address class="mt-2 not-italic">
+				<button
+					class="btn btn-sm btn-primary btn-outline"
+					on:click={() => openDirections(field.content)}
+				>
+					Get Directions
+				</button>
+			</address>
+		{/if}
+	</div>
 {/if}
