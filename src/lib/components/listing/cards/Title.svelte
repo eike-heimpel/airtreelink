@@ -7,10 +7,9 @@
 
 {#if $editMode}
 	<div class="form-control">
-		<label class="label">
-			<span class="label-text">Title</span>
-		</label>
-		<input type="text" class="input input-bordered" bind:value={editableTitle} />
+		<h3 class="text-primary mb-2 text-xl">Title</h3>
+
+		<input type="text" class="input input-primary" bind:value={editableTitle} />
 	</div>
 {:else}
 	<div class="flex items-center">

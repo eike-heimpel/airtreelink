@@ -13,19 +13,16 @@
 </script>
 
 {#if $editMode}
-	<div class="form-control p-4 border rounded-lg bg-base-100">
+	<div class="form-control p-4 bg-base-100">
+		<h3 class="text-primary mb-2 text-xl cursor-auto">Video Field</h3>
+
 		<label class="label">
 			<span class="label-text">Video URL</span>
 		</label>
-		<input
-			type="text"
-			class="input input-bordered w-full"
-			value={field.url}
-			on:input={updateContent}
-		/>
+		<input type="text" class="input input-primary" value={field.url} on:input={updateContent} />
 	</div>
 {:else if field.url}
-	<div class="p-4 border rounded-lg bg-base-100 mt-4">
+	<div class="p-4 bg-base-100 mt-4">
 		<iframe
 			class="w-full aspect-video"
 			src={field.url}

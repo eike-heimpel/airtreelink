@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { flip } from 'svelte/animate';
-	import { dndzone } from 'svelte-dnd-action';
 	import { editMode } from '$lib/stores/store';
 	import ListingCard from './ListingCard.svelte';
+	import Sortable from 'sortablejs';
+	import DragIcon from 'virtual:icons/mdi/drag';
 
 	export let cards = [];
 	export let type = '';
@@ -18,16 +18,20 @@
 		showAddModal = false;
 	}
 
-	function handleDndConsider(event: CustomEvent<DndEvent>) {
-		console.log(event.detail);
-		const { items: newItems } = event.detail;
-		cards = newItems;
-	}
-
-	function handleDndFinalize(event: CustomEvent<DndEvent>) {
-		const { items: newItems } = event.detail;
-		cards = newItems;
-	}
+	onMount(() => {
+		if (editMode) {
+			const sortable = new Sortable(document.getElementById('sortable-cards'), {
+				animation: 150,
+				onEnd: (event) => {
+					const { oldIndex, newIndex } = event;
+					if (oldIndex !== newIndex) {
+						const movedItem = cards.splice(oldIndex, 1)[0];
+						cards.splice(newIndex, 0, movedItem);
+					}
+				}
+			});
+		}
+	});
 </script>
 
 <div class="container mx-auto">
@@ -35,19 +39,9 @@
 		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add</button>
 	{/if}
 
-	<div
-		class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 md:mt-10"
-		use:dndzone={{
-			items: cards,
-			flipDurationMs: 200,
-			dropTargetStyle: {},
-			dragDisabled: !editMode
-		}}
-		on:consider={handleDndConsider}
-		on:finalize={handleDndFinalize}
-	>
+	<div id="sortable-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 md:mt-10">
 		{#each cards as card (card.id)}
-			<div class="col-span-1">
+			<div class="col-span-1 relative">
 				<button
 					tabindex="0"
 					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full"
@@ -62,19 +56,3 @@
 		<dialog class="modal modal-open modal-bottom sm:modal-middle"></dialog>
 	{/if}
 </div>
-
-<style>
-	.line-clamp-3 {
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.line-clamp-4 {
-		display: -webkit-box;
-		-webkit-line-clamp: 4;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-</style>

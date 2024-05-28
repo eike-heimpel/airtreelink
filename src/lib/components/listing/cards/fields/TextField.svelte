@@ -14,9 +14,13 @@
 
 {#if $editMode}
 	<div class="form-control p-4 bg-base-100">
-		<h3 class="label-text text-primary mb-2 text-xl">Text Field</h3>
+		<h3 class="text-primary mb-2 text-xl cursor-auto">Text Field</h3>
 
-		<textarea class="textarea textarea-bordered" value={field.content} on:input={updateContent}
+		<textarea
+			class="textarea textarea-primary h-40"
+			value={field.content}
+			on:input={updateContent}
+			placeholder="Enter text here..."
 		></textarea>
 	</div>
 {:else}
