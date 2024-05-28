@@ -1,21 +1,63 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { editMode } from '$lib/stores/store';
-	import ListingCard from './ListingCard.svelte';
+	import ListingCardComponent from '$components/listing/ListingCard.svelte';
 	import Sortable from 'sortablejs';
-	import DragIcon from 'virtual:icons/mdi/drag';
+	import { page } from '$app/stores';
+	import type { ListingCardCreate, ListingCard } from '$lib/types/cards';
+	import TextField from '$components/listing/cards/fields/TextField.svelte';
+	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { toastPromiseDelayMs } from '$lib/stores/store';
+	import { toast } from 'svelte-french-toast';
 
-	export let cards = [];
+	export let cards: ListingCard[] = [];
 	export let type = '';
 
 	let showAddModal = false;
+	let newCardTitle = '';
 
 	function openAddModal() {
 		showAddModal = true;
 	}
 
-	function addCard() {
+	function closeAddModal() {
 		showAddModal = false;
+		newCardTitle = '';
+	}
+
+	async function handleSave() {
+		const toastId = toast.loading('Adding card...');
+
+		const newCard: ListingCardCreate = {
+			content_fields: [],
+			description: '',
+			listing_id: $page.data.currentListingInfo.id,
+			title: newCardTitle,
+			type: type
+		};
+
+		const response = await fetch('/api/listing/card', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ card: newCard })
+		});
+
+		if (response.ok) {
+			const createdCard: ListingCard = await response.json();
+			cards = [...cards, createdCard];
+			setTimeout(() => {
+				toast.success('Card created.', { id: toastId });
+			}, $toastPromiseDelayMs);
+
+			closeAddModal();
+			invalidateAll();
+		} else {
+			toast.error('Failed to create new card.', { id: toastId });
+			console.error('Failed to create new card');
+		}
 	}
 
 	let sortable;
@@ -42,7 +84,7 @@
 
 <div class="container mx-auto">
 	{#if $editMode}
-		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add</button>
+		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add New Card</button>
 	{/if}
 
 	<div id="sortable-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 md:mt-10">
@@ -52,13 +94,32 @@
 					tabindex="0"
 					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full"
 				>
-					<ListingCard {card} />
+					<ListingCardComponent {card} />
 				</button>
 			</div>
 		{/each}
 	</div>
 
 	{#if showAddModal}
-		<dialog class="modal modal-open modal-bottom sm:modal-middle"></dialog>
+		<dialog class="modal modal-open modal-bottom sm:modal-middle">
+			<div class="modal-box">
+				<h3 class="font-bold text-lg">Add New Card</h3>
+				<div class="modal-content">
+					<div class="form-control">
+						<label class="label">Title</label>
+						<input
+							type="text"
+							bind:value={newCardTitle}
+							class="input input-bordered w-full"
+							required
+						/>
+					</div>
+				</div>
+				<div class="modal-action">
+					<button type="button" class="btn" on:click={closeAddModal}>Cancel</button>
+					<button type="button" class="btn btn-primary" on:click={handleSave}>Add Card</button>
+				</div>
+			</div>
+		</dialog>
 	{/if}
 </div>

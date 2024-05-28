@@ -13,9 +13,8 @@ export type Database = {
         Row: {
           content_fields: Json | null
           created_at: string
-          decription: string | null
+          description: string | null
           id: number
-          is_recommended: boolean
           last_changed: string
           listing_id: number
           title: string

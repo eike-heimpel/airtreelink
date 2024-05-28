@@ -4,8 +4,7 @@
 	import { toast } from 'svelte-french-toast';
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
-	import type { ContentField } from '$lib/types/fields';
-	import type { Database } from '$lib/types/supabase';
+	import type { ListingCard } from '$lib/types/cards';
 	import Sortable from 'sortablejs';
 	import DragIcon from 'virtual:icons/mdi/drag';
 	import { createEventDispatcher } from 'svelte';
@@ -19,13 +18,6 @@
 	import AddressFieldComponent from '$components/listing/cards/fields/AddressField.svelte';
 	import LinkFieldComponent from '$components/listing/cards/fields/LinkField.svelte';
 	import Title from '$components/listing/cards/Title.svelte';
-
-	type ListingCard = Omit<
-		Database['public']['Tables']['listing_cards']['Row'],
-		'content_fields'
-	> & {
-		content_fields: ContentField[];
-	};
 
 	export let card: ListingCard;
 
@@ -75,7 +67,6 @@
 		}, $toastPromiseDelayMs);
 
 		invalidateAll();
-		$editMode = false;
 	}
 
 	function deleteField(fieldId: string) {
@@ -125,31 +116,33 @@
 </div>
 
 <div id="sortable-list" class="collapse-content flex flex-col gap-2">
-	{#each editedCard.content_fields as field, index (field.id)}
-		<div class="flex items-center">
-			<div class="flex-grow">
-				{#if field.type === 'text'}
-					<TextFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-				{:else if field.type === 'video'}
-					<VideoFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-				{:else if field.type === 'address'}
-					<AddressFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-				{:else if field.type === 'link'}
-					<LinkFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
+	{#if editedCard.content_fields}
+		{#each editedCard.content_fields as field, index (field.id)}
+			<div class="flex items-center">
+				<div class="flex-grow">
+					{#if field.type === 'text'}
+						<TextFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
+					{:else if field.type === 'video'}
+						<VideoFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
+					{:else if field.type === 'address'}
+						<AddressFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
+					{:else if field.type === 'link'}
+						<LinkFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
+					{/if}
+				</div>
+				{#if $editMode}
+					<div class="flex items-center gap-2">
+						<div class="drag-handle cursor-grab">
+							<DragIcon />
+						</div>
+						<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}>
+							X
+						</button>
+					</div>
 				{/if}
 			</div>
-			{#if $editMode}
-				<div class="flex items-center gap-2">
-					<div class="drag-handle cursor-grab">
-						<DragIcon />
-					</div>
-					<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}>
-						X
-					</button>
-				</div>
-			{/if}
-		</div>
-	{/each}
+		{/each}
+	{/if}
 
 	{#if $editMode}
 		<div class="flex justify-between gap-4 p-4">

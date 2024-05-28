@@ -76,22 +76,22 @@
 		<li class="flex-1">
 			<button
 				class="w-full py-3 flex flex-col items-center justify-center lg:text-lg {activeTab ===
-				'recommendations'
+				'recommendation'
 					? 'bg-accent text-white'
 					: 'hover:bg-accent hover:text-white'}"
 				on:click={() => {
-					activeTab = 'recommendations';
-					updateQueryParam('recommendations');
+					activeTab = 'recommendation';
+					updateQueryParam('recommendation');
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'recommendations';
-						updateQueryParam('recommendations');
+						activeTab = 'recommendation';
+						updateQueryParam('recommendation');
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'recommendations';
-					updateQueryParam('recommendations');
+					activeTab = 'recommendation';
+					updateQueryParam('recommendation');
 				}}
 			>
 				<StarOutline class="w-7 h-7" />

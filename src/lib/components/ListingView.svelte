@@ -29,12 +29,12 @@
 			</div>
 
 			<div class="text-center flex justify-center">
-				{#if activeTab === 'recommendations'}
+				{#if activeTab === 'recommendation'}
 					<ListingTab
 						cards={Object.values(currentListing.cards).filter(
 							(card) => card.type === 'recommendation'
 						)}
-						type="recommendations"
+						type="recommendation"
 					/>
 				{:else if activeTab === 'links'}
 					<ListingTab
