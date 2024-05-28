@@ -1,21 +1,36 @@
 
 import { error } from "@sveltejs/kit";
-import { all } from "axios";
+
+import { createServerClient } from '@supabase/ssr';
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
+import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 
-export const load = async ({ request, cookies, params, locals: { supabase } }) => {
+const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    cookies: {}
+});
+
+export const load = async ({ request, cookies, params, url, locals: { supabase } }) => {
 
 
     const lastUpdated = cookies.get('lastUpdated');
     const listingId = parseInt(params.listingId);
 
-    const {data: currentListingInfo} = await supabase.from('Listings').select('*').eq('id', listingId).single();
+    const {data: currentListingInfo, error: listingError} = await supabaseServiceClient.from('Listings').select('*').eq('id', listingId).single();
 
-    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq('listing_id', listingId);
+    if (listingError) {
+        throw error(404, "could not find listing page");
+    }
+
+    if (!currentListingInfo.public || currentListingInfo.hash !== url.searchParams.get('hash')) {
+        throw error(403, 'Listing is private')
+    }
+
+    const { data: listingCards, error: listingCardsError } = await supabaseServiceClient.from('listing_cards').select('*').eq('listing_id', listingId);
     console.log(listingCards)
 
     if (listingCardsError) {
-        throw error(500, listingCardsError);
+        throw error(500, "could not find listing info");
     }
     let modifiedCards = [];
 
