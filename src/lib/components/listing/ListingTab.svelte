@@ -18,24 +18,32 @@
 		showAddModal = false;
 	}
 
+	let sortable;
 	onMount(() => {
-		if (editMode) {
-			const sortable = new Sortable(document.getElementById('sortable-cards'), {
-				animation: 150,
-				onEnd: (event) => {
-					const { oldIndex, newIndex } = event;
-					if (oldIndex !== newIndex) {
-						const movedItem = cards.splice(oldIndex, 1)[0];
-						cards.splice(newIndex, 0, movedItem);
-					}
+		sortable = new Sortable(document.getElementById('sortable-cards'), {
+			disabled: !$editMode,
+			animation: 150,
+			onEnd: (event) => {
+				const { oldIndex, newIndex } = event;
+				if (oldIndex !== newIndex) {
+					const movedItem = cards.splice(oldIndex, 1)[0];
+					cards.splice(newIndex, 0, movedItem);
 				}
-			});
-		}
+			}
+		});
+
+		console.log(sortable);
 	});
+
+	function updateSortable(editMode: any) {
+		if (sortable) sortable.options.disabled = !editMode;
+	}
+
+	$: updateSortable($editMode);
 </script>
 
 <div class="container mx-auto">
-	{#if editMode}
+	{#if $editMode}
 		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add</button>
 	{/if}
 

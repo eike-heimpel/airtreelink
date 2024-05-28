@@ -27,8 +27,6 @@
 
 		// Update cards with new data from the server
 		const newCards = data.modifiedCards;
-		console.log('-----');
-		console.log(newCards);
 
 		for (const card of newCards) {
 			currentListing.cards[card.id] = card;
@@ -36,9 +34,6 @@
 
 		// Remove deleted cards from local storage
 		const allCardIds = data.allCardIds;
-
-		console.log('All card IDs:', allCardIds);
-		console.log(Object.keys(currentListing.cards));
 
 		for (const id of Object.keys(currentListing.cards)) {
 			if (!allCardIds.includes(parseInt(id))) {

@@ -58,25 +58,29 @@
 		$editMode = false;
 	}
 
+	let sortable;
+
 	onMount(() => {
-		let sortable;
-		if ($editMode) {
-			sortable = new Sortable(document.getElementById('sortable-list'), {
-				animation: 150,
-				handle: '.drag-handle',
-				onEnd: (event) => {
-					const { oldIndex, newIndex } = event;
-					if (oldIndex !== newIndex) {
-						const movedItem = editedCard.content_fields.splice(oldIndex, 1)[0];
-						editedCard.content_fields.splice(newIndex, 0, movedItem);
-					}
+		sortable = new Sortable(document.getElementById('sortable-list'), {
+			disabled: !$editMode,
+
+			animation: 150,
+			handle: '.drag-handle',
+			onEnd: (event) => {
+				const { oldIndex, newIndex } = event;
+				if (oldIndex !== newIndex) {
+					const movedItem = editedCard.content_fields.splice(oldIndex, 1)[0];
+					editedCard.content_fields.splice(newIndex, 0, movedItem);
 				}
-			});
-		}
-		return () => {
-			if (sortable) sortable.destroy();
-		};
+			}
+		});
 	});
+
+	function updateSortable(editMode: any) {
+		if (sortable) sortable.options.disabled = !editMode;
+	}
+
+	$: updateSortable($editMode);
 </script>
 
 <input
