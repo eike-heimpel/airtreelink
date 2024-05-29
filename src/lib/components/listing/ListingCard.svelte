@@ -10,16 +10,20 @@
 	import type { FieldTypes } from '$lib/types/fields';
 	import { fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
+	import { flip } from 'svelte/animate';
 
 	import TextField from '$components/listing/cards/fields/TextField.svelte';
 	import VideoField from '$components/listing/cards/fields/VideoField.svelte';
 	import AddressField from '$components/listing/cards/fields/AddressField.svelte';
 	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
 	import Title from '$components/listing/cards/Title.svelte';
+	import ImageField from '$components/listing/cards/fields/ImageField.svelte';
 	import { error } from '@sveltejs/kit';
 
 	export let card: ListingCard;
 	export let moveCards = false;
+
+	console.log(card);
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
@@ -101,7 +105,6 @@
 		checked = !checked;
 	}
 
-	$: console.log(editedCard?.title);
 	// if editMode changes from true to false, call saveEdit if there are changes
 	$: if (!$editMode && JSON.stringify(card) !== JSON.stringify(editedCard)) {
 		saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
@@ -120,7 +123,7 @@
 <div id="sortable-list" class="collapse-content flex flex-col gap-2">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
-			<div class="flex flex-col">
+			<div class="flex flex-col" animate:flip={{ duration: 500 }}>
 				{#if field.type === 'text'}
 					<TextField
 						{field}
@@ -161,6 +164,18 @@
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
 					/>
+				{:else if field.type === 'image'}
+					<ImageField
+						{field}
+						{index}
+						totalFields={editedCard.content_fields.length}
+						on:updateField={(e) => updateField(index, e.detail)}
+						on:deleteField={() => deleteField(field.id)}
+						on:moveFieldUp={() => moveFieldUp(index)}
+						on:moveFieldDown={() => moveFieldDown(index)}
+					/>
+				{:else}
+					<p>Field type not recognized.</p>
 				{/if}
 			</div>
 		{/each}
@@ -180,6 +195,7 @@
 				<button class="btn btn-outline" on:click={() => addField('link')}>Link Field</button>
 				<button class="btn btn-outline" on:click={() => addField('address')}>Address Field</button>
 				<button class="btn btn-outline" on:click={() => addField('video')}>Video Field</button>
+				<button class="btn btn-outline" on:click={() => addField('image')}>Image Field</button>
 			{:else}
 				<button class="btn btn-outline" on:click={() => addField('text')}>Add Text Field</button>
 				<button

@@ -30,9 +30,16 @@ export type LinkField = {
     url: string;
 };
 
-export type ContentField = TextField | VideoField | AddressField | LinkField;
+export type ImageField = {
+    id: string;
+    type: "image"; 
+    altText: string;
+    url: string;
+}
 
-export type FieldTypes = 'text' | 'video' | 'address' | 'link';
+export type ContentField = TextField | VideoField | AddressField | LinkField | ImageField;
+
+export type FieldTypes = 'text' | 'video' | 'address' | 'link' | 'image';
 
 export function createEmptyField(type: FieldTypes): ContentField {
     const id = nanoid(10);
@@ -45,6 +52,8 @@ export function createEmptyField(type: FieldTypes): ContentField {
             return { id, type, content: '', showDirections: false, showAddressAsText: false };
         case 'link':
             return { id, type, content: '', url: '' };
+        case 'image':
+            return { id, type, altText: '', url: '' };
         default:
             throw new Error(`Unsupported field type: ${type}`);
     }

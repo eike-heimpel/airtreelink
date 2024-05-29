@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex gap-2">
-	{#if index > 1}
+	{#if index > 0}
 		<button class="btn btn-outline btn-sm" on:click={moveFieldUp}>↑</button>
 	{/if}
 	<button class="btn btn-error btn-outline btn-sm" on:click={deleteField}>X</button>
