@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { editMode } from '$lib/stores/store';
+	import { editMode, previewMode } from '$lib/stores/store';
 	import ListingCardComponent from '$components/listing/ListingCard.svelte';
 	import Sortable from 'sortablejs';
 	import { page } from '$app/stores';
@@ -77,18 +77,18 @@
 		});
 	});
 
-	function updateSortable(editMode: any, moveCards: any) {
+	function updateSortable(moveCards: any) {
 		if (!sortable) return;
 
-		if (!editMode || !moveCards) sortable.options.disabled = true;
+		if (!moveCards) sortable.options.disabled = true;
 		else sortable.options.disabled = false;
 	}
 
-	$: updateSortable($editMode, moveCards);
+	$: updateSortable(moveCards);
 </script>
 
 <div class="container mx-auto">
-	{#if $editMode}
+	{#if !$previewMode}
 		<div class="flex justify-center gap-10">
 			<button class="btn btn-primary mb-4 ml-2" on:click={openAddModal}>Add New Card</button>
 			<button
@@ -107,7 +107,7 @@
 		</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 gap-4 md:gap-8 md:mt-10">
+	<div id="sortable-cards" class="grid grid-cols-1 gap-4 md:gap-8">
 		{#each cards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button

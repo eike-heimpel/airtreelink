@@ -186,11 +186,13 @@
 						<span>Settings</span>
 					</button>
 					<button
-						class="btn btn-{$editMode ? 'secondary' : 'primary'} flex items-center"
+						class="btn flex items-center"
+						class:btn-secondary={$editMode}
+						class:btn-outline={!$editMode}
 						on:click={toggleEditMode}
 					>
 						<PencilOutline class="w-6 h-6 mr-2" />
-						<span>{$editMode ? 'Stop' : 'Start'} Editing</span>
+						<span>{$editMode ? 'Stop Editing' : 'Edit All'}</span>
 					</button>
 				</div>
 			{/if}

@@ -23,15 +23,13 @@
 	export let card: ListingCard;
 	export let moveCards = false;
 
-	console.log(card);
-
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
 	let addingField = false;
 	let showDeleteModal = false;
 	let formLoading = false;
 
-	function resetEditedCard(_) {
+	function resetEditedCard(card: ListingCard) {
 		editedCard = JSON.parse(JSON.stringify(card));
 	}
 
@@ -122,7 +120,7 @@
 <div class="collapse-title">
 	<Title bind:title={editedCard.title} />
 </div>
-<div id="sortable-list" class="collapse-content flex flex-col gap-4">
+<div id="sortable-list" class="collapse-content flex flex-col gap-2">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
 			<div class="flex flex-col rounded-md" animate:flip={{ duration: 500 }}>
@@ -136,6 +134,7 @@
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
 						on:save={() => saveEdit()}
+						on:cancelEdit={() => resetEditedCard(card)}
 					/>
 				{:else if field.type === 'video'}
 					<VideoField

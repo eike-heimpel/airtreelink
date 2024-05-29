@@ -3,12 +3,11 @@
 	import type { TextField } from '$lib/types/fields';
 	import { editMode, previewMode } from '$lib/stores/store';
 	import FieldControls from './FieldControls.svelte';
+	import FieldEditControls from './FieldEditControls.svelte';
 
 	export let field: TextField;
 	export let index: number;
 	export let totalFields: number;
-
-	let fieldCopy = JSON.parse(JSON.stringify(field));
 
 	const dispatch = createEventDispatcher();
 
@@ -30,10 +29,15 @@
 		dispatch('moveFieldDown');
 	}
 
-	function toggleIndividualEditMode() {
-		individualEditMode = !individualEditMode;
-		console.log('called');
-		if (!individualEditMode) dispatch('save');
+	function save() {
+		individualEditMode = false;
+		dispatch('save');
+	}
+
+	function cancel() {
+		individualEditMode = false;
+
+		dispatch('cancelEdit');
 	}
 </script>
 
@@ -55,9 +59,8 @@
 			on:input={updateContent}
 			placeholder="Enter text here..."
 		></textarea>
-		{#if !$editMode && fieldCopy.content !== field.content}
-			<button class="btn btn-primary mt-2" on:click={toggleIndividualEditMode}>Save</button>
-		{/if}
+
+		<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
 	</div>
 {:else}
 	<div class="relative">
@@ -65,7 +68,7 @@
 			class="mt-2 text-neutral"
 			on:dblclick={() => {
 				if ($previewMode) return;
-				toggleIndividualEditMode();
+				individualEditMode = true;
 			}}
 		>
 			{field.content}
