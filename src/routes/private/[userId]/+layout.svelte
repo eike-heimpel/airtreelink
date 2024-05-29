@@ -37,7 +37,8 @@
 	function toggleEditMode() {
 		if (session) {
 			if ($editMode) {
-				confirmModalOpen = true;
+				// confirmModalOpen = true;
+				$editMode = !$editMode;
 			} else {
 				$editMode = !$editMode;
 			}

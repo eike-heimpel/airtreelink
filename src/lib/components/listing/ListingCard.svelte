@@ -5,8 +5,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
 	import type { ListingCard } from '$lib/types/cards';
-	import Sortable from 'sortablejs';
-	import DragIcon from 'virtual:icons/mdi/drag';
 	import { createEventDispatcher } from 'svelte';
 	import { createEmptyField } from '$lib/types/fields';
 	import type { FieldTypes } from '$lib/types/fields';
@@ -73,33 +71,25 @@
 		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
 
-	let sortable;
+	function moveFieldUp(index: number) {
+		if (index > 0) {
+			const [movedItem] = editedCard.content_fields.splice(index, 1);
+			editedCard.content_fields.splice(index - 1, 0, movedItem);
+			editedCard = { ...editedCard }; // Ensure reactivity
+		}
+	}
 
-	onMount(() => {
-		sortable = new Sortable(document.getElementById('sortable-list'), {
-			disabled: !$editMode,
-
-			animation: 150,
-			handle: '.drag-handle',
-			onEnd: (event) => {
-				const { oldIndex, newIndex } = event;
-				if (oldIndex !== newIndex) {
-					const movedItem = editedCard.content_fields.splice(oldIndex, 1)[0];
-					editedCard.content_fields.splice(newIndex, 0, movedItem);
-				}
-			}
-		});
-	});
-
-	function updateSortable(editMode: any) {
-		if (sortable) sortable.options.disabled = !editMode;
+	function moveFieldDown(index: number) {
+		if (index < editedCard.content_fields.length - 1) {
+			const [movedItem] = editedCard.content_fields.splice(index, 1);
+			editedCard.content_fields.splice(index + 1, 0, movedItem);
+			editedCard = { ...editedCard }; // Ensure reactivity
+		}
 	}
 
 	function openDeleteModal() {
 		showDeleteModal = true;
 	}
-
-	$: updateSortable($editMode);
 
 	function toggleChecked() {
 		checked = !checked;
@@ -128,13 +118,17 @@
 					{/if}
 				</div>
 				{#if $editMode}
-					<div class="flex items-center gap-2">
-						<div class="drag-handle cursor-grab">
-							<DragIcon />
-						</div>
-						<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}>
-							X
-						</button>
+					<div class="flex flex-col justify-center items-center ml-2 gap-2">
+						{#if index > 0}
+							<button class="btn btn-outline btn-sm" on:click={() => moveFieldUp(index)}>↑</button>
+						{/if}
+						<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}
+							>X</button
+						>
+						{#if index < editedCard.content_fields.length - 1}
+							<button class="btn btn-outline btn-sm" on:click={() => moveFieldDown(index)}>↓</button
+							>
+						{/if}
 					</div>
 				{/if}
 			</div>
