@@ -12,7 +12,5 @@
 		<input type="text" class="input input-primary" bind:value={editableTitle} />
 	</div>
 {:else}
-	<div class="flex items-center">
-		<h1 class="text-xl font-medium">{title}</h1>
-	</div>
+	<h1 class="text-xl font-medium text-left">{title}</h1>
 {/if}
