@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { TextField } from '$lib/types/fields';
-	import { editMode } from '$lib/stores/store';
+	import { editMode, previewMode } from '$lib/stores/store';
 	import FieldControls from './FieldControls.svelte';
 
 	export let field: TextField;
 	export let index: number;
 	export let totalFields: number;
 
+	let fieldCopy = JSON.parse(JSON.stringify(field));
+
 	const dispatch = createEventDispatcher();
+
+	let individualEditMode = false;
 
 	function updateContent(event) {
 		dispatch('updateField', { key: 'content', value: event.target.value });
@@ -25,9 +29,15 @@
 	function moveFieldDown() {
 		dispatch('moveFieldDown');
 	}
+
+	function toggleIndividualEditMode() {
+		individualEditMode = !individualEditMode;
+		console.log('called');
+		if (!individualEditMode) dispatch('save');
+	}
 </script>
 
-{#if $editMode}
+{#if $editMode || individualEditMode}
 	<div class="form-control p-4 bg-base-100">
 		<div class="flex justify-between items-center mb-2">
 			<h3 class="text-primary text-xl cursor-auto">Text Field</h3>
@@ -45,7 +55,20 @@
 			on:input={updateContent}
 			placeholder="Enter text here..."
 		></textarea>
+		{#if !$editMode && fieldCopy.content !== field.content}
+			<button class="btn btn-primary mt-2" on:click={toggleIndividualEditMode}>Save</button>
+		{/if}
 	</div>
 {:else}
-	<p class="mt-2 text-neutral">{field.content}</p>
+	<div class="relative">
+		<p
+			class="mt-2 text-neutral"
+			on:dblclick={() => {
+				if ($previewMode) return;
+				toggleIndividualEditMode();
+			}}
+		>
+			{field.content}
+		</p>
+	</div>
 {/if}

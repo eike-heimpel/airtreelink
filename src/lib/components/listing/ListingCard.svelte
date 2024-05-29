@@ -27,7 +27,7 @@
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
-	let addingOtherField = false;
+	let addingField = false;
 	let showDeleteModal = false;
 	let formLoading = false;
 
@@ -45,6 +45,7 @@
 		const newField = createEmptyField(type);
 		editedCard.content_fields.push(newField);
 		editedCard = { ...editedCard };
+		addingField = false;
 	}
 
 	async function saveEdit(
@@ -106,9 +107,10 @@
 	}
 
 	// if editMode changes from true to false, call saveEdit if there are changes
-	$: if (!$editMode && JSON.stringify(card) !== JSON.stringify(editedCard)) {
-		saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
-	}
+	// $: if (!$editMode && JSON.stringify(card) !== JSON.stringify(editedCard)) {
+	// 	console.log($editMode);
+	// 	saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
+	// }
 </script>
 
 <input
@@ -120,10 +122,10 @@
 <div class="collapse-title">
 	<Title bind:title={editedCard.title} />
 </div>
-<div id="sortable-list" class="collapse-content flex flex-col gap-2">
+<div id="sortable-list" class="collapse-content flex flex-col gap-4">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
-			<div class="flex flex-col" animate:flip={{ duration: 500 }}>
+			<div class="flex flex-col rounded-md" animate:flip={{ duration: 500 }}>
 				{#if field.type === 'text'}
 					<TextField
 						{field}
@@ -133,6 +135,7 @@
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
+						on:save={() => saveEdit()}
 					/>
 				{:else if field.type === 'video'}
 					<VideoField
@@ -181,32 +184,25 @@
 		{/each}
 	{/if}
 	{#if $editMode}
-		<div class="flex flex-col gap-4 p-4">
-			{#if addingOtherField}
-				<button
-					class="btn btn-outline btn-primary"
-					on:click={() => {
-						addingOtherField = false;
-					}}
+		<div class="flex flex-col gap-4">
+			{#if addingField}
+				<div class="grid grid-cols-2 gap-4">
+					<button class="btn btn-outline" on:click={() => addField('text')}>Text</button>
+					<button class="btn btn-outline" on:click={() => addField('link')}>Link</button>
+					<button class="btn btn-outline" on:click={() => addField('address')}>Address</button>
+					<button class="btn btn-outline" on:click={() => addField('video')}>Video</button>
+					<button class="btn btn-outline" on:click={() => addField('image')}>Image</button>
+				</div>
+				<button class="btn btn-outline btn-primary" on:click={() => (addingField = false)}
+					>Cancel</button
 				>
-					&lt;
-				</button>
-
-				<button class="btn btn-outline" on:click={() => addField('link')}>Link Field</button>
-				<button class="btn btn-outline" on:click={() => addField('address')}>Address Field</button>
-				<button class="btn btn-outline" on:click={() => addField('video')}>Video Field</button>
-				<button class="btn btn-outline" on:click={() => addField('image')}>Image Field</button>
 			{:else}
-				<button class="btn btn-outline" on:click={() => addField('text')}>Add Text Field</button>
-				<button
-					class="btn btn-outline"
-					on:click={() => {
-						addingOtherField = true;
-					}}>Add Other Field</button
-				>
+				<div class="flex justify-between">
+					<button class="btn btn-primary" on:click={() => saveEdit()}>Save All</button>
+					<button class="btn btn-outline" on:click={() => (addingField = true)}>Add Field</button>
+					<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
+				</div>
 			{/if}
-			<button class="btn btn-primary" on:click={() => saveEdit()}>Save All</button>
-			<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
 		</div>
 	{/if}
 </div>
