@@ -5,8 +5,13 @@
 	import BasicInfo from '$components/listing/BasicInfo.svelte';
 	import { previewMode } from '$lib/stores/store';
 	import { page } from '$app/stores';
+	import type { Database } from '$lib/types/supabase';
+	import type { ListingCard } from '$lib/types/cards';
+	import ListingCard from './listing/ListingCard.svelte';
 
-	export let currentListing;
+	type Listing = Database['public']['Tables']['Listings']['Row'];
+
+	export let currentListing: Listing;
 
 	let activeTab = 'home';
 </script>
@@ -19,7 +24,7 @@
 		<div class="hero-overlay bg-opacity-60"></div>
 
 		<div
-			class="h-full listing-info w-full px-4 pb-20 md:pt-4 {$previewMode ||
+			class="h-full listing-info w-full px-4 pb-20 {$previewMode ||
 			$page.route.id?.includes('public')
 				? 'pt-10'
 				: 'pt-24'} mb-10"

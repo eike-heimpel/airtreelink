@@ -16,6 +16,7 @@
 
 	let showAddModal = false;
 	let newCardTitle = '';
+	let moveCards = false;
 
 	function openAddModal() {
 		showAddModal = true;
@@ -63,7 +64,7 @@
 	let sortable;
 	onMount(() => {
 		sortable = new Sortable(document.getElementById('sortable-cards'), {
-			disabled: !$editMode,
+			disabled: !$editMode && moveCards,
 			animation: 150,
 			onEnd: (event) => {
 				const { oldIndex, newIndex } = event;
@@ -75,26 +76,42 @@
 		});
 	});
 
-	function updateSortable(editMode: any) {
-		if (sortable) sortable.options.disabled = !editMode;
+	function updateSortable(editMode: any, moveCards: any) {
+		if (!sortable) return;
+
+		if (!editMode || !moveCards) sortable.options.disabled = true;
+		else sortable.options.disabled = false;
 	}
 
-	$: updateSortable($editMode);
+	$: updateSortable($editMode, moveCards);
 </script>
 
 <div class="container mx-auto">
 	{#if $editMode}
-		<button class="btn btn-secondary mb-4 ml-2" on:click={openAddModal}>Add New Card</button>
+		<div class="flex justify-center gap-10">
+			<button class="btn btn-primary mb-4 ml-2" on:click={openAddModal}>Add New Card</button>
+			<button
+				class="btn {moveCards ? 'btn-secondary' : 'btn-primary'} mb-4 ml-2"
+				on:click={() => {
+					moveCards = !moveCards;
+				}}
+			>
+				{moveCards ? 'End Moving Cards' : 'Move Cards'}
+			</button>
+		</div>
+	{/if}
+	{#if moveCards}
+		<p class="text-center text-lg italic text-accent">Drag and drop to reorder cards</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 md:mt-10">
+	<div id="sortable-cards" class="grid grid-cols-1 gap-4 md:gap-8 md:mt-10">
 		{#each cards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button
 					tabindex="0"
 					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full"
 				>
-					<ListingCardComponent {card} />
+					<ListingCardComponent {card} {moveCards} />
 				</button>
 			</div>
 		{/each}

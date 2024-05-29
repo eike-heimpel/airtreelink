@@ -11,13 +11,14 @@
 	import { fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 
-	import TextFieldComponent from '$components/listing/cards/fields/TextField.svelte';
-	import VideoFieldComponent from '$components/listing/cards/fields/VideoField.svelte';
-	import AddressFieldComponent from '$components/listing/cards/fields/AddressField.svelte';
-	import LinkFieldComponent from '$components/listing/cards/fields/LinkField.svelte';
+	import TextField from '$components/listing/cards/fields/TextField.svelte';
+	import VideoField from '$components/listing/cards/fields/VideoField.svelte';
+	import AddressField from '$components/listing/cards/fields/AddressField.svelte';
+	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
 	import Title from '$components/listing/cards/Title.svelte';
 
 	export let card: ListingCard;
+	export let moveCards = false;
 
 	let editedCard: ListingCard = { ...card };
 	let checked = false;
@@ -29,7 +30,7 @@
 		editedCard = { ...card };
 	}
 
-	$: resetEditedCard(card); // needed for reactivity if the card changes from load function
+	$: resetEditedCard(card);
 
 	function updateField(index: number, eventDetail) {
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
@@ -75,7 +76,7 @@
 		if (index > 0) {
 			const [movedItem] = editedCard.content_fields.splice(index, 1);
 			editedCard.content_fields.splice(index - 1, 0, movedItem);
-			editedCard = { ...editedCard }; // Ensure reactivity
+			editedCard = { ...editedCard };
 		}
 	}
 
@@ -83,7 +84,7 @@
 		if (index < editedCard.content_fields.length - 1) {
 			const [movedItem] = editedCard.content_fields.splice(index, 1);
 			editedCard.content_fields.splice(index + 1, 0, movedItem);
-			editedCard = { ...editedCard }; // Ensure reactivity
+			editedCard = { ...editedCard };
 		}
 	}
 
@@ -96,47 +97,65 @@
 	}
 </script>
 
-<input type="radio" name="my-accordion-1" {checked} on:click={toggleChecked} />
-
+<input
+	type="radio"
+	name="my-accordion-1"
+	checked={moveCards ? false : checked}
+	on:click={toggleChecked}
+/>
 <div class="collapse-title">
 	<Title bind:title={editedCard.title} />
 </div>
-
 <div id="sortable-list" class="collapse-content flex flex-col gap-2">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
-			<div class="flex items-center">
-				<div class="flex-grow">
-					{#if field.type === 'text'}
-						<TextFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-					{:else if field.type === 'video'}
-						<VideoFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-					{:else if field.type === 'address'}
-						<AddressFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-					{:else if field.type === 'link'}
-						<LinkFieldComponent {field} on:updateField={(e) => updateField(index, e.detail)} />
-					{/if}
-				</div>
-				{#if $editMode}
-					<div class="flex flex-col justify-center items-center ml-2 gap-2">
-						{#if index > 0}
-							<button class="btn btn-outline btn-sm" on:click={() => moveFieldUp(index)}>↑</button>
-						{/if}
-						<button class="btn btn-error btn-outline btn-sm" on:click={() => deleteField(field.id)}
-							>X</button
-						>
-						{#if index < editedCard.content_fields.length - 1}
-							<button class="btn btn-outline btn-sm" on:click={() => moveFieldDown(index)}>↓</button
-							>
-						{/if}
-					</div>
+			<div class="flex flex-col">
+				{#if field.type === 'text'}
+					<TextField
+						{field}
+						{index}
+						totalFields={editedCard.content_fields.length}
+						on:updateField={(e) => updateField(index, e.detail)}
+						on:deleteField={() => deleteField(field.id)}
+						on:moveFieldUp={() => moveFieldUp(index)}
+						on:moveFieldDown={() => moveFieldDown(index)}
+					/>
+				{:else if field.type === 'video'}
+					<VideoField
+						{field}
+						{index}
+						totalFields={editedCard.content_fields.length}
+						on:updateField={(e) => updateField(index, e.detail)}
+						on:deleteField={() => deleteField(field.id)}
+						on:moveFieldUp={() => moveFieldUp(index)}
+						on:moveFieldDown={() => moveFieldDown(index)}
+					/>
+				{:else if field.type === 'address'}
+					<AddressField
+						{field}
+						{index}
+						totalFields={editedCard.content_fields.length}
+						on:updateField={(e) => updateField(index, e.detail)}
+						on:deleteField={() => deleteField(field.id)}
+						on:moveFieldUp={() => moveFieldUp(index)}
+						on:moveFieldDown={() => moveFieldDown(index)}
+					/>
+				{:else if field.type === 'link'}
+					<LinkField
+						{field}
+						{index}
+						totalFields={editedCard.content_fields.length}
+						on:updateField={(e) => updateField(index, e.detail)}
+						on:deleteField={() => deleteField(field.id)}
+						on:moveFieldUp={() => moveFieldUp(index)}
+						on:moveFieldDown={() => moveFieldDown(index)}
+					/>
 				{/if}
 			</div>
 		{/each}
 	{/if}
-
 	{#if $editMode}
-		<div class="flex justify-between gap-4 p-4">
+		<div class="flex flex-col gap-4 p-4">
 			{#if addingOtherField}
 				<button
 					class="btn btn-outline btn-primary"
@@ -164,7 +183,6 @@
 		</div>
 	{/if}
 </div>
-
 {#if showDeleteModal}
 	<dialog class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
