@@ -16,18 +16,19 @@
 	import AddressField from '$components/listing/cards/fields/AddressField.svelte';
 	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
 	import Title from '$components/listing/cards/Title.svelte';
+	import { error } from '@sveltejs/kit';
 
 	export let card: ListingCard;
 	export let moveCards = false;
 
-	let editedCard: ListingCard = { ...card };
+	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
 	let addingOtherField = false;
 	let showDeleteModal = false;
 	let formLoading = false;
 
 	function resetEditedCard(_) {
-		editedCard = { ...card };
+		editedCard = JSON.parse(JSON.stringify(card));
 	}
 
 	$: resetEditedCard(card);
@@ -42,10 +43,14 @@
 		editedCard = { ...editedCard };
 	}
 
-	async function saveEdit() {
+	async function saveEdit(
+		loadingMessage = 'Updating card...',
+		errorMessage = 'Error updating card.',
+		successMessage = 'Card updated.'
+	) {
 		editedCard.last_changed = new Date().toISOString();
 
-		const toastId = toast.loading('Updating card...');
+		const toastId = toast.loading(loadingMessage);
 
 		const resp = await fetch('/api/listing/card', {
 			method: 'PUT',
@@ -56,13 +61,13 @@
 		});
 
 		if (!resp.ok) {
-			console.error('Error updating card:', resp.statusText);
-			toast.error('Error updating card.', { id: toastId });
+			console.error(errorMessage, resp.statusText);
+			toast.error(errorMessage, { id: toastId });
 			return;
 		}
 
 		setTimeout(() => {
-			toast.success('Card updated.', { id: toastId });
+			toast.success(successMessage, { id: toastId });
 		}, $toastPromiseDelayMs);
 
 		invalidateAll();
@@ -94,6 +99,12 @@
 
 	function toggleChecked() {
 		checked = !checked;
+	}
+
+	$: console.log(editedCard?.title);
+	// if editMode changes from true to false, call saveEdit if there are changes
+	$: if (!$editMode && JSON.stringify(card) !== JSON.stringify(editedCard)) {
+		saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
 	}
 </script>
 
@@ -178,7 +189,7 @@
 					}}>Add Other Field</button
 				>
 			{/if}
-			<button class="btn btn-primary" on:click={saveEdit}>Save All</button>
+			<button class="btn btn-primary" on:click={() => saveEdit()}>Save All</button>
 			<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
 		</div>
 	{/if}

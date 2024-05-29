@@ -10,6 +10,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
 	import { toast } from 'svelte-french-toast';
+	import { fade, slide } from 'svelte/transition';
 
 	export let cards: ListingCard[] = [];
 	export let type = '';
@@ -96,12 +97,14 @@
 					moveCards = !moveCards;
 				}}
 			>
-				{moveCards ? 'End Moving Cards' : 'Move Cards'}
+				{moveCards ? 'Lock Cards' : 'Reorder Cards'}
 			</button>
 		</div>
 	{/if}
 	{#if moveCards}
-		<p class="text-center text-lg italic text-accent">Drag and drop to reorder cards</p>
+		<p class="text-center text-lg italic text-accent mb-2" in:fade>
+			Drag and drop to reorder cards
+		</p>
 	{/if}
 
 	<div id="sortable-cards" class="grid grid-cols-1 gap-4 md:gap-8 md:mt-10">
