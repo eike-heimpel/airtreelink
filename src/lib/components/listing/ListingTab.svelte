@@ -65,7 +65,7 @@
 	let sortable;
 	onMount(() => {
 		sortable = new Sortable(document.getElementById('sortable-cards'), {
-			disabled: !$editMode && moveCards,
+			disabled: !moveCards,
 			animation: 150,
 			onEnd: (event) => {
 				const { oldIndex, newIndex } = event;

@@ -123,7 +123,7 @@
 	on:click={toggleChecked}
 />
 <div class="collapse-title">
-	<Title bind:title={editedCard.title} />
+	<Title bind:title={editedCard.title} editMode={cardEditMode} />
 </div>
 <div id="sortable-list" class="collapse-content flex flex-col gap-2">
 	{#if editedCard.content_fields}

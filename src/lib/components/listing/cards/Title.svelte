@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { editMode } from '$lib/stores/store';
-
 	export let title: string;
+	export let editMode: boolean;
 </script>
 
-{#if $editMode}
+{#if editMode}
 	<div class="form-control">
 		<h3 class="text-primary mb-2 text-xl">Title</h3>
 

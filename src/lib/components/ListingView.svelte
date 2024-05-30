@@ -1,13 +1,9 @@
 <script lang="ts">
-	import Links from '$components/listing/Links.svelte';
 	import ListingTab from '$components/listing/ListingTab.svelte';
 	import NavigationMenu from '$components/listing/NavigationMenu.svelte';
-	import BasicInfo from '$components/listing/BasicInfo.svelte';
 	import { previewMode } from '$lib/stores/store';
 	import { page } from '$app/stores';
 	import type { Database } from '$lib/types/supabase';
-	import type { ListingCard } from '$lib/types/cards';
-	import ListingCard from './listing/ListingCard.svelte';
 
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 

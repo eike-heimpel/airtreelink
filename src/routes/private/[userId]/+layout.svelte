@@ -3,8 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { navigating } from '$app/stores';
 	import { editMode, showListingSettings, previewMode } from '$lib/stores/store';
-	import ListingView from '$components/ListingView.svelte';
-	import { fly, slide } from 'svelte/transition';
+
 	import AccountCircleOutline from 'virtual:icons/mdi/account-circle-outline';
 	import FormatListBulleted from 'virtual:icons/mdi/format-list-bulleted';
 	import CardMembership from 'virtual:icons/mdi/card-membership';
@@ -29,30 +28,6 @@
 	const closeMobileMenu = () => {
 		mobileMenuOpen = false;
 	};
-
-	const closeConfirmModal = () => {
-		confirmModalOpen = false;
-	};
-
-	function toggleEditMode() {
-		if (session) {
-			if ($editMode) {
-				// confirmModalOpen = true;
-				$editMode = !$editMode;
-			} else {
-				$editMode = !$editMode;
-			}
-		} else {
-			console.log('unauthorized attempt to edit listing by user');
-		}
-	}
-
-	function confirmDisableEditMode() {
-		$editMode = false;
-		console.log('invalidate all');
-		invalidateAll();
-		confirmModalOpen = false;
-	}
 
 	function openSettingsModal() {
 		if (session) {
@@ -110,12 +85,6 @@
 				</button>
 				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>
 					<SettingsOutline class="h-6 w-6" />
-				</button>
-				<button
-					class="btn btn-sm btn-{$editMode ? 'secondary' : 'primary'} ml-1"
-					on:click={toggleEditMode}
-				>
-					<PencilOutline class="h-6 w-6" />
 				</button>
 			{/if}
 		</div>
@@ -185,15 +154,6 @@
 						<SettingsOutline class="w-6 h-6 mr-2" />
 						<span>Settings</span>
 					</button>
-					<button
-						class="btn flex items-center"
-						class:btn-secondary={$editMode}
-						class:btn-outline={!$editMode}
-						on:click={toggleEditMode}
-					>
-						<PencilOutline class="w-6 h-6 mr-2" />
-						<span>{$editMode ? 'Stop Editing' : 'Edit All'}</span>
-					</button>
 				</div>
 			{/if}
 		</nav>
@@ -213,19 +173,3 @@
 		<slot></slot>
 	</div>
 </div>
-
-<!-- Confirm Disable Edit Mode Modal -->
-{#if confirmModalOpen}
-	<dialog class="modal modal-open modal-bottom sm:modal-middle">
-		<div class="modal-box">
-			<h3 class="font-bold text-lg">Confirm Disable Edit Mode</h3>
-			<p class="py-4">
-				Are you sure you want to disable edit mode? All unsaved changes will be lost.
-			</p>
-			<div class="modal-action justify-end align-center">
-				<button class="btn mr-2" on:click={closeConfirmModal}>Cancel</button>
-				<button class="btn btn-primary" on:click={confirmDisableEditMode}>Confirm</button>
-			</div>
-		</div>
-	</dialog>
-{/if}
