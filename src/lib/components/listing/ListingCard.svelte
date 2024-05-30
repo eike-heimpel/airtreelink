@@ -195,40 +195,50 @@
 	{#if !$previewMode}
 		<div class="flex flex-col gap-4">
 			{#if addingField}
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
 					<button class="btn btn-outline" on:click={() => addField('text')}>Text</button>
 					<button class="btn btn-outline" on:click={() => addField('link')}>Link</button>
 					<button class="btn btn-outline" on:click={() => addField('address')}>Address</button>
 					<button class="btn btn-outline" on:click={() => addField('video')}>Video</button>
 					<button class="btn btn-outline" on:click={() => addField('image')}>Image</button>
 				</div>
-				<button class="btn btn-outline btn-primary" on:click={() => (addingField = false)}
-					>Cancel</button
+				<button
+					class="btn btn-outline btn-primary w-full md:w-auto"
+					on:click={() => (addingField = false)}
 				>
+					Cancel
+				</button>
 			{:else}
-				<div class="flex justify-between">
-					<div class="flex justify-center gap-2">
+				<div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
+					<div class="flex flex-col gap-2 sm:flex-row sm:gap-2">
 						<button
-							class="btn {cardEditMode ? 'btn-outline' : 'btn-primary'}"
+							class="btn {cardEditMode ? 'btn-outline' : 'btn-primary'} w-full sm:w-auto"
 							on:click={() => {
 								cardEditMode = !cardEditMode;
 								resetEditedCard(card);
 							}}
 						>
-							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}</button
-						>
+							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}
+						</button>
 
 						{#if cardEditMode}
-							<button class="btn btn-outline" on:click={() => (addingField = true)}
-								>Add Field</button
+							<button
+								class="btn btn-outline w-full sm:w-auto"
+								on:click={() => (addingField = true)}
 							>
+								Add Field
+							</button>
 						{/if}
 
 						{#if cardHasBeenEdited && cardEditMode}
-							<button class="btn btn-secondary" on:click={updateCard}> Save All Changes</button>
+							<button class="btn btn-secondary w-full sm:w-auto" on:click={updateCard}>
+								Save All Changes
+							</button>
 						{/if}
 					</div>
-					<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete Card</button>
+					<button class="btn btn-error btn-outline w-full sm:w-auto" on:click={openDeleteModal}>
+						Delete Card
+					</button>
 				</div>
 			{/if}
 		</div>
