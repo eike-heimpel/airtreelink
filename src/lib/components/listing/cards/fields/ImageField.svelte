@@ -32,6 +32,7 @@
 
 	async function uploadImage(file) {
 		uploadedImage = URL.createObjectURL(file);
+		console.log(file);
 		const { data, error } = await supabase.storage
 			.from('listing_images')
 			.upload(`${file.name}`, file);
@@ -39,17 +40,25 @@
 			console.error('Error uploading file:', error.message);
 			return;
 		}
-		const fileUrl = supabase.storage.from('listing_images').getPublicUrl(data.path).publicUrl;
-		dispatch('updateField', { key: 'url', value: fileUrl });
+		const { data: image } = await supabase.storage.from('listing_images').getPublicUrl(data.path);
+		dispatch('updateField', { key: 'url', value: image.publicUrl });
 	}
 
 	function updateAltText(event) {
 		dispatch('updateField', { key: 'altText', value: event.target.value });
 	}
 
-	function deleteImage() {
-		dispatch('updateField', { key: 'url', value: '' });
-		uploadedImage = null;
+	async function deleteImage() {
+		if (field.url) {
+			const filePath = field.url.split('/').pop();
+			const { error } = await supabase.storage.from('listing_images').remove([filePath]);
+			if (error) {
+				console.error('Error deleting file:', error.message);
+				return;
+			}
+			dispatch('updateField', { key: 'url', value: '' });
+			uploadedImage = null;
+		}
 	}
 </script>
 
