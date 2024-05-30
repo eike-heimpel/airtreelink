@@ -152,13 +152,12 @@
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
-						on:save={() => saveEdit()}
-						on:cancelEdit={() => resetEditedCard(card)}
 					/>
 				{:else if field.type === 'address'}
 					<AddressField
 						{field}
 						{index}
+						{cardEditMode}
 						totalFields={editedCard.content_fields.length}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
@@ -169,6 +168,7 @@
 					<LinkField
 						{field}
 						{index}
+						{cardEditMode}
 						totalFields={editedCard.content_fields.length}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
@@ -179,6 +179,7 @@
 					<ImageField
 						{field}
 						{index}
+						{cardEditMode}
 						totalFields={editedCard.content_fields.length}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}

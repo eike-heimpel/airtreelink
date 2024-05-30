@@ -1,18 +1,15 @@
 <script lang="ts">
+	import BaseField from './BaseField.svelte';
 	import type { AddressField } from '$lib/types/fields';
-	import { editMode } from '$lib/stores/store';
 	import { createEventDispatcher } from 'svelte';
-	import FieldControls from './FieldControls.svelte';
 
 	export let field: AddressField;
 	export let index: number;
 	export let totalFields: number;
+	export let cardEditMode: boolean;
 
 	let showDirections = field.showDirections ?? true;
 	let showAddressAsText = field.showAddressAsText ?? false;
-
-	$: showDirections = field.showDirections ?? true;
-	$: showAddressAsText = field.showAddressAsText ?? false;
 
 	const dispatch = createEventDispatcher();
 
@@ -32,32 +29,19 @@
 		const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 		window.open(url, '_blank');
 	}
-
-	function deleteField() {
-		dispatch('deleteField');
-	}
-
-	function moveFieldUp() {
-		dispatch('moveFieldUp');
-	}
-
-	function moveFieldDown() {
-		dispatch('moveFieldDown');
-	}
 </script>
 
-{#if $editMode}
-	<div class="form-control p-4 bg-base-100">
-		<div class="flex justify-between items-center mb-2">
-			<p class="text-primary text-xl cursor-auto">Address Field</p>
-			<FieldControls
-				{index}
-				{totalFields}
-				on:deleteField={deleteField}
-				on:moveFieldUp={moveFieldUp}
-				on:moveFieldDown={moveFieldDown}
-			/>
-		</div>
+<BaseField
+	{field}
+	{index}
+	{totalFields}
+	editMode={cardEditMode}
+	title="Address Field"
+	on:deleteField
+	on:moveFieldUp
+	on:moveFieldDown
+>
+	<div slot="content" class="form-control">
 		<input type="text" class="input input-primary" value={field.content} on:input={updateContent} />
 		<div class="flex items-center mt-4 space-x-4">
 			<label class="cursor-pointer flex items-center">
@@ -81,8 +65,7 @@
 			</label>
 		</div>
 	</div>
-{:else}
-	<div class="p-4">
+	<div slot="preview">
 		{#if showAddressAsText}
 			<p class="mt-2 text-neutral">{field.content}</p>
 		{/if}
@@ -97,4 +80,4 @@
 			</address>
 		{/if}
 	</div>
-{/if}
+</BaseField>
