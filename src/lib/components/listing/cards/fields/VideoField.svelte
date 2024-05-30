@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import BaseField from './BaseField.svelte';
 	import type { VideoField } from '$lib/types/fields';
-	import { previewMode } from '$lib/stores/store';
-	import FieldControls from './FieldControls.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let field: VideoField;
 	export let index: number;
@@ -44,46 +43,34 @@
 
 		dispatch('updateField', { key: 'url', value: url });
 	}
-
-	function deleteField() {
-		dispatch('deleteField');
-	}
-
-	function moveFieldUp() {
-		dispatch('moveFieldUp');
-	}
-
-	function moveFieldDown() {
-		dispatch('moveFieldDown');
-	}
 </script>
 
-{#if cardEditMode && !$previewMode}
-	<div class="form-control p-4 bg-base-100">
-		<div class="flex justify-between items-center mb-2">
-			<h3 class="text-primary text-xl cursor-auto">Video Field</h3>
-			<FieldControls
-				{index}
-				{totalFields}
-				on:deleteField={deleteField}
-				on:moveFieldUp={moveFieldUp}
-				on:moveFieldDown={moveFieldDown}
-			/>
-		</div>
+<BaseField
+	{field}
+	{index}
+	{totalFields}
+	editMode={cardEditMode}
+	title="Video Field"
+	on:deleteField
+	on:moveFieldUp
+	on:moveFieldDown
+>
+	<div slot="content" class="form-control">
 		<label class="label">
 			<span class="label-text">Video URL</span>
 		</label>
 		<input type="text" class="input input-primary" value={field.url} on:input={updateContent} />
 	</div>
-{:else if field.url}
-	<div class="relative">
-		<iframe
-			class="w-full aspect-video"
-			src={field.url}
-			frameborder="0"
-			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-			allowfullscreen
-			title="Video"
-		></iframe>
+	<div slot="preview">
+		{#if field.url}
+			<iframe
+				class="w-full aspect-video"
+				src={field.url}
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowfullscreen
+				title="Video"
+			></iframe>
+		{/if}
 	</div>
-{/if}
+</BaseField>

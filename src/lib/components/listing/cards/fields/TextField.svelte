@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { TextField } from '$lib/types/fields';
-	import { previewMode } from '$lib/stores/store';
-	import FieldControls from './FieldControls.svelte';
+	import BaseField from './BaseField.svelte';
 	import FieldEditControls from './FieldEditControls.svelte';
+	import type { TextField } from '$lib/types/fields';
+	import { createEventDispatcher } from 'svelte';
+	import { previewMode } from '$lib/stores/store';
 
 	export let field: TextField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
+
+	let individualEditMode = false;
 
 	$: if (cardEditMode) {
 		individualEditMode = true;
@@ -16,22 +18,8 @@
 
 	const dispatch = createEventDispatcher();
 
-	let individualEditMode = false;
-
 	function updateContent(event) {
 		dispatch('updateField', { key: 'content', value: event.target.value });
-	}
-
-	function deleteField() {
-		dispatch('deleteField');
-	}
-
-	function moveFieldUp() {
-		dispatch('moveFieldUp');
-	}
-
-	function moveFieldDown() {
-		dispatch('moveFieldDown');
 	}
 
 	function save() {
@@ -41,38 +29,34 @@
 
 	function cancel() {
 		if (!cardEditMode) individualEditMode = false;
-
 		dispatch('cancelEdit');
 	}
 
-	$: if ($previewMode) individualEditMode = false;
+	$: console.log(individualEditMode, cardEditMode);
 </script>
 
-{#if (cardEditMode || individualEditMode) && !$previewMode}
-	<div class="form-control p-4 bg-base-100">
-		<div class="flex justify-between items-center mb-2">
-			<h3 class="text-primary text-xl cursor-auto">Text Field</h3>
-			<FieldControls
-				{index}
-				{totalFields}
-				on:deleteField={deleteField}
-				on:moveFieldUp={moveFieldUp}
-				on:moveFieldDown={moveFieldDown}
-			/>
-		</div>
+<BaseField
+	{field}
+	{index}
+	{totalFields}
+	editMode={cardEditMode || individualEditMode}
+	title="Text Field"
+	on:deleteField
+	on:moveFieldUp
+	on:moveFieldDown
+>
+	<div slot="content" class="form-control">
 		<textarea
 			class="textarea textarea-primary h-40"
 			value={field.content}
 			on:input={updateContent}
 			placeholder="Enter text here..."
 		></textarea>
-
-		{#if !cardEditMode}
+		{#if !cardEditMode && individualEditMode}
 			<FieldEditControls editMode={cardEditMode} on:save={save} on:cancel={cancel} />
 		{/if}
 	</div>
-{:else}
-	<div class="relative">
+	<div slot="preview">
 		<p
 			class="mt-2 text-neutral"
 			on:dblclick={() => {
@@ -83,4 +67,4 @@
 			{field.content}
 		</p>
 	</div>
-{/if}
+</BaseField>
