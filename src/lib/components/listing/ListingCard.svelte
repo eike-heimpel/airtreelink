@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { editMode } from '$lib/stores/store';
+	import { previewMode } from '$lib/stores/store';
 	import { toast } from 'svelte-french-toast';
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
@@ -18,7 +18,6 @@
 	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
 	import Title from '$components/listing/cards/Title.svelte';
 	import ImageField from '$components/listing/cards/fields/ImageField.svelte';
-	import { error } from '@sveltejs/kit';
 
 	export let card: ListingCard;
 	export let moveCards = false;
@@ -28,6 +27,10 @@
 	let addingField = false;
 	let showDeleteModal = false;
 	let formLoading = false;
+	let cardEditMode = false;
+	let cardHasBeenEdited = false;
+
+	$: cardHasBeenEdited = JSON.stringify(card) !== JSON.stringify(editedCard);
 
 	function resetEditedCard(card: ListingCard) {
 		editedCard = JSON.parse(JSON.stringify(card));
@@ -104,11 +107,13 @@
 		checked = !checked;
 	}
 
-	// if editMode changes from true to false, call saveEdit if there are changes
-	// $: if (!$editMode && JSON.stringify(card) !== JSON.stringify(editedCard)) {
-	// 	console.log($editMode);
-	// 	saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
-	// }
+	function updateCard() {
+		cardEditMode = !cardEditMode;
+
+		if (!cardEditMode && cardHasBeenEdited) {
+			saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
+		}
+	}
 </script>
 
 <input
@@ -129,6 +134,7 @@
 						{field}
 						{index}
 						totalFields={editedCard.content_fields.length}
+						{cardEditMode}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -141,10 +147,13 @@
 						{field}
 						{index}
 						totalFields={editedCard.content_fields.length}
+						{cardEditMode}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
+						on:save={() => saveEdit()}
+						on:cancelEdit={() => resetEditedCard(card)}
 					/>
 				{:else if field.type === 'address'}
 					<AddressField
@@ -182,7 +191,7 @@
 			</div>
 		{/each}
 	{/if}
-	{#if $editMode}
+	{#if !$previewMode}
 		<div class="flex flex-col gap-4">
 			{#if addingField}
 				<div class="grid grid-cols-2 gap-4">
@@ -197,8 +206,23 @@
 				>
 			{:else}
 				<div class="flex justify-between">
-					<button class="btn btn-primary" on:click={() => saveEdit()}>Save All</button>
 					<button class="btn btn-outline" on:click={() => (addingField = true)}>Add Field</button>
+
+					<div class="flex justify-center gap-2">
+						<button
+							class="btn {cardEditMode ? 'btn-outline' : 'btn-primary'}"
+							on:click={() => {
+								cardEditMode = !cardEditMode;
+								resetEditedCard(card);
+							}}
+						>
+							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}</button
+						>
+
+						{#if cardHasBeenEdited && cardEditMode}
+							<button class="btn btn-secondary" on:click={updateCard}> Save All Changes</button>
+						{/if}
+					</div>
 					<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
 				</div>
 			{/if}

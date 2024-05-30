@@ -28,7 +28,7 @@
 				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'home'
 					? 'bg-accent text-white'
-					: 'hover:bg-accent hover:text-white'}"
+					: 'hover:text-accent'}"
 				on:click={() => {
 					activeTab = 'home';
 					updateQueryParam('home');
@@ -53,7 +53,7 @@
 				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				'links'
 					? 'bg-accent text-white'
-					: 'hover:bg-accent hover:text-white'}"
+					: 'hover:text-accent'}"
 				on:click={() => {
 					activeTab = 'links';
 					updateQueryParam('links');
@@ -78,7 +78,7 @@
 				class="w-full py-3 flex flex-col items-center justify-center lg:text-lg {activeTab ===
 				'recommendation'
 					? 'bg-accent text-white'
-					: 'hover:bg-accent hover:text-white'}"
+					: 'hover:text-accent'}"
 				on:click={() => {
 					activeTab = 'recommendation';
 					updateQueryParam('recommendation');

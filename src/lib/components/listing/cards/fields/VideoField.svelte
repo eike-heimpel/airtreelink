@@ -1,23 +1,29 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { VideoField } from '$lib/types/fields';
-	import { editMode } from '$lib/stores/store';
+	import { editMode, previewMode } from '$lib/stores/store';
 	import FieldControls from './FieldControls.svelte';
+	import FieldEditControls from './FieldEditControls.svelte';
 
 	export let field: VideoField;
 	export let index: number;
 	export let totalFields: number;
+	export let cardEditMode: boolean;
+
+	$: if (cardEditMode) {
+		individualEditMode = true;
+	} else individualEditMode = false;
 
 	const dispatch = createEventDispatcher();
+
+	let individualEditMode = false;
 
 	function updateContent(event) {
 		let url = event.target.value;
 
-		// Function to extract video ID and convert to embed URL
 		function convertToEmbedUrl(url) {
 			let videoId = null;
 
-			// Extract video ID for various YouTube URL formats
 			if (url.includes('youtu.be/')) {
 				videoId = url.split('youtu.be/')[1];
 			} else if (url.includes('youtube.com/watch?v=')) {
@@ -38,7 +44,7 @@
 			if (videoId) {
 				return `https://www.youtube.com/embed/${videoId}`;
 			}
-			return url; // Return the original URL if it doesn't match
+			return url;
 		}
 
 		url = convertToEmbedUrl(url);
@@ -57,9 +63,22 @@
 	function moveFieldDown() {
 		dispatch('moveFieldDown');
 	}
+
+	function save() {
+		if (!cardEditMode) individualEditMode = false;
+
+		dispatch('save');
+	}
+
+	function cancel() {
+		if (!cardEditMode) individualEditMode = false;
+		dispatch('cancelEdit');
+	}
+
+	$: if ($previewMode) individualEditMode = false;
 </script>
 
-{#if $editMode}
+{#if $editMode || individualEditMode}
 	<div class="form-control p-4 bg-base-100">
 		<div class="flex justify-between items-center mb-2">
 			<h3 class="text-primary text-xl cursor-auto">Video Field</h3>
@@ -75,9 +94,12 @@
 			<span class="label-text">Video URL</span>
 		</label>
 		<input type="text" class="input input-primary" value={field.url} on:input={updateContent} />
+		{#if !cardEditMode}
+			<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
+		{/if}
 	</div>
 {:else if field.url}
-	<div class="p-4 bg-base-100 mt-4">
+	<div class="relative">
 		<iframe
 			class="w-full aspect-video"
 			src={field.url}

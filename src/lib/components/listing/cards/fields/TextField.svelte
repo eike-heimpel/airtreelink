@@ -8,6 +8,13 @@
 	export let field: TextField;
 	export let index: number;
 	export let totalFields: number;
+	export let cardEditMode: boolean;
+
+	let fieldHasBeenChanged = false;
+
+	$: if (cardEditMode) {
+		individualEditMode = true;
+	} else individualEditMode = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -30,15 +37,17 @@
 	}
 
 	function save() {
-		individualEditMode = false;
+		if (!cardEditMode) individualEditMode = false;
 		dispatch('save');
 	}
 
 	function cancel() {
-		individualEditMode = false;
+		if (!cardEditMode) individualEditMode = false;
 
 		dispatch('cancelEdit');
 	}
+
+	$: if ($previewMode) individualEditMode = false;
 </script>
 
 {#if $editMode || individualEditMode}
@@ -60,7 +69,9 @@
 			placeholder="Enter text here..."
 		></textarea>
 
-		<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
+		{#if !cardEditMode}
+			<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
+		{/if}
 	</div>
 {:else}
 	<div class="relative">

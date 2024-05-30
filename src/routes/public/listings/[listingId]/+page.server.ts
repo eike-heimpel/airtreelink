@@ -22,7 +22,11 @@ export const load = async ({ request, cookies, params, url, locals: { supabase }
         throw error(404, "could not find listing page");
     }
 
-    if (!currentListingInfo.public || currentListingInfo.hash !== url.searchParams.get('hash')) {
+
+    const rawHash = url.searchParams.get('hash') || "";
+    const urlHash = decodeURIComponent(rawHash.replace(/ /g, '+')); // replace space with + to avoid encoding issues
+    
+    if (!currentListingInfo.public || currentListingInfo.hash !== urlHash) {
         throw error(403, 'Listing is private')
     }
 
