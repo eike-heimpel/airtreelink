@@ -206,8 +206,6 @@
 				>
 			{:else}
 				<div class="flex justify-between">
-					<button class="btn btn-outline" on:click={() => (addingField = true)}>Add Field</button>
-
 					<div class="flex justify-center gap-2">
 						<button
 							class="btn {cardEditMode ? 'btn-outline' : 'btn-primary'}"
@@ -219,11 +217,17 @@
 							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}</button
 						>
 
+						{#if cardEditMode}
+							<button class="btn btn-outline" on:click={() => (addingField = true)}
+								>Add Field</button
+							>
+						{/if}
+
 						{#if cardHasBeenEdited && cardEditMode}
 							<button class="btn btn-secondary" on:click={updateCard}> Save All Changes</button>
 						{/if}
 					</div>
-					<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete</button>
+					<button class="btn btn-error btn-outline" on:click={openDeleteModal}>Delete Card</button>
 				</div>
 			{/if}
 		</div>

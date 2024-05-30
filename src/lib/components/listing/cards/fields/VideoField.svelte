@@ -1,22 +1,15 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { VideoField } from '$lib/types/fields';
-	import { editMode, previewMode } from '$lib/stores/store';
+	import { previewMode } from '$lib/stores/store';
 	import FieldControls from './FieldControls.svelte';
-	import FieldEditControls from './FieldEditControls.svelte';
 
 	export let field: VideoField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
 
-	$: if (cardEditMode) {
-		individualEditMode = true;
-	} else individualEditMode = false;
-
 	const dispatch = createEventDispatcher();
-
-	let individualEditMode = false;
 
 	function updateContent(event) {
 		let url = event.target.value;
@@ -63,22 +56,9 @@
 	function moveFieldDown() {
 		dispatch('moveFieldDown');
 	}
-
-	function save() {
-		if (!cardEditMode) individualEditMode = false;
-
-		dispatch('save');
-	}
-
-	function cancel() {
-		if (!cardEditMode) individualEditMode = false;
-		dispatch('cancelEdit');
-	}
-
-	$: if ($previewMode) individualEditMode = false;
 </script>
 
-{#if $editMode || individualEditMode}
+{#if cardEditMode && !$previewMode}
 	<div class="form-control p-4 bg-base-100">
 		<div class="flex justify-between items-center mb-2">
 			<h3 class="text-primary text-xl cursor-auto">Video Field</h3>
@@ -94,9 +74,6 @@
 			<span class="label-text">Video URL</span>
 		</label>
 		<input type="text" class="input input-primary" value={field.url} on:input={updateContent} />
-		{#if !cardEditMode}
-			<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
-		{/if}
 	</div>
 {:else if field.url}
 	<div class="relative">

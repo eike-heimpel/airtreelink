@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { TextField } from '$lib/types/fields';
-	import { editMode, previewMode } from '$lib/stores/store';
+	import { previewMode } from '$lib/stores/store';
 	import FieldControls from './FieldControls.svelte';
 	import FieldEditControls from './FieldEditControls.svelte';
 
@@ -9,8 +9,6 @@
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
-
-	let fieldHasBeenChanged = false;
 
 	$: if (cardEditMode) {
 		individualEditMode = true;
@@ -50,7 +48,7 @@
 	$: if ($previewMode) individualEditMode = false;
 </script>
 
-{#if $editMode || individualEditMode}
+{#if (cardEditMode || individualEditMode) && !$previewMode}
 	<div class="form-control p-4 bg-base-100">
 		<div class="flex justify-between items-center mb-2">
 			<h3 class="text-primary text-xl cursor-auto">Text Field</h3>
@@ -70,7 +68,7 @@
 		></textarea>
 
 		{#if !cardEditMode}
-			<FieldEditControls editMode={$editMode} on:save={save} on:cancel={cancel} />
+			<FieldEditControls editMode={cardEditMode} on:save={save} on:cancel={cancel} />
 		{/if}
 	</div>
 {:else}
