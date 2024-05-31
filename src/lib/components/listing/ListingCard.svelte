@@ -11,6 +11,7 @@
 	import { fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { flip } from 'svelte/animate';
+	import { page } from '$app/stores';
 
 	import TextField from '$components/listing/cards/fields/TextField.svelte';
 	import VideoField from '$components/listing/cards/fields/VideoField.svelte';
@@ -29,17 +30,25 @@
 	let formLoading = false;
 	let cardEditMode = false;
 	let cardHasBeenEdited = false;
+	let tempImages: { [key: number]: { url: string; file: File } | null } = {};
+	let supabase = $page.data.supabase;
 
 	$: cardHasBeenEdited = JSON.stringify(card) !== JSON.stringify(editedCard);
 
 	function resetEditedCard(card: ListingCard) {
 		editedCard = JSON.parse(JSON.stringify(card));
+		tempImages = {};
 	}
 
 	$: resetEditedCard(card);
 
 	function updateField(index: number, eventDetail) {
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
+	}
+
+	function updateTempImage(index: number, tempImage: { url: string; file: File } | null) {
+		console.log(tempImage);
+		tempImages = { ...tempImages, [index]: tempImage };
 	}
 
 	function addField(type: FieldTypes) {
@@ -55,6 +64,28 @@
 		successMessage = 'Card updated.'
 	) {
 		editedCard.last_changed = new Date().toISOString();
+
+		// Upload images to Supabase before saving the card
+		for (const [index, tempImage] of Object.entries(tempImages)) {
+			if (tempImage) {
+				console.log(tempImage);
+				const { data, error } = await supabase.storage
+					.from('listing_images')
+					.upload(`${tempImage.file.name}`, tempImage.file);
+
+				console.log(data);
+				if (error) {
+					console.error('Error uploading file:', error.message);
+					toast.error(errorMessage);
+					return;
+				}
+				const { data: image } = await supabase.storage
+					.from('listing_images')
+					.getPublicUrl(data.path);
+				editedCard.content_fields[index].url = image.publicUrl;
+				editedCard.content_fields[index].path = data.path;
+			}
+		}
 
 		const toastId = toast.loading(loadingMessage);
 
@@ -181,6 +212,8 @@
 						{index}
 						{cardEditMode}
 						totalFields={editedCard.content_fields.length}
+						tempImage={tempImages[index]}
+						onTempImageUpdate={updateTempImage}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}

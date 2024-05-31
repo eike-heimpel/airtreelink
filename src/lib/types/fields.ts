@@ -35,6 +35,7 @@ export type ImageField = {
     type: "image"; 
     altText: string;
     url: string;
+    path: string;
 }
 
 export type ContentField = TextField | VideoField | AddressField | LinkField | ImageField;
@@ -53,7 +54,7 @@ export function createEmptyField(type: FieldTypes): ContentField {
         case 'link':
             return { id, type, content: '', url: '' };
         case 'image':
-            return { id, type, altText: '', url: '' };
+            return { id, type, altText: '', url: '', path: '' };
         default:
             throw new Error(`Unsupported field type: ${type}`);
     }
