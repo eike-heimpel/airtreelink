@@ -51,22 +51,22 @@
 		<li class="flex-1">
 			<button
 				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				'links'
+				'info'
 					? 'bg-accent text-white'
 					: 'hover:text-accent'}"
 				on:click={() => {
-					activeTab = 'links';
-					updateQueryParam('links');
+					activeTab = 'info';
+					updateQueryParam('info');
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'links';
-						updateQueryParam('links');
+						activeTab = 'info';
+						updateQueryParam('info');
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'links';
-					updateQueryParam('links');
+					activeTab = 'info';
+					updateQueryParam('info');
 				}}
 			>
 				<InfoOutline class="w-7 h-7" />

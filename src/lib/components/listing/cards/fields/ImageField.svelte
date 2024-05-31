@@ -10,7 +10,7 @@
 	export let tempImage: { url: string; file: File } | null;
 	export let onTempImageUpdate: (
 		index: number,
-		tempImage: { url: string; file: File } | null
+		tempImage: { url: string; file: File; altText: string } | null
 	) => void;
 
 	const dispatch = createEventDispatcher();
@@ -20,7 +20,8 @@
 		const file = event.target.files[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file });
+			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
+			dispatch('updateField', { key: 'altText', value: file.name });
 		}
 	}
 
@@ -29,16 +30,13 @@
 		const file = event.dataTransfer.files[0];
 		if (file) {
 			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file });
+			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
+			dispatch('updateField', { key: 'altText', value: file.name });
 		}
 	}
 
 	function deleteTempImage() {
 		dispatch('updateField', { key: 'url', value: '' });
-	}
-
-	function updateAltText(event) {
-		dispatch('updateField', { key: 'altText', value: event.target.value });
 	}
 </script>
 
@@ -101,10 +99,6 @@
 				</label>
 			</div>
 		{/if}
-		<label class="label mt-4">
-			<span class="label-text">Description (optional)</span>
-		</label>
-		<input type="text" class="input input-primary" value={field.altText} on:input={updateAltText} />
 	</div>
 	<div slot="preview">
 		{#if tempImage?.url || field.url}

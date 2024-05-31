@@ -18,18 +18,16 @@
 	let updatedListing = {};
 
 	function updateListing() {
-		// Retrieve the last updated timestamp and cards from localStorage
-		const storedLastUpdated = localStorage.getItem('lastUpdated');
 		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
 		if (storedListing) {
 			currentListing = JSON.parse(storedListing);
 		}
-		// Update cards with new data from the server
+
 		const newCards = data.modifiedCards;
 		for (const card of newCards) {
 			currentListing.cards[card.id] = card;
 		}
-		// Remove deleted cards from local storage
+
 		const allCardIds = data.allCardIds;
 		for (const id of Object.keys(currentListing.cards)) {
 			if (!allCardIds.includes(parseInt(id))) {
@@ -39,11 +37,9 @@
 				toast('Deleted card: ' + cardName);
 			}
 		}
-		// Update the lastUpdated timestamp in localStorage
-		localStorage.setItem('lastUpdated', data.lastChanged);
-		// Save the updated cards back to localStorage
+
 		localStorage.setItem(data.currentListingInfo.hash, JSON.stringify(currentListing));
-		// Trigger reactivity by reassigning currentListing
+
 		currentListing = { ...currentListing };
 	}
 

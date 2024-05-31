@@ -8,6 +8,7 @@
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
 	export let currentListing: Listing;
+	console.log(currentListing);
 
 	let activeTab = 'home';
 </script>
@@ -41,10 +42,10 @@
 						)}
 						type="recommendation"
 					/>
-				{:else if activeTab === 'links'}
+				{:else if activeTab === 'info'}
 					<ListingTab
 						cards={Object.values(currentListing.cards).filter((card) => card.type === 'info')}
-						type="infos"
+						type="info"
 					/>
 				{:else if activeTab === 'home'}
 					<ListingTab

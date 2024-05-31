@@ -30,7 +30,7 @@
 	let formLoading = false;
 	let cardEditMode = false;
 	let cardHasBeenEdited = false;
-	let tempImages: { [key: number]: { url: string; file: File } | null } = {};
+	let tempImages: { [key: number]: { url: string; file: File; altText: string } | null } = {};
 	let supabase = $page.data.supabase;
 
 	$: cardHasBeenEdited = JSON.stringify(card) !== JSON.stringify(editedCard);
@@ -46,8 +46,10 @@
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
-	function updateTempImage(index: number, tempImage: { url: string; file: File } | null) {
-		console.log(tempImage);
+	function updateTempImage(
+		index: number,
+		tempImage: { url: string; file: File; altText: string } | null
+	) {
 		tempImages = { ...tempImages, [index]: tempImage };
 	}
 
@@ -65,15 +67,13 @@
 	) {
 		editedCard.last_changed = new Date().toISOString();
 
-		// Upload images to Supabase before saving the card
+		// Upload new images to Supabase before saving the card
 		for (const [index, tempImage] of Object.entries(tempImages)) {
 			if (tempImage) {
-				console.log(tempImage);
 				const { data, error } = await supabase.storage
 					.from('listing_images')
 					.upload(`${tempImage.file.name}`, tempImage.file);
 
-				console.log(data);
 				if (error) {
 					console.error('Error uploading file:', error.message);
 					toast.error(errorMessage);
@@ -84,6 +84,7 @@
 					.getPublicUrl(data.path);
 				editedCard.content_fields[index].url = image.publicUrl;
 				editedCard.content_fields[index].path = data.path;
+				editedCard.content_fields[index].altText = tempImage.altText;
 			}
 		}
 
@@ -103,6 +104,34 @@
 			return;
 		}
 
+		function normalizePath(filePath) {
+			if (!filePath) return '';
+			return filePath.startsWith('/') ? filePath.slice(1) : filePath;
+		}
+		// Compare the initial card to the edited card and delete any images from storage that are no longer in the card
+		for (const field of card.content_fields) {
+			if (field.type === 'image' && !editedCard.content_fields.some((f) => f.id === field.id)) {
+				const normalizedPath = normalizePath(field.path);
+				console.log('Deleting image:', normalizedPath);
+
+				const { data, error: deleteError } = await supabase.storage
+					.from('listing_images')
+					.remove([normalizedPath]);
+
+				if (deleteError) {
+					console.error('Error deleting image:', deleteError.message);
+					toast.error(errorMessage);
+					return;
+				}
+
+				if (!data || data.length === 0) {
+					console.log('No images deleted');
+				} else {
+					console.log('Image deleted successfully:', data);
+				}
+			}
+		}
+
 		setTimeout(() => {
 			toast.success(successMessage, { id: toastId });
 		}, $toastPromiseDelayMs);
@@ -110,7 +139,7 @@
 		invalidateAll();
 	}
 
-	function deleteField(fieldId: string) {
+	async function deleteField(fieldId: string) {
 		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
 
