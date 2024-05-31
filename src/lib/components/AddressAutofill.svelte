@@ -1,7 +1,6 @@
 <!-- MapboxSearchAutocomplete.svelte -->
 <script>
 	import { PUBLIC_MAPBOX_ACCESS_TOKEN } from '$env/static/public';
-	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	let query = '';
