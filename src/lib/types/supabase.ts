@@ -20,30 +20,31 @@ export type Database = {
           title: string
           type: string | null
           user_id: string | null
+          icon: string | null
         }
         Insert: {
           content_fields?: Json | null
           created_at?: string
           decription?: string | null
           id?: number
-          is_recommended?: boolean
           last_changed?: string
           listing_id: number
           title: string
           type?: string | null
           user_id?: string | null
+          icon?: string | null
         }
         Update: {
           content_fields?: Json | null
           created_at?: string
           decription?: string | null
           id?: number
-          is_recommended?: boolean
           last_changed?: string
           listing_id?: number
           title?: string
           type?: string | null
           user_id?: string | null
+          icon?: string | null
         }
         Relationships: [
           {

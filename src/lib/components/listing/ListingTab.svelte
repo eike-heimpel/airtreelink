@@ -58,6 +58,8 @@
 	}
 
 	$: updateSortable(moveCards);
+
+	$: console.log(tempCard);
 </script>
 
 <div class="container mx-auto">

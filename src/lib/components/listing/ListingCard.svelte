@@ -26,6 +26,7 @@
 	export let collapsable = true;
 	export let cardEditMode = false;
 	export let createNewCard = false;
+	console.log(card);
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
@@ -71,7 +72,6 @@
 		successMessage = 'Card updated.'
 	) {
 		if (createNewCard) {
-			// lets close the modal either way, user will be notified if something went wrong
 			dispatch('closeModal');
 		}
 
@@ -113,34 +113,6 @@
 			toast.error(errorMessage, { id: toastId });
 			return;
 		}
-
-		// function normalizePath(filePath) {
-		// 	if (!filePath) return '';
-		// 	return filePath.startsWith('/') ? filePath.slice(1) : filePath;
-		// }
-		// // Compare the initial card to the edited card and delete any images from storage that are no longer in the card
-		// for (const field of card.content_fields) {
-		// 	if (field.type === 'image' && !editedCard.content_fields.some((f) => f.id === field.id)) {
-		// 		const normalizedPath = normalizePath(field.path);
-		// 		console.log('Deleting image:', normalizedPath);
-
-		// 		const { data, error: deleteError } = await supabase.storage
-		// 			.from('listing_images')
-		// 			.remove([normalizedPath]);
-
-		// 		if (deleteError) {
-		// 			console.error('Error deleting image:', deleteError.message);
-		// 			toast.error(errorMessage);
-		// 			return;
-		// 		}
-
-		// 		if (!data || data.length === 0) {
-		// 			console.log('No images deleted');
-		// 		} else {
-		// 			console.log('Image deleted successfully:', data);
-		// 		}
-		// 	}
-		// }
 
 		setTimeout(() => {
 			toast.success(successMessage, { id: toastId });
@@ -194,8 +166,8 @@
 		on:click={toggleChecked}
 	/>
 {/if}
-<div class={collapsable ? 'collapse-title' : ''}>
-	<Title bind:title={editedCard.title} editMode={cardEditMode} />
+<div class="flex justify-between py-4 pl-4 {collapsable ? 'collapse-title' : ''}">
+	<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
 </div>
 <div id="sortable-list" class="{collapsable ? 'collapse-content' : ''} flex flex-col gap-2">
 	{#if editedCard.content_fields}
@@ -290,6 +262,9 @@
 							on:click={() => {
 								cardEditMode = !cardEditMode;
 								resetEditedCard(card);
+								if (createNewCard) {
+									dispatch('closeModal');
+								}
 							}}
 						>
 							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}
@@ -310,9 +285,11 @@
 							</button>
 						{/if}
 					</div>
-					<button class="btn btn-error btn-outline w-full sm:w-auto" on:click={openDeleteModal}>
-						Delete Card
-					</button>
+					{#if !cardEditMode}
+						<button class="btn btn-error btn-outline w-full sm:w-auto" on:click={openDeleteModal}>
+							Delete Card
+						</button>
+					{/if}
 				</div>
 			{/if}
 		</div>
