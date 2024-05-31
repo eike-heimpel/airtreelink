@@ -51,22 +51,22 @@
 	}
 </script>
 
-<div class="container mx-auto p-4">
-	<h2 class="text-2xl font-bold mb-4">Search for an Address</h2>
+<div class="container mx-auto p-2 sm:p-4">
+	<h2 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">Search for an Address</h2>
 	<div class="form-control">
 		<input
 			type="text"
 			placeholder="Enter address"
-			class="input input-bordered"
+			class="input input-bordered w-full sm:max-w-lg"
 			bind:value={query}
 			on:input={searchAddress}
 		/>
 	</div>
 
 	{#if suggestions.length > 0}
-		<div class="mt-4">
-			<h3 class="text-lg font-bold mb-2">Suggestions:</h3>
-			<ul class="menu bg-base-100 rounded-box">
+		<div class="mt-2 sm:mt-4">
+			<h3 class="text-md sm:text-lg font-bold mb-1 sm:mb-2">Suggestions:</h3>
+			<ul class="menu bg-base-100 rounded-box max-h-64 overflow-y-auto">
 				{#each suggestions as suggestion}
 					<li>
 						<a href="#" on:click|preventDefault={() => retrieveDetails(suggestion)}>
@@ -80,9 +80,9 @@
 	{/if}
 
 	{#if selectedAddress}
-		<div class="mt-8">
-			<h3 class="text-lg font-bold mb-2">Selected Address:</h3>
-			<div class="bg-base-100 rounded-box p-4">
+		<div class="mt-4 sm:mt-8">
+			<h3 class="text-md sm:text-lg font-bold mb-1 sm:mb-2">Selected Address:</h3>
+			<div class="bg-base-100 rounded-box p-2 sm:p-4">
 				<p>{selectedAddress}</p>
 			</div>
 		</div>

@@ -12,6 +12,7 @@
 	import { enhance } from '$app/forms';
 	import { flip } from 'svelte/animate';
 	import { page } from '$app/stores';
+	import type { ListingCardCreate } from '$lib/types/cards';
 
 	import TextField from '$components/listing/cards/fields/TextField.svelte';
 	import VideoField from '$components/listing/cards/fields/VideoField.svelte';
@@ -20,7 +21,7 @@
 	import Title from '$components/listing/cards/Title.svelte';
 	import ImageField from '$components/listing/cards/fields/ImageField.svelte';
 
-	export let card: ListingCard;
+	export let card: ListingCard | ListingCardCreate;
 	export let moveCards = false;
 	export let collapsable = true;
 	export let cardEditMode = false;
