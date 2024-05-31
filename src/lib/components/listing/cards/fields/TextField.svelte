@@ -31,8 +31,6 @@
 		if (!cardEditMode) individualEditMode = false;
 		dispatch('cancelEdit');
 	}
-
-	$: console.log(individualEditMode, cardEditMode);
 </script>
 
 <BaseField

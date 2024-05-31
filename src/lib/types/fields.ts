@@ -46,15 +46,15 @@ export function createEmptyField(type: FieldTypes): ContentField {
     const id = nanoid(10);
     switch (type) {
         case 'text':
-            return { id, type, content: '' };
+            return { id, type, content: '' } as TextField;
         case 'video':
-            return { id, type, content: '', url: '' };
+            return { id, type, content: '', url: '' } as VideoField;
         case 'address':
-            return { id, type, content: '', showDirections: false, showAddressAsText: false };
+            return { id, type, content: '', showDirections: false, showAddressAsText: false } as AddressField;
         case 'link':
-            return { id, type, content: '', url: '' };
+            return { id, type, content: '', url: '' } as  LinkField;
         case 'image':
-            return { id, type, altText: '', url: '', path: '' };
+            return { id, type, altText: '', url: '', path: '' } as ImageField;
         default:
             throw new Error(`Unsupported field type: ${type}`);
     }

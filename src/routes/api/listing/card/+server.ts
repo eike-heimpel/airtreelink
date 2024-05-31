@@ -4,11 +4,13 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { json, error } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request, locals: { session, supabase } }) => {
+
     if (!session) {
         throw error(401, 'Unauthorized');
     }
 
     const { card } = await request.json();
+
 
     // add user id to card
     card.user_id = session.user.id;
@@ -42,6 +44,7 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
 
     const { card } = await request.json();
+
 
     if (!card) {
         console.log("no card")

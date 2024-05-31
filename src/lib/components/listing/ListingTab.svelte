@@ -5,61 +5,34 @@
 	import Sortable from 'sortablejs';
 	import { page } from '$app/stores';
 	import type { ListingCardCreate, ListingCard } from '$lib/types/cards';
-	import TextField from '$components/listing/cards/fields/TextField.svelte';
-	import LinkField from '$components/listing/cards/fields/LinkField.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { toastPromiseDelayMs } from '$lib/stores/store';
 	import { toast } from 'svelte-french-toast';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
+	import { getTemplate } from '$lib/listings/cards/cardTemplates';
 
 	export let cards: ListingCard[] = [];
-	export let type = '';
+	export let type: string;
 
-	let showAddModal = false;
 	let newCardTitle = '';
+	let tempCard: ListingCardCreate | null = null;
 	let moveCards = false;
 
 	function openAddModal() {
-		showAddModal = true;
+		createTempCard();
 	}
 
 	function closeAddModal() {
-		showAddModal = false;
-		newCardTitle = '';
+		tempCard = null;
 	}
 
-	async function handleSave() {
-		const toastId = toast.loading('Adding card...');
-
-		const newCard: ListingCardCreate = {
-			content_fields: [],
-			description: '',
-			listing_id: $page.data.currentListingInfo.id,
+	function createTempCard() {
+		const template = getTemplate(type);
+		tempCard = {
+			...template,
 			title: newCardTitle,
-			type: type
+			listing_id: $page.data.currentListingInfo.id
 		};
-
-		const response = await fetch('/api/listing/card', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ card: newCard })
-		});
-
-		if (response.ok) {
-			const createdCard: ListingCard = await response.json();
-			cards = [...cards, createdCard];
-			setTimeout(() => {
-				toast.success('Card created.', { id: toastId });
-			}, $toastPromiseDelayMs);
-
-			closeAddModal();
-			invalidateAll();
-		} else {
-			toast.error('Failed to create new card.', { id: toastId });
-			console.error('Failed to create new card');
-		}
 	}
 
 	let sortable;
@@ -120,25 +93,17 @@
 		{/each}
 	</div>
 
-	{#if showAddModal}
+	{#if tempCard}
 		<dialog class="modal modal-open modal-bottom sm:modal-middle">
-			<div class="modal-box">
-				<h3 class="font-bold text-lg">Add New Card</h3>
-				<div class="modal-content">
-					<div class="form-control">
-						<label class="label">Title</label>
-						<input
-							type="text"
-							bind:value={newCardTitle}
-							class="input input-bordered w-full"
-							required
-						/>
-					</div>
-				</div>
-				<div class="modal-action">
-					<button type="button" class="btn" on:click={closeAddModal}>Cancel</button>
-					<button type="button" class="btn btn-primary" on:click={handleSave}>Add Card</button>
-				</div>
+			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
+				<ListingCardComponent
+					card={tempCard}
+					{moveCards}
+					collapsable={false}
+					cardEditMode={true}
+					createNewCard={true}
+					on:closeModal={closeAddModal}
+				/>
 			</div>
 		</dialog>
 	{/if}

@@ -22,16 +22,20 @@
 
 	export let card: ListingCard;
 	export let moveCards = false;
+	export let collapsable = true;
+	export let cardEditMode = false;
+	export let createNewCard = false;
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
 	let addingField = false;
 	let showDeleteModal = false;
 	let formLoading = false;
-	let cardEditMode = false;
 	let cardHasBeenEdited = false;
 	let tempImages: { [key: number]: { url: string; file: File; altText: string } | null } = {};
 	let supabase = $page.data.supabase;
+
+	const dispatch = createEventDispatcher();
 
 	$: cardHasBeenEdited = JSON.stringify(card) !== JSON.stringify(editedCard);
 
@@ -65,6 +69,11 @@
 		errorMessage = 'Error updating card.',
 		successMessage = 'Card updated.'
 	) {
+		if (createNewCard) {
+			// lets close the modal either way, user will be notified if something went wrong
+			dispatch('closeModal');
+		}
+
 		editedCard.last_changed = new Date().toISOString();
 
 		// Upload new images to Supabase before saving the card
@@ -91,7 +100,7 @@
 		const toastId = toast.loading(loadingMessage);
 
 		const resp = await fetch('/api/listing/card', {
-			method: 'PUT',
+			method: createNewCard ? 'POST' : 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -104,33 +113,33 @@
 			return;
 		}
 
-		function normalizePath(filePath) {
-			if (!filePath) return '';
-			return filePath.startsWith('/') ? filePath.slice(1) : filePath;
-		}
-		// Compare the initial card to the edited card and delete any images from storage that are no longer in the card
-		for (const field of card.content_fields) {
-			if (field.type === 'image' && !editedCard.content_fields.some((f) => f.id === field.id)) {
-				const normalizedPath = normalizePath(field.path);
-				console.log('Deleting image:', normalizedPath);
+		// function normalizePath(filePath) {
+		// 	if (!filePath) return '';
+		// 	return filePath.startsWith('/') ? filePath.slice(1) : filePath;
+		// }
+		// // Compare the initial card to the edited card and delete any images from storage that are no longer in the card
+		// for (const field of card.content_fields) {
+		// 	if (field.type === 'image' && !editedCard.content_fields.some((f) => f.id === field.id)) {
+		// 		const normalizedPath = normalizePath(field.path);
+		// 		console.log('Deleting image:', normalizedPath);
 
-				const { data, error: deleteError } = await supabase.storage
-					.from('listing_images')
-					.remove([normalizedPath]);
+		// 		const { data, error: deleteError } = await supabase.storage
+		// 			.from('listing_images')
+		// 			.remove([normalizedPath]);
 
-				if (deleteError) {
-					console.error('Error deleting image:', deleteError.message);
-					toast.error(errorMessage);
-					return;
-				}
+		// 		if (deleteError) {
+		// 			console.error('Error deleting image:', deleteError.message);
+		// 			toast.error(errorMessage);
+		// 			return;
+		// 		}
 
-				if (!data || data.length === 0) {
-					console.log('No images deleted');
-				} else {
-					console.log('Image deleted successfully:', data);
-				}
-			}
-		}
+		// 		if (!data || data.length === 0) {
+		// 			console.log('No images deleted');
+		// 		} else {
+		// 			console.log('Image deleted successfully:', data);
+		// 		}
+		// 	}
+		// }
 
 		setTimeout(() => {
 			toast.success(successMessage, { id: toastId });
@@ -176,16 +185,18 @@
 	}
 </script>
 
-<input
-	type="radio"
-	name="my-accordion-1"
-	checked={moveCards ? false : checked}
-	on:click={toggleChecked}
-/>
-<div class="collapse-title">
+{#if collapsable}
+	<input
+		type="radio"
+		name="my-accordion-1"
+		checked={moveCards ? false : checked}
+		on:click={toggleChecked}
+	/>
+{/if}
+<div class={collapsable ? 'collapse-title' : ''}>
 	<Title bind:title={editedCard.title} editMode={cardEditMode} />
 </div>
-<div id="sortable-list" class="collapse-content flex flex-col gap-2">
+<div id="sortable-list" class="{collapsable ? 'collapse-content' : ''} flex flex-col gap-2">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
 			<div class="flex flex-col rounded-md" animate:flip={{ duration: 500 }}>

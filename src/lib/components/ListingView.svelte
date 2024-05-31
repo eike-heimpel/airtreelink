@@ -8,7 +8,6 @@
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
 	export let currentListing: Listing;
-	console.log(currentListing);
 
 	let activeTab = 'home';
 </script>
