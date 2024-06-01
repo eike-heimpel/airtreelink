@@ -1,9 +1,11 @@
 <script>
-	export let companyName = '[Your Company Name]';
-	export let companyEmail = '[Your Company Email]';
-	export let companyAddress = '[Your Company Address]';
-	export let dataProtectionOfficer;
-	export let dpoEmail;
+	import {
+		name,
+		privacyEmail,
+		address,
+		dataProtectionOfficer,
+		dpoEmail
+	} from '$lib/stores/business_info';
 </script>
 
 <div class="container mx-auto my-10 p-5 shadow-md rounded-lg">
@@ -18,9 +20,9 @@
 	<p class="mt-4">
 		<strong>Data Controller</strong> <br />
 		The data controller for this website is:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />Email: {companyEmail}
+		<br />{name}, operating the website GuestLink.
+		<br />{address}
+		<br />Email: {privacyEmail}
 	</p>
 	{#if dataProtectionOfficer}
 		<p class="mt-4">
@@ -80,7 +82,7 @@
 		<li>The right to restrict or object to processing</li>
 		<li>The right to data portability</li>
 	</ul>
-	To exercise these rights, please contact us at {companyEmail}.
+	To exercise these rights, please contact us at {privacyEmail}.
 	<p class="mt-4">
 		<strong>Changes to This Privacy Notice</strong> <br />
 		We may update this privacy notice from time to time to reflect changes in our practices or legal
@@ -90,9 +92,9 @@
 	<p class="mt-4">
 		<strong>Contact</strong> <br />
 		If you have any questions or concerns about this privacy notice, please contact us at:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />Email: {companyEmail}
+
+		<br />
+		<a href="mailto:{privacyEmail}" class="text-blue-500 hover:underline">{privacyEmail}</a>
 	</p>
 
 	<h2 class="text-xl font-semibold mt-8 mb-2">German Version</h2>
@@ -105,9 +107,9 @@
 	<p class="mt-4">
 		<strong>Verantwortlicher für die Datenverarbeitung</strong> <br />
 		Der Verantwortliche für die Datenverarbeitung auf dieser Website ist:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />E-Mail: {companyEmail}
+		<br />{name}, Betreiber der Website GuestLink.
+		<br />{address}
+		<br />E-Mail: {privacyEmail}
 	</p>
 	{#if dataProtectionOfficer}
 		<p class="mt-4">
@@ -172,7 +174,7 @@
 		<li>Das Recht auf Einschränkung oder Widerspruch gegen die Verarbeitung</li>
 		<li>Das Recht auf Datenübertragbarkeit</li>
 	</ul>
-	Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter {companyEmail}.
+	Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter {privacyEmail}.
 	<p class="mt-4">
 		<strong>Änderungen dieser Datenschutzerklärung</strong> <br />
 		Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren, um Änderungen in unseren Praktiken
@@ -182,8 +184,6 @@
 	<p class="mt-4">
 		<strong>Kontakt</strong> <br />
 		Wenn Sie Fragen oder Bedenken zu dieser Datenschutzerklärung haben, kontaktieren Sie uns bitte unter:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />E-Mail: {companyEmail}
+		<br /><a href="mailto:{privacyEmail}" class="text-blue-500 hover:underline">{privacyEmail}</a>
 	</p>
 </div>

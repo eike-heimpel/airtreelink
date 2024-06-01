@@ -235,8 +235,7 @@
 		<div class="text-center md:text-left">
 			<h2 class="text-lg font-bold">GuestLink</h2>
 			<p class="mt-2">
-				© 2024 GuestLink. All rights reserved. GuestLink is a website by Eike Heimpel. Small
-				business according to § 19 UStG.
+				© 2024 GuestLink. All rights reserved. GuestLink is a website by agentur moog GmbH.
 			</p>
 		</div>
 		<div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">

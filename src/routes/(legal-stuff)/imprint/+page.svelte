@@ -1,12 +1,14 @@
 <script>
-	export let name = 'agentur moog GmbH';
-	export let ceo = 'Tobias Heimpel';
-	export let address = 'Magirusstraße 33, 89077 Ulm';
-	export let emailAddress = 'info@agenturmoog.de';
-	export let hrb = 'HRB Ulm 734140';
-	export let taxNumber = '88001/11974';
-	export let vatId = 'DE308309857';
-	export let customerSupportEmail = 'support@myguestlink.com';
+	import {
+		name,
+		ceo,
+		address,
+		emailAddress,
+		hrb,
+		taxNumber,
+		vatId,
+		customerSupportEmail
+	} from '$lib/stores/business_info';
 </script>
 
 <div class="container mx-auto my-10 p-5 shadow-md rounded-lg">

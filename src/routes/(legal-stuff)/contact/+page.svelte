@@ -1,5 +1,5 @@
 <script>
-	export let emailAddress = '[Your Email Address]';
+	import { customerSupportEmail } from '$lib/stores/business_info';
 </script>
 
 <div class="container mx-auto my-10 p-5 shadow-md rounded-lg">
@@ -10,6 +10,8 @@
 	</p>
 	<p class="mt-4">
 		<strong>Email:</strong> <br />
-		<a href="mailto:{emailAddress}" class="text-blue-500 hover:underline">{emailAddress}</a>
+		<a href="mailto:{customerSupportEmail}" class="text-blue-500 hover:underline"
+			>{customerSupportEmail}</a
+		>
 	</p>
 </div>
