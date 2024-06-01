@@ -37,7 +37,6 @@
 				const cardName = currentListing.cards[id].title;
 				delete currentListing.cards[id];
 				console.log('Deleted card:', id);
-				toast('Deleted card: ' + cardName);
 			}
 		}
 

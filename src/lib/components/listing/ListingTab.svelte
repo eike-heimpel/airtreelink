@@ -87,7 +87,9 @@
 			<div class="col-span-1 relative">
 				<button
 					tabindex="0"
-					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full"
+					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full {$previewMode
+						? 'bg-opacity-50'
+						: ''}"
 				>
 					<ListingCardComponent {card} {moveCards} />
 				</button>

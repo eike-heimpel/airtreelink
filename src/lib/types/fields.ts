@@ -6,7 +6,7 @@ export type TextField = {
     id: string;
     type: 'text';
     content: string;
-    delta: string;
+    delta?: string;
 };
 
 export type VideoField = {

@@ -6,6 +6,7 @@
 	import InfoOutline from 'virtual:icons/mdi/information-outline';
 	import StarOutline from 'virtual:icons/mdi/star-outline';
 	import { goto } from '$app/navigation';
+	import { previewMode } from '$lib/stores/store';
 
 	export let activeTab = '';
 
@@ -21,7 +22,11 @@
 	}
 </script>
 
-<div class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center z-10">
+<div
+	class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center z-10 {$previewMode
+		? 'bg-opacity-90'
+		: ''}"
+>
 	<ul class="flex w-full">
 		<li class="flex-1">
 			<button
