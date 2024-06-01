@@ -69,9 +69,9 @@
 		selectedCard = null;
 	}
 
-	const handleOutsideClick = (event) => {
-		closeCardModal();
-	};
+	function refreshSelectedCard(e) {
+		selectedCard = e.detail;
+	}
 </script>
 
 <div class="container mx-auto">
@@ -132,7 +132,11 @@
 			class:modal-open={selectedCard}
 		>
 			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
-				<ListingCardComponent card={selectedCard} on:closeModal={closeCardModal} />
+				<ListingCardComponent
+					card={selectedCard}
+					on:closeModal={closeCardModal}
+					on:refreshSelectedCard={refreshSelectedCard}
+				/>
 			</div>
 			<form method="dialog" class="modal-backdrop" on:click={closeCardModal}>
 				<button>close</button>

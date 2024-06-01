@@ -116,6 +116,7 @@
 			toast.success(successMessage, { id: toastId });
 		}, $toastPromiseDelayMs);
 
+		dispatch('refreshSelectedCard', editedCard);
 		invalidateAll();
 	}
 
