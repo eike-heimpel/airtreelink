@@ -6,6 +6,7 @@ export type TextField = {
     id: string;
     type: 'text';
     content: string;
+    delta: string;
 };
 
 export type VideoField = {
@@ -46,7 +47,7 @@ export function createEmptyField(type: FieldTypes): ContentField {
     const id = nanoid(10);
     switch (type) {
         case 'text':
-            return { id, type, content: '' } as TextField;
+            return { id, type, content: '', delta: "" } as TextField;
         case 'video':
             return { id, type, content: '', url: '' } as VideoField;
         case 'address':

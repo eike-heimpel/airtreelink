@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
+import type { Database } from '$lib/types/supabase';
+
+type Listing = Database['public']['Tables']['Listings']['Row'];
 
 
 export const load = async ({ locals: { session }, parent }) => {
@@ -34,9 +37,11 @@ export const actions: Actions = {
         try {
             const response = await locals.supabase
                 .from('Listings')
-                .insert([{ name, description, title_image_url, public: false, hash, listing_data: {} }]);
+                .insert([{ name, description, title_image_url, public: false, hash} as Listing]);
 
+        
             if (response.error) {
+                console.log(response.error);
                 return error(500, { message: 'Failed to add listing' });
             }
 

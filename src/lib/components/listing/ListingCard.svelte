@@ -26,7 +26,6 @@
 	export let collapsable = true;
 	export let cardEditMode = false;
 	export let createNewCard = false;
-	console.log(card);
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;

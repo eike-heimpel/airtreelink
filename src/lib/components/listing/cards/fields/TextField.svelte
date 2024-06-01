@@ -1,68 +1,103 @@
 <script lang="ts">
+	import { onMount, onDestroy, createEventDispatcher, tick } from 'svelte';
 	import BaseField from './BaseField.svelte';
 	import FieldEditControls from './FieldEditControls.svelte';
 	import type { TextField } from '$lib/types/fields';
-	import { createEventDispatcher } from 'svelte';
 	import { previewMode } from '$lib/stores/store';
+	import DOMPurify from 'dompurify';
 
 	export let field: TextField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
 
-	let individualEditMode = false;
+	function sanitizeHtml(html) {
+		return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+	}
 
-	$: if (cardEditMode) {
-		individualEditMode = true;
-	} else individualEditMode = false;
+	$: console.log(field);
 
+	let quill;
 	const dispatch = createEventDispatcher();
+	let editor: HTMLDivElement;
 
-	function updateContent(event) {
-		dispatch('updateField', { key: 'content', value: event.target.value });
+	async function initializeQuill() {
+		await tick(); // Ensure the component is fully rendered
+		if (editor && !quill) {
+			const { default: Quill } = await import('quill');
+			await import('quill/dist/quill.snow.css');
+
+			quill = new Quill(editor, {
+				theme: 'snow',
+				placeholder: 'Enter text here...'
+			});
+
+			quill.on('text-change', () => {
+				const content = quill.root.innerHTML;
+				const delta = JSON.stringify(quill.getContents());
+				dispatch('updateField', { key: 'content', value: content });
+				dispatch('updateField', { key: 'delta', value: delta });
+			});
+
+			// Set the initial content of the editor
+			if (field.delta) {
+				quill.setContents(JSON.parse(field.delta));
+			} else if (field.content) {
+				quill.root.innerHTML = field.content;
+			}
+		}
 	}
 
-	function save() {
-		if (!cardEditMode) individualEditMode = false;
-		dispatch('save');
+	onMount(async () => {
+		if (cardEditMode) {
+			await tick(); // Ensure the component is fully rendered
+			await initializeQuill();
+		}
+	});
+
+	$: {
+		if (cardEditMode) {
+			initializeQuill();
+		}
 	}
 
-	function cancel() {
-		if (!cardEditMode) individualEditMode = false;
-		dispatch('cancelEdit');
-	}
+	onDestroy(() => {
+		if (quill) {
+			quill = null;
+		}
+	});
 </script>
 
 <BaseField
 	{field}
 	{index}
 	{totalFields}
-	editMode={cardEditMode || individualEditMode}
+	editMode={cardEditMode}
 	title="Text Field"
 	on:deleteField
 	on:moveFieldUp
 	on:moveFieldDown
 >
-	<div slot="content" class="form-control">
-		<textarea
-			class="textarea textarea-primary h-40"
-			value={field.content}
-			on:input={updateContent}
-			placeholder="Enter text here..."
-		></textarea>
-		{#if !cardEditMode && individualEditMode}
-			<FieldEditControls editMode={cardEditMode} on:save={save} on:cancel={cancel} />
-		{/if}
+	<div slot="content" class="h-40 flex flex-col">
+		<div id="editor-container" class="flex-1 overflow-hidden flex flex-col">
+			<div id="editor" bind:this={editor} class="flex-1 overflow-auto"></div>
+		</div>
 	</div>
-	<div slot="preview">
-		<p
-			class="mt-2 text-neutral"
-			on:dblclick={() => {
-				if ($previewMode) return;
-				individualEditMode = true;
-			}}
-		>
-			{field.content}
-		</p>
+	<div slot="preview" class="p-4">
+		<div class="mt-2 text-neutral">
+			{@html sanitizeHtml(field.content)}
+		</div>
 	</div>
 </BaseField>
+
+<style>
+	#editor-container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+	#editor {
+		flex-grow: 1;
+		overflow-y: auto;
+	}
+</style>

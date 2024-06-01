@@ -21,7 +21,7 @@
 	}
 </script>
 
-<div class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center">
+<div class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center z-10">
 	<ul class="flex w-full">
 		<li class="flex-1">
 			<button

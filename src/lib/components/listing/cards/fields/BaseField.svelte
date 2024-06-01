@@ -39,7 +39,7 @@
 		<slot name="content"></slot>
 	</div>
 {:else}
-	<div class="relative">
+	<div class="relative text-left">
 		<slot name="preview"></slot>
 	</div>
 {/if}
