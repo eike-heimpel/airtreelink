@@ -15,15 +15,16 @@
 		return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 	}
 
-	$: console.log(field);
-
 	let quill;
 	const dispatch = createEventDispatcher();
 	let editor: HTMLDivElement;
 
 	async function initializeQuill() {
-		await tick(); // Ensure the component is fully rendered
-		if (editor && !quill) {
+		await tick();
+
+		quill = null;
+
+		if (editor) {
 			const { default: Quill } = await import('quill');
 			await import('quill/dist/quill.snow.css');
 
@@ -50,15 +51,12 @@
 
 	onMount(async () => {
 		if (cardEditMode) {
-			await tick(); // Ensure the component is fully rendered
 			await initializeQuill();
 		}
 	});
 
-	$: {
-		if (cardEditMode) {
-			initializeQuill();
-		}
+	$: if (cardEditMode) {
+		initializeQuill();
 	}
 
 	onDestroy(() => {
@@ -83,7 +81,7 @@
 			<div id="editor" bind:this={editor} class="flex-1 overflow-auto"></div>
 		</div>
 	</div>
-	<div slot="preview" class="p-4">
+	<div slot="preview">
 		<div class="mt-2 text-neutral">
 			{@html sanitizeHtml(field.content)}
 		</div>

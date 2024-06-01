@@ -22,8 +22,7 @@
 	import ImageField from '$components/listing/cards/fields/ImageField.svelte';
 
 	export let card: ListingCard | ListingCardCreate;
-	export let moveCards = false;
-	export let collapsable = true;
+
 	export let cardEditMode = false;
 	export let createNewCard = false;
 
@@ -157,18 +156,16 @@
 	}
 </script>
 
-{#if collapsable}
-	<input
-		type="radio"
-		name="my-accordion-1"
-		checked={moveCards ? false : checked}
-		on:click={toggleChecked}
-	/>
-{/if}
-<div class="flex justify-between py-4 pl-4 {collapsable ? 'collapse-title' : ''}">
-	<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+<div class="modal-header">
+	<div class="flex flex-row gap-4">
+		<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+	</div>
+	<button
+		class="btn btn-md btn-circle btn-ghost absolute right-0 top-0"
+		on:click={() => dispatch('closeModal')}>X</button
+	>
 </div>
-<div id="sortable-list" class="{collapsable ? 'collapse-content' : ''} flex flex-col gap-2">
+<div class="modal-body">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
 			<div class="flex flex-col rounded-md" animate:flip={{ duration: 500 }}>
@@ -240,9 +237,8 @@
 	{#if !$previewMode}
 		<div class="flex flex-col gap-4">
 			{#if addingField}
-				<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+				<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 					<button class="btn btn-outline" on:click={() => addField('text')}>Text</button>
-					<button class="btn btn-outline" on:click={() => addField('link')}>Link</button>
 					<button class="btn btn-outline" on:click={() => addField('address')}>Address</button>
 					<button class="btn btn-outline" on:click={() => addField('video')}>Video</button>
 					<button class="btn btn-outline" on:click={() => addField('image')}>Image</button>

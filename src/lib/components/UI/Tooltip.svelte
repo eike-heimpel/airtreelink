@@ -18,7 +18,7 @@
 </button>
 
 {#if showAsModal}
-	<dialog class="modal modal-open modal-bottom md:hidden">
+	<dialog class="modal modal-bottom md:hidden" class:modal-open={showAsModal}>
 		<div class="modal-box">
 			<div class="modal-body">
 				<p>{tooltipText}</p>
@@ -32,5 +32,8 @@
 				>
 			</div>
 		</div>
+		<form method="dialog" class="modal-backdrop" on:click={() => (showAsModal = false)}>
+			<button>close</button>
+		</form>
 	</dialog>
 {/if}

@@ -51,7 +51,7 @@ export function createEmptyField(type: FieldTypes): ContentField {
         case 'video':
             return { id, type, content: '', url: '' } as VideoField;
         case 'address':
-            return { id, type, content: '', showDirections: false, showAddressAsText: false } as AddressField;
+            return { id, type, content: '', showDirections: true } as AddressField;
         case 'link':
             return { id, type, content: '', url: '' } as  LinkField;
         case 'image':

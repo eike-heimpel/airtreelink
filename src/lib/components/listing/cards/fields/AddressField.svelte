@@ -10,7 +10,7 @@
 	export let cardEditMode: boolean;
 
 	let showDirections = field.showDirections ?? true;
-	let showAddressAsText = field.showAddressAsText ?? false;
+	let showAddressAsText = field.showAddressAsText ?? true;
 	let suggestions = [];
 	let autocompleteEnabled = true;
 	let autocompleteService;

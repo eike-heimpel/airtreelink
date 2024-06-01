@@ -10,6 +10,7 @@
 	import { toast } from 'svelte-french-toast';
 	import { fade } from 'svelte/transition';
 	import { getTemplate } from '$lib/listings/cards/cardTemplates';
+	import Title from './cards/Title.svelte';
 
 	export let cards: ListingCard[] = [];
 	export let type: string;
@@ -17,6 +18,7 @@
 	let newCardTitle = '';
 	let tempCard: ListingCardCreate | null = null;
 	let moveCards = false;
+	let selectedCard: ListingCard | null = null;
 
 	function openAddModal() {
 		createTempCard();
@@ -59,7 +61,17 @@
 
 	$: updateSortable(moveCards);
 
-	$: console.log(tempCard);
+	function openCardModal(card: ListingCard) {
+		selectedCard = card;
+	}
+
+	function closeCardModal() {
+		selectedCard = null;
+	}
+
+	const handleOutsideClick = (event) => {
+		closeCardModal();
+	};
 </script>
 
 <div class="container mx-auto">
@@ -82,7 +94,7 @@
 		</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 gap-4 md:gap-8">
+	<div id="sortable-cards" class="grid grid-cols-1 gap-4 m max-w-2xl mx-auto">
 		{#each cards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button
@@ -90,8 +102,11 @@
 					class="collapse collapse-arrow border border-base-300 bg-base-200 w-full {$previewMode
 						? 'bg-opacity-50'
 						: ''}"
+					on:click={() => openCardModal(card)}
 				>
-					<ListingCardComponent {card} {moveCards} />
+					<div class="card-body flex-row justify-between p-4">
+						<Title bind:title={card.title} editMode={false} bind:icon={card.icon} />
+					</div>
 				</button>
 			</div>
 		{/each}
@@ -102,13 +117,26 @@
 			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
 				<ListingCardComponent
 					card={tempCard}
-					{moveCards}
-					collapsable={false}
 					cardEditMode={true}
 					createNewCard={true}
 					on:closeModal={closeAddModal}
 				/>
 			</div>
+		</dialog>
+	{/if}
+
+	{#if selectedCard}
+		<dialog
+			class="modal modal-bottom sm:modal-middle"
+			id="card-modal"
+			class:modal-open={selectedCard}
+		>
+			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
+				<ListingCardComponent card={selectedCard} on:closeModal={closeCardModal} />
+			</div>
+			<form method="dialog" class="modal-backdrop" on:click={closeCardModal}>
+				<button>close</button>
+			</form>
 		</dialog>
 	{/if}
 </div>

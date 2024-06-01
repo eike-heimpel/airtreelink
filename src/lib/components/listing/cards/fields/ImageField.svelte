@@ -122,6 +122,9 @@
 						class="w-full rounded"
 					/>
 				</div>
+				<form method="dialog" class="modal-backdrop" on:click={() => (isModalOpen = false)}>
+					<button>close</button>
+				</form>
 			</dialog>
 		{/if}
 	</div>
