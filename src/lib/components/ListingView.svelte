@@ -4,12 +4,13 @@
 	import { previewMode } from '$lib/stores/store';
 	import { page } from '$app/stores';
 	import type { Database } from '$lib/types/supabase';
+	import { ActiveTab } from '$lib/types/listing';
 
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
 	export let currentListing: Listing;
 
-	let activeTab = 'home';
+	let activeTab = 'arrival';
 </script>
 
 {#if currentListing}
@@ -34,22 +35,24 @@
 			</div>
 
 			<div class="text-center flex justify-center">
-				{#if activeTab === 'recommendation'}
+				{#if activeTab === ActiveTab.Recommendation}
 					<ListingTab
 						cards={Object.values(currentListing.cards).filter(
-							(card) => card.type === 'recommendation'
+							(card) => card.type === ActiveTab.Recommendation
 						)}
-						type="recommendation"
+						type={ActiveTab.Recommendation}
 					/>
-				{:else if activeTab === 'info'}
+				{:else if activeTab === ActiveTab.Home}
 					<ListingTab
-						cards={Object.values(currentListing.cards).filter((card) => card.type === 'info')}
-						type="info"
+						cards={Object.values(currentListing.cards).filter(
+							(card) => card.type === ActiveTab.Home
+						)}
+						type={ActiveTab.Home}
 					/>
-				{:else if activeTab === 'home'}
+				{:else if activeTab === 'arrival'}
 					<ListingTab
-						cards={Object.values(currentListing.cards).filter((card) => card.type === 'home')}
-						type="home"
+						cards={Object.values(currentListing.cards).filter((card) => card.type === 'arrival')}
+						type="arrival"
 					/>
 				{/if}
 			</div>

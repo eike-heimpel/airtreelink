@@ -3,10 +3,11 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import HomeOutline from 'virtual:icons/mdi/home-outline';
-	import InfoOutline from 'virtual:icons/mdi/information-outline';
+	import Directions from 'virtual:icons/mdi/directions';
 	import StarOutline from 'virtual:icons/mdi/star-outline';
 	import { goto } from '$app/navigation';
 	import { previewMode } from '$lib/stores/store';
+	import { ActiveTab } from '$lib/types/listing';
 
 	export let activeTab = '';
 
@@ -31,72 +32,72 @@
 		<li class="flex-1">
 			<button
 				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				'home'
+				ActiveTab.Arrival
 					? 'bg-accent text-white'
 					: 'hover:text-accent'}"
 				on:click={() => {
-					activeTab = 'home';
-					updateQueryParam('home');
+					activeTab = ActiveTab.Arrival;
+					updateQueryParam(ActiveTab.Arrival);
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'home';
-						updateQueryParam('home');
+						activeTab = ActiveTab.Arrival;
+						updateQueryParam(ActiveTab.Arrival);
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'home';
-					updateQueryParam('home');
+					activeTab = ActiveTab.Arrival;
+					updateQueryParam(ActiveTab.Arrival);
 				}}
 			>
-				<HomeOutline class="w-7 h-7" />
-				<span class="hidden md:block">Home</span>
+				<Directions class="w-7 h-7" />
+				<span class="hidden md:block">Arrival</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
 				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				'info'
+				ActiveTab.Home
 					? 'bg-accent text-white'
 					: 'hover:text-accent'}"
 				on:click={() => {
-					activeTab = 'info';
-					updateQueryParam('info');
+					activeTab = ActiveTab.Home;
+					updateQueryParam(ActiveTab.Home);
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'info';
-						updateQueryParam('info');
+						activeTab = ActiveTab.Home;
+						updateQueryParam(ActiveTab.Home);
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'info';
-					updateQueryParam('info');
+					activeTab = ActiveTab.Home;
+					updateQueryParam(ActiveTab.Home);
 				}}
 			>
-				<InfoOutline class="w-7 h-7" />
+				<HomeOutline class="w-7 h-7" />
 				<span class="hidden md:block">House Info</span>
 			</button>
 		</li>
 		<li class="flex-1">
 			<button
 				class="w-full py-3 flex flex-col items-center justify-center lg:text-lg {activeTab ===
-				'recommendation'
+				ActiveTab.Recommendation
 					? 'bg-accent text-white'
 					: 'hover:text-accent'}"
 				on:click={() => {
-					activeTab = 'recommendation';
-					updateQueryParam('recommendation');
+					activeTab = ActiveTab.Recommendation;
+					updateQueryParam(ActiveTab.Recommendation);
 				}}
 				on:keydown={(event) => {
 					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = 'recommendation';
-						updateQueryParam('recommendation');
+						activeTab = ActiveTab.Recommendation;
+						updateQueryParam(ActiveTab.Recommendation);
 					}
 				}}
 				on:touchstart={() => {
-					activeTab = 'recommendation';
-					updateQueryParam('recommendation');
+					activeTab = ActiveTab.Recommendation;
+					updateQueryParam(ActiveTab.Recommendation);
 				}}
 			>
 				<StarOutline class="w-7 h-7" />

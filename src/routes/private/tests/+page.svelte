@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { nanoid } from 'nanoid';
+	import { ActiveTab } from '$lib/types/listing';
 
 	let cards = [
 		{
@@ -13,7 +14,7 @@
 			],
 			listing_id: 80,
 			title: 'Welcome',
-			type: 'home',
+			type: ActiveTab.Arrival,
 			icon: 'home-outline',
 			description: null
 		},
@@ -28,7 +29,7 @@
 			],
 			listing_id: 80,
 			title: 'Check-in',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -43,7 +44,7 @@
 			],
 			listing_id: 80,
 			title: 'Access to the house',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -58,7 +59,7 @@
 			],
 			listing_id: 80,
 			title: 'Check-out',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -72,7 +73,7 @@
 			],
 			listing_id: 80,
 			title: 'Wifi',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'wifi',
 			description: null
 		},
@@ -87,7 +88,7 @@
 			],
 			listing_id: 80,
 			title: 'House rules',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -102,7 +103,7 @@
 			],
 			listing_id: 80,
 			title: 'Contact',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -116,7 +117,7 @@
 			],
 			listing_id: 80,
 			title: 'Social Media',
-			type: 'recommendation',
+			type: ActiveTab.Recommendation,
 			icon: 'wifi',
 			description: null
 		},
@@ -131,7 +132,7 @@
 			],
 			listing_id: 80,
 			title: 'Welcome Message',
-			type: 'home',
+			type: ActiveTab.Arrival,
 			icon: 'home-outline',
 			description: null
 		},
@@ -146,7 +147,7 @@
 			],
 			listing_id: 80,
 			title: 'Arrival',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'car',
 			description: null
 		},
@@ -161,7 +162,7 @@
 			],
 			listing_id: 80,
 			title: 'Shopping and Necessities',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'shopping',
 			description: null
 		},
@@ -176,7 +177,7 @@
 			],
 			listing_id: 80,
 			title: 'Emergency Numbers',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'map-marker',
 			description: null
 		},
@@ -191,7 +192,7 @@
 			],
 			listing_id: 80,
 			title: 'House Use and Equipment',
-			type: 'info',
+			type: ActiveTab.Home,
 			icon: 'home-outline',
 			description: null
 		},
@@ -206,7 +207,7 @@
 			],
 			listing_id: 80,
 			title: 'Cafés',
-			type: 'recommendation',
+			type: ActiveTab.Recommendation,
 			icon: 'restaurant',
 			description: null
 		},
@@ -221,7 +222,7 @@
 			],
 			listing_id: 80,
 			title: 'Restaurants',
-			type: 'recommendation',
+			type: ActiveTab.Recommendation,
 			icon: 'restaurant',
 			description: null
 		},
@@ -236,7 +237,7 @@
 			],
 			listing_id: 80,
 			title: 'Nature',
-			type: 'recommendation',
+			type: ActiveTab.Recommendation,
 			icon: 'nature-people',
 			description: null
 		}

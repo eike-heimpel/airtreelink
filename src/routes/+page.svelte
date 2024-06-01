@@ -1,9 +1,4 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { page } from '$app/stores';
-	import { navigating } from '$app/stores';
-	import { fly, slide } from 'svelte/transition';
-
 	import MenuIcon from 'virtual:icons/mdi/menu';
 	import CloseIcon from 'virtual:icons/mdi/close';
 	import HomeIcon from 'virtual:icons/mdi/home';
