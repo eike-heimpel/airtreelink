@@ -21,7 +21,7 @@
 		<div class="flex items-center justify-center gap-4">
 			<input type="text" class="input input-primary" bind:value={title} />
 			<div>
-				{#if iconMapping[icon].component}
+				{#if iconMapping[icon]?.component}
 					<button
 						class="flex items-center cursor-pointer {iconMapping[icon].bgColor} rounded-full p-1"
 						on:click={() => (showAsModal = true)}
@@ -37,7 +37,7 @@
 	</div>
 {:else}
 	<h1 class="text-xl font-medium text-left drop-shadow-xl">{title}</h1>
-	{#if iconMapping[icon].component}
+	{#if iconMapping[icon]?.component}
 		<div class="flex items-center {iconMapping[icon].bgColor} rounded-full p-1">
 			<svelte:component this={iconMapping[icon].component} class="w-5 h-5" />
 		</div>

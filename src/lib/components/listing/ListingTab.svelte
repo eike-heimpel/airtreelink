@@ -9,6 +9,8 @@
 	import { getTemplate } from '$lib/listings/cards/cardTemplates';
 	import Title from './cards/Title.svelte';
 	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
+	import SearchFilter from '$components/SearchFilter.svelte';
+	import { ActiveTab } from '$lib/types/listing';
 
 	export let cards: ListingCard[] = [];
 	export let type: string;
@@ -17,9 +19,7 @@
 	let tempCard: ListingCardCreate | null = null;
 	let moveCards = false;
 	let selectedCard: ListingCard | null = null;
-	let selectedIcon: string | null = null;
-	let filterDropdownOpen = false;
-	let iconsLoaded = false;
+	let filteredCards: ListingCard[] = cards;
 
 	function openAddModal() {
 		createTempCard();
@@ -46,8 +46,8 @@
 			onEnd: (event) => {
 				const { oldIndex, newIndex } = event;
 				if (oldIndex !== newIndex) {
-					const movedItem = cards.splice(oldIndex, 1)[0];
-					cards.splice(newIndex, 0, movedItem);
+					const movedItem = filteredCards.splice(oldIndex, 1)[0];
+					filteredCards.splice(newIndex, 0, movedItem);
 				}
 			}
 		});
@@ -74,35 +74,19 @@
 		selectedCard = e.detail;
 	}
 
-	function filterByIcon(iconKey: string) {
-		console.log('filter by icon', iconKey);
-		filterDropdownOpen = false;
-		selectedIcon = iconKey;
+	function handleFilter(event) {
+		filteredCards = event.detail.filteredCards;
 	}
 </script>
 
 <div class="container mx-auto">
-	<details class="dropdown" bind:open={filterDropdownOpen}>
-		<summary class="m-1 btn">Click</summary>
-		{#if filterDropdownOpen}
-			<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-				{#each Object.entries(iconMapping) as [key, icon]}
-					<li>
-						<button
-							on:click={() => {
-								filterByIcon(key);
-							}}
-							class="flex items-center gap-2"
-						>
-							<svelte:component this={iconMapping[key].component} class="w-5 h-5" />
-
-							<span>{icon.name}</span>
-						</button>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</details>
+	<div class="max-w-2xl mx-auto mb-4" class:hidden={!$previewMode || type === ActiveTab.Arrival}>
+		<SearchFilter
+			{cards}
+			addIconFilter={type === ActiveTab.Recommendation}
+			on:filter={handleFilter}
+		/>
+	</div>
 
 	{#if !$previewMode}
 		<div class="flex justify-center gap-10 mb-4">
@@ -124,7 +108,7 @@
 	{/if}
 
 	<div id="sortable-cards" class="grid grid-cols-1 gap-4 max-w-2xl mx-auto items-center">
-		{#each cards.filter((card) => !selectedIcon || card.icon === selectedIcon) as card (card.id)}
+		{#each filteredCards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button
 					tabindex="0"
