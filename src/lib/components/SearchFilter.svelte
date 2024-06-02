@@ -36,21 +36,22 @@
 	}
 </script>
 
-<div class="flex flex-row gap-4 items-center p-4 rounded-lg">
+<div class="relative w-full">
 	<input
 		type="text"
 		placeholder="Search..."
 		class="input input-bordered w-full"
+		class:pr-16={addIconFilter}
 		bind:value={searchQuery}
 		on:input={filterCards}
 	/>
 
 	{#if addIconFilter}
-		<details class="dropdown dropdown-end" bind:open={filterDropdownOpen}>
-			<summary class="m-1 btn btn-outline btn-square">
-				<Filter class="w-6 h-6" />
-			</summary>
-			{#if filterDropdownOpen}
+		<div class="absolute top-0 right-0 h-full">
+			<details class="dropdown dropdown-end" bind:open={filterDropdownOpen}>
+				<summary class="btn btn-outline btn-square h-full w-12 flex justify-center items-center">
+					<Filter class="w-6 h-6" />
+				</summary>
 				<ul
 					class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 border border-neutral"
 				>
@@ -68,14 +69,7 @@
 						{/if}
 					{/each}
 				</ul>
-			{/if}
-		</details>
+			</details>
+		</div>
 	{/if}
 </div>
-
-<style>
-	.dropdown[open] .btn {
-		border-bottom-left-radius: 0;
-		border-bottom-right-radius: 0;
-	}
-</style>

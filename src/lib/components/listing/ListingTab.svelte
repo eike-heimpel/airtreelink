@@ -77,6 +77,9 @@
 	function handleFilter(event) {
 		filteredCards = event.detail.filteredCards;
 	}
+
+	$: if (moveCards) {
+	}
 </script>
 
 <div class="container mx-auto">
