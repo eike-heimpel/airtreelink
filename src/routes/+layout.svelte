@@ -40,6 +40,9 @@
 <svelte:head>
 	{@html webManifestLink}
 	<meta name="robots" content="noindex, nofollow" />
+	<meta name="theme-color" content="#65c3c8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 	<title>GuestLink</title>
 </svelte:head>
 

@@ -1,19 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { editMode, previewMode } from '$lib/stores/store';
+	import { previewMode } from '$lib/stores/store';
 	import ListingCardComponent from '$components/listing/ListingCard.svelte';
 	import Sortable from 'sortablejs';
 	import { page } from '$app/stores';
 	import type { ListingCardCreate, ListingCard } from '$lib/types/cards';
-	import { invalidateAll } from '$app/navigation';
-	import { toastPromiseDelayMs } from '$lib/stores/store';
-	import { toast } from 'svelte-french-toast';
 	import { fade } from 'svelte/transition';
 	import { getTemplate } from '$lib/listings/cards/cardTemplates';
 	import Title from './cards/Title.svelte';
 	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
-
-	let iconComponents: Record<string, ConstructorOfATypedSvelteComponent> = {};
 
 	export let cards: ListingCard[] = [];
 	export let type: string;
@@ -23,6 +18,8 @@
 	let moveCards = false;
 	let selectedCard: ListingCard | null = null;
 	let selectedIcon: string | null = null;
+	let filterDropdownOpen = false;
+	let iconsLoaded = false;
 
 	function openAddModal() {
 		createTempCard();
@@ -79,38 +76,34 @@
 
 	function filterByIcon(iconKey: string) {
 		console.log('filter by icon', iconKey);
+		filterDropdownOpen = false;
 		selectedIcon = iconKey;
-	}
-
-	async function loadAllIcons() {
-		for (const [iconName, icon] of Object.entries(iconMapping)) {
-			if (!iconComponents[iconName]) {
-				const module = await icon.importPath();
-				iconComponents[iconName] = module.default;
-			}
-		}
 	}
 </script>
 
 <div class="container mx-auto">
-	<div class="dropdown dropdown-hover">
-		<label tabindex="0" class="btn btn-accent m-1" on:click={loadAllIcons}>Filter</label>
-		<ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10">
-			{#each Object.entries(iconMapping) as [key, icon]}
-				<li
-					class="flex items-center gap-2 cursor-pointer p-2 rounded-lg {selectedIcon === key
-						? 'bg-primary text-white'
-						: ''}"
-					on:click={() => filterByIcon(key)}
-				>
-					{#if iconComponents[key]}
-						<svelte:component this={iconComponents[key]} class="w-5 h-5" />
-					{/if}
-					<span>{icon.name}</span>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<details class="dropdown" bind:open={filterDropdownOpen}>
+		<summary class="m-1 btn">Click</summary>
+		{#if filterDropdownOpen}
+			<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+				{#each Object.entries(iconMapping) as [key, icon]}
+					<li>
+						<button
+							on:click={() => {
+								filterByIcon(key);
+							}}
+							class="flex items-center gap-2"
+						>
+							<svelte:component this={iconMapping[key].component} class="w-5 h-5" />
+
+							<span>{icon.name}</span>
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</details>
+
 	{#if !$previewMode}
 		<div class="flex justify-center gap-10 mb-4">
 			<button class="btn btn-primary ml-2" on:click={openAddModal}>Add New Card</button>

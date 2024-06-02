@@ -1,47 +1,17 @@
 <script lang="ts">
+	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
+	import PlusIcon from 'virtual:icons/mdi/plus';
+
 	export let title: string;
 	export let editMode: boolean;
 	export let icon: string | null;
-	import PlusIcon from 'virtual:icons/mdi/plus';
 
-	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
-
-	let IconComponent: ConstructorOfATypedSvelteComponent;
 	let showAsModal = false;
 	let tooltipText = 'Select an icon';
-	let iconComponents: Record<string, ConstructorOfATypedSvelteComponent> = {};
 
-	async function loadIcon(iconName) {
-		const icon = iconMapping[iconName];
-		if (icon) {
-			const module = await icon.importPath();
-			IconComponent = module.default;
-		} else {
-			IconComponent = null;
-		}
-	}
-
-	$: if (icon) {
-		loadIcon(icon);
-	}
-
-	async function loadAllIcons() {
-		for (const [iconName, icon] of Object.entries(iconMapping)) {
-			if (!iconComponents[iconName]) {
-				const module = await icon.importPath();
-				iconComponents[iconName] = module.default;
-			}
-		}
-	}
-
-	function selectIcon(iconName) {
+	function selectIcon(iconName: string) {
 		icon = iconName;
 		showAsModal = false;
-		loadIcon(iconName); // Load the selected icon
-	}
-
-	$: if (showAsModal) {
-		loadAllIcons(); // Load all icons when modal is shown
 	}
 </script>
 
@@ -51,24 +21,25 @@
 		<div class="flex items-center justify-center gap-4">
 			<input type="text" class="input input-primary" bind:value={title} />
 			<div>
-				{#if IconComponent}
+				{#if iconMapping[icon].component}
 					<button
 						class="flex items-center cursor-pointer {iconMapping[icon].bgColor} rounded-full p-1"
 						on:click={() => (showAsModal = true)}
 					>
-						<svelte:component this={IconComponent} class="w-5 h-5" />
+						<svelte:component this={iconMapping[icon].component} class="w-5 h-5" />
 					</button>
 				{:else}
-					<button class="btn btn-outline" on:click={() => (showAsModal = true)}> Add Icon </button>
+					<button class="btn btn-outline" on:click={() => (showAsModal = true)}><PlusIcon /></button
+					>
 				{/if}
 			</div>
 		</div>
 	</div>
 {:else}
 	<h1 class="text-xl font-medium text-left drop-shadow-xl">{title}</h1>
-	{#if IconComponent}
+	{#if iconMapping[icon].component}
 		<div class="flex items-center {iconMapping[icon].bgColor} rounded-full p-1">
-			<svelte:component this={IconComponent} class="w-5 h-5" />
+			<svelte:component this={iconMapping[icon].component} class="w-5 h-5" />
 		</div>
 	{/if}
 {/if}
@@ -79,16 +50,14 @@
 			<div class="modal-body">
 				<p class="mb-4">{tooltipText}</p>
 				<div class="flex flex-wrap gap-4">
-					{#each Object.entries(iconMapping) as [iconName, icon]}
+					{#each Object.entries(iconMapping) as [iconName, icon] (iconName)}
 						<button
-							class="flex items-center justify-center cursor-pointer {icon.bgColor} rounded-full p-2"
+							class="flex items-center gap-2 cursor-pointer {icon.bgColor} rounded-full p-2"
 							on:click={() => selectIcon(iconName)}
 						>
-							{#if iconComponents[iconName]}
-								<svelte:component this={iconComponents[iconName]} class="w-8 h-8" />
-							{:else}
-								<span>Loading...</span>
-							{/if}
+							<svelte:component this={icon.component} class="w-5 h-5" />
+
+							<span>{icon.name}</span>
 						</button>
 					{/each}
 				</div>

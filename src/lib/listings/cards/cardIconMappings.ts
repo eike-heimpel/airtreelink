@@ -1,67 +1,82 @@
+import RestaurantIcon from 'virtual:icons/mdi/restaurant';
+import HomeOutlineIcon from 'virtual:icons/mdi/home-outline';
+import BedOutlineIcon from 'virtual:icons/mdi/bed-outline';
+import MapMarkerIcon from 'virtual:icons/mdi/map-marker';
+import BeachIcon from 'virtual:icons/mdi/beach';
+import BikeIcon from 'virtual:icons/mdi/bike';
+import ShoppingIcon from 'virtual:icons/mdi/shopping';
+import CarIcon from 'virtual:icons/mdi/car';
+import WifiIcon from 'virtual:icons/mdi/wifi';
+import PoolIcon from 'virtual:icons/mdi/pool';
+import DogServiceIcon from 'virtual:icons/mdi/dog-service';
+import CityIcon from 'virtual:icons/mdi/city';
+import NaturePeopleIcon from 'virtual:icons/mdi/nature-people';
+
 export const iconMapping = {
     restaurant: {
         name: 'Restaurant',
-        importPath: () => import('virtual:icons/mdi/restaurant'),
+        component: RestaurantIcon,
         bgColor: 'bg-yellow-400'
     },
     'home-outline': {
         name: 'Home',
-        importPath: () => import('virtual:icons/mdi/home-outline'),
+        component: HomeOutlineIcon,
         bgColor: 'bg-blue-100'
     },
     'bed-outline': {
         name: 'Bed',
-        importPath: () => import('virtual:icons/mdi/bed-outline'),
+        component: BedOutlineIcon,
         bgColor: 'bg-green-100'
     },
     'map-marker': {
         name: 'Map Marker',
-        importPath: () => import('virtual:icons/mdi/map-marker'),
+        component: MapMarkerIcon,
         bgColor: 'bg-red-100'
     },
     'beach': {
         name: 'Beach',
-        importPath: () => import('virtual:icons/mdi/beach'),
+        component: BeachIcon,
         bgColor: 'bg-blue-200'
     },
     'bike': {
         name: 'Bike',
-        importPath: () => import('virtual:icons/mdi/bike'),
+        component: BikeIcon,
         bgColor: 'bg-orange-100'
     },
     'shopping': {
         name: 'Shopping',
-        importPath: () => import('virtual:icons/mdi/shopping'),
+        component: ShoppingIcon,
         bgColor: 'bg-pink-100'
     },
     'car': {
         name: 'Car',
-        importPath: () => import('virtual:icons/mdi/car'),
+        component: CarIcon,
         bgColor: 'bg-gray-100'
     },
     'wifi': {
         name: 'WiFi',
-        importPath: () => import('virtual:icons/mdi/wifi'),
+        component: WifiIcon,
         bgColor: 'bg-indigo-100'
     },
     'pool': {
         name: 'Pool',
-        importPath: () => import('virtual:icons/mdi/pool'),
+        component: PoolIcon,
         bgColor: 'bg-teal-100'
     },
     'dog-service': {
         name: 'Dog Service',
-        importPath: () => import('virtual:icons/mdi/dog-service'),
+        component: DogServiceIcon,
         bgColor: 'bg-yellow-200'
     },
     'city': {
         name: 'City',
-        importPath: () => import('virtual:icons/mdi/city'),
+        component: CityIcon,
         bgColor: 'bg-purple-100'
     },
     'nature-people': {
         name: 'Nature People',
-        importPath: () => import('virtual:icons/mdi/nature-people'),
+        component: NaturePeopleIcon,
         bgColor: 'bg-green-200'
-    }
+    }   
 };
+
