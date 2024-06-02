@@ -94,7 +94,7 @@
 		</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 gap-4 m max-w-2xl mx-auto">
+	<div id="sortable-cards" class="grid grid-cols-1 gap-4 m max-w-2xl mx-auto items-center">
 		{#each cards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button

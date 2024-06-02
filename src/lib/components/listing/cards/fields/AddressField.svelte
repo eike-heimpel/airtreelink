@@ -3,6 +3,8 @@
 	import type { AddressField } from '$lib/types/fields';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
+	import ContentCopy from 'virtual:icons/mdi/content-copy';
+	import { toast } from 'svelte-french-toast';
 
 	export let field: AddressField;
 	export let index: number;
@@ -31,6 +33,7 @@
 		autocompleteService = new google.maps.places.AutocompleteService();
 		placeService = new google.maps.places.PlacesService(document.createElement('div'));
 	}
+
 	function searchAddress(event) {
 		const query = event.target.value;
 		dispatch('updateField', { key: 'content', value: query });
@@ -79,9 +82,30 @@
 		dispatch('updateField', { key: 'showDirections', value: event.target.checked });
 	}
 
-	function openDirections(address: string) {
-		const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-		window.open(url, '_blank');
+	function openDirections(address) {
+		const encodedAddress = encodeURIComponent(address);
+		const googleMapsAppUrl = `comgooglemaps://?daddr=${encodedAddress}`;
+		const googleMapsWebUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+		const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+		if (isMobile) {
+			window.open(googleMapsWebUrl, '_blank');
+		} else {
+			// Directly open the web URL on desktop browsers
+			window.open(googleMapsWebUrl, '_blank');
+		}
+	}
+
+	function copyToClipboard(text) {
+		navigator.clipboard.writeText(text).then(
+			() => {
+				console.log('Address copied to clipboard');
+				toast.success('Address copied to clipboard!');
+			},
+			(err) => {
+				console.error('Could not copy text: ', err);
+			}
+		);
 	}
 </script>
 
@@ -142,7 +166,13 @@
 	</div>
 	<div slot="preview">
 		{#if showAddressAsText}
-			<p class="mt-2 text-neutral">{field.content}</p>
+			<div
+				class="flex items-center mt-2 cursor-pointer"
+				on:click={() => copyToClipboard(field.content)}
+			>
+				<p class="text-neutral">{field.content}</p>
+				<ContentCopy class="ml-2 w-5 h-5 text-primary" />
+			</div>
 		{/if}
 		{#if showDirections}
 			<address class="mt-2 not-italic">
