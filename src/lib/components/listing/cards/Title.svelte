@@ -65,7 +65,7 @@
 		</div>
 	</div>
 {:else}
-	<h1 class="text-xl font-medium text-left">{title}</h1>
+	<h1 class="text-xl font-medium text-left drop-shadow-xl">{title}</h1>
 	{#if IconComponent}
 		<div class="flex items-center {iconMapping[icon].bgColor} rounded-full p-1">
 			<svelte:component this={IconComponent} class="w-5 h-5" />
