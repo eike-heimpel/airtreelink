@@ -11,6 +11,9 @@
 	import { fade } from 'svelte/transition';
 	import { getTemplate } from '$lib/listings/cards/cardTemplates';
 	import Title from './cards/Title.svelte';
+	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
+
+	let iconComponents: Record<string, ConstructorOfATypedSvelteComponent> = {};
 
 	export let cards: ListingCard[] = [];
 	export let type: string;
@@ -19,6 +22,7 @@
 	let tempCard: ListingCardCreate | null = null;
 	let moveCards = false;
 	let selectedCard: ListingCard | null = null;
+	let selectedIcon: string | null = null;
 
 	function openAddModal() {
 		createTempCard();
@@ -72,14 +76,46 @@
 	function refreshSelectedCard(e) {
 		selectedCard = e.detail;
 	}
+
+	function filterByIcon(iconKey: string) {
+		console.log('filter by icon', iconKey);
+		selectedIcon = iconKey;
+	}
+
+	async function loadAllIcons() {
+		for (const [iconName, icon] of Object.entries(iconMapping)) {
+			if (!iconComponents[iconName]) {
+				const module = await icon.importPath();
+				iconComponents[iconName] = module.default;
+			}
+		}
+	}
 </script>
 
 <div class="container mx-auto">
+	<div class="dropdown dropdown-hover">
+		<label tabindex="0" class="btn btn-accent m-1" on:click={loadAllIcons}>Filter</label>
+		<ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10">
+			{#each Object.entries(iconMapping) as [key, icon]}
+				<li
+					class="flex items-center gap-2 cursor-pointer p-2 rounded-lg {selectedIcon === key
+						? 'bg-primary text-white'
+						: ''}"
+					on:click={() => filterByIcon(key)}
+				>
+					{#if iconComponents[key]}
+						<svelte:component this={iconComponents[key]} class="w-5 h-5" />
+					{/if}
+					<span>{icon.name}</span>
+				</li>
+			{/each}
+		</ul>
+	</div>
 	{#if !$previewMode}
-		<div class="flex justify-center gap-10">
-			<button class="btn btn-primary mb-4 ml-2" on:click={openAddModal}>Add New Card</button>
+		<div class="flex justify-center gap-10 mb-4">
+			<button class="btn btn-primary ml-2" on:click={openAddModal}>Add New Card</button>
 			<button
-				class="btn {moveCards ? 'btn-secondary' : 'btn-primary'} mb-4 ml-2"
+				class="btn {moveCards ? 'btn-secondary' : 'btn-primary'} ml-2"
 				on:click={() => {
 					moveCards = !moveCards;
 				}}
@@ -94,8 +130,8 @@
 		</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 gap-4 m max-w-2xl mx-auto items-center">
-		{#each cards as card (card.id)}
+	<div id="sortable-cards" class="grid grid-cols-1 gap-4 max-w-2xl mx-auto items-center">
+		{#each cards.filter((card) => !selectedIcon || card.icon === selectedIcon) as card (card.id)}
 			<div class="col-span-1 relative">
 				<button
 					tabindex="0"

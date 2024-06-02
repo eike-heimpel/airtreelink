@@ -3,9 +3,11 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-french-toast';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	export let data;
 	$: ({ session, supabase } = data);
+	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -31,22 +33,12 @@
 			}
 		});
 
-		// if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-		// 	navigator.serviceWorker
-		// 		.register('/service-worker.js')
-		// 		.then((registration) => {
-		// 			console.log('Service Worker registered with scope:', registration.scope);
-		// 		})
-		// 		.catch((error) => {
-		// 			console.log('Service Worker registration failed:', error);
-		// 		});
-		// }
-
 		return () => data.subscription.unsubscribe();
 	});
 </script>
 
 <svelte:head>
+	{@html webManifestLink}
 	<meta name="robots" content="noindex, nofollow" />
 	<title>GuestLink</title>
 </svelte:head>

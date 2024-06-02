@@ -10,53 +10,8 @@
 
 	export let data;
 
-	let currentListingInfo: Listing = data.currentListingInfo;
-	let currentListing: Listing = JSON.parse(JSON.stringify(currentListingInfo));
-
-	currentListing.cards = {};
-
-	let updatedListing = {};
-
-	function updateListing() {
-		const storedListing = localStorage.getItem(data.currentListingInfo.hash);
-
-		if (storedListing) {
-			currentListing = JSON.parse(storedListing);
-		}
-
-		const newCards = data.modifiedCards;
-
-		for (const card of newCards) {
-			currentListing.cards[card.id] = card;
-		}
-
-		const allCardIds = data.allCardIds;
-
-		for (const id of Object.keys(currentListing.cards)) {
-			if (!allCardIds.includes(parseInt(id))) {
-				const cardName = currentListing.cards[id].title;
-				delete currentListing.cards[id];
-				console.log('Deleted card:', id);
-			}
-		}
-
-		localStorage.setItem('lastUpdated', data.lastChanged);
-
-		localStorage.setItem(data.currentListingInfo.hash, JSON.stringify(currentListing));
-
-		currentListing = { ...currentListing };
-	}
-
-	onMount(() => {
-		updateListing();
-	});
-
-	$: if (data && browser) {
-		updateListing();
-	}
-
-	$: updatedListing = currentListing;
+	let currentListing: Listing = data.currentListingInfo;
+	currentListing.cards = data.cards;
 </script>
 
-<ListingView currentListing={updatedListing} />
-<ListingSettings currentListing={updatedListing} />
+<ListingView {currentListing} />

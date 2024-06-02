@@ -13,7 +13,6 @@ const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_S
 export const load = async ({ request, cookies, params, url, locals: { supabase } }) => {
 
 
-    const lastUpdated = cookies.get('lastUpdated');
     const listingId = parseInt(params.listingId);
 
     const {data: currentListingInfo, error: listingError} = await supabaseServiceClient.from('Listings').select('*').eq('id', listingId).single();
@@ -35,20 +34,11 @@ export const load = async ({ request, cookies, params, url, locals: { supabase }
     if (listingCardsError) {
         throw error(500, "could not find listing info");
     }
-    let modifiedCards = [];
 
-    if (!lastUpdated) {
-        modifiedCards = Object.values(listingCards);
-    } else {
-        modifiedCards = Object.values(listingCards).filter(card => new Date(card.last_changed) > new Date(lastUpdated));
-    }
+     const cards = Object.values(listingCards);
 
-    // Collect all card IDs
-    const allCardIds = listingCards.map(card => card.id);
 
-    cookies.set('lastUpdated', new Date().toISOString(), { path: '/' });
-
-    return { currentListingInfo, modifiedCards, lastChanged: new Date().toISOString(), allCardIds };
+    return { currentListingInfo, cards };
 };
 
 

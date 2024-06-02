@@ -3,8 +3,8 @@ import { error } from "@sveltejs/kit";
 import { all } from "axios";
 
 export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
-    const lastUpdated = cookies.get('lastUpdated');
-    console.log("lastUpdated", lastUpdated);
+
+
     const listingId = parseInt(params.listingId);
 
     const parents = await parent();
@@ -15,20 +15,11 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
     if (listingCardsError) {
         throw error(500, listingCardsError);
     }
-    let modifiedCards = [];
 
-    if (!lastUpdated) {
-        modifiedCards = Object.values(listingCards);
-    } else {
-        modifiedCards = Object.values(listingCards).filter(card => new Date(card.last_changed) > new Date(lastUpdated));
-    }
+    const cards = Object.values(listingCards);
 
-    // Collect all card IDs
-    const allCardIds = listingCards.map(card => card.id);
 
-    cookies.set('lastUpdated', new Date().toISOString(), { path: '/' });
-
-    return { currentListingInfo, modifiedCards, lastChanged: new Date().toISOString(), allCardIds };
+    return { currentListingInfo, cards};
 };
 
 export const actions = {
