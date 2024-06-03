@@ -4,44 +4,54 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { json, error } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request, locals: { session, supabase } }) => {
-    console.log("sending")
+    console.log("sending");
     if (!session) {
         throw error(401, 'Unauthorized');
     }
 
-    const { card } = await request.json();
+    const { cards } = await request.json();
 
-
-    // add user id to card
-    card.user_id = session.user.id;
-    // add created at to card
-    card.last_changed = new Date().toISOString();
-
-
-    if (!card) {
-        console.log("no card")
-        throw error(400, 'Card is required');
+    if (!cards || !Array.isArray(cards)) {
+        console.log("Invalid payload");
+        throw error(400, 'Cards array is required');
     }
 
-    const { data, error: cardError } = await supabase
-        .from('listing_cards')
-        .insert(card);
+    const inserts = cards.map((card) => {
+        card.user_id = session.user.id;
+        card.last_changed = new Date().toISOString();
 
-    if (cardError) {
-        console.error('Error updating card:', cardError);
-        throw error(500, 'Error updating card');
+        if (!card) {
+            console.log("No card");
+            throw error(400, 'Card is required');
+        }
+
+        return supabase
+            .from('listing_cards')
+            .insert(card);
+    });
+
+    try {
+        const results = await Promise.all(inserts);
+
+        // Check for errors in any of the inserts
+        results.forEach(({ error: cardError }) => {
+            if (cardError) {
+                console.error('Error inserting card:', cardError);
+                throw error(500, 'Error inserting card');
+            }
+        });
+
+        return json({ message: 'Inserted cards successfully' });
+    } catch (err) {
+        console.error('Error inserting cards:', err);
+        throw error(500, 'Error inserting cards');
     }
-
-    return json({ message: 'updated card successfully' });
 };
-
-
 
 export const PUT: RequestHandler = async ({ request, locals: { session, supabase } }) => {
     if (!session) {
         throw error(401, 'Unauthorized');
     }
-
 
     const { cards } = await request.json();
 

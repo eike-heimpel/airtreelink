@@ -20,3 +20,4 @@
 </script>
 
 <ListingView {currentListing} />
+<ListingSettings {currentListing} />
