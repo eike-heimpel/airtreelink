@@ -24,17 +24,19 @@
 </script>
 
 <div
-	class="fixed bottom-0 w-full bg-base-200 border-t border-neutral flex justify-center z-10 {$previewMode
-		? 'bg-opacity-90'
-		: ''}"
+	class=" fixed bottom-0 w-full {$previewMode
+		? 'lg:w-1/2'
+		: 'md:w-1/2'} flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}"
 >
-	<ul class="flex w-full">
+	<ul class="flex w-full {$previewMode ? 'lg:gap-4' : 'md:gap-4'}">
 		<li class="flex-1">
 			<button
-				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+				class="{!$previewMode
+					? 'md:rounded-t-lg'
+					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				ActiveTab.Arrival
 					? 'bg-accent text-white'
-					: 'hover:text-accent'}"
+					: 'bg-base-200 hover:text-accent'}"
 				on:click={() => {
 					activeTab = ActiveTab.Arrival;
 					updateQueryParam(ActiveTab.Arrival);
@@ -56,10 +58,12 @@
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+				class="{!$previewMode
+					? 'md:rounded-t-lg'
+					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				ActiveTab.Home
 					? 'bg-accent text-white'
-					: 'hover:text-accent'}"
+					: 'bg-base-200 hover:text-accent'}"
 				on:click={() => {
 					activeTab = ActiveTab.Home;
 					updateQueryParam(ActiveTab.Home);
@@ -81,10 +85,12 @@
 		</li>
 		<li class="flex-1">
 			<button
-				class="w-full py-3 flex flex-col items-center justify-center lg:text-lg {activeTab ===
+				class="{!$previewMode
+					? 'md:rounded-t-lg'
+					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
 				ActiveTab.Recommendation
 					? 'bg-accent text-white'
-					: 'hover:text-accent'}"
+					: 'bg-base-200 hover:text-accent'}"
 				on:click={() => {
 					activeTab = ActiveTab.Recommendation;
 					updateQueryParam(ActiveTab.Recommendation);
