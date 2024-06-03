@@ -15,10 +15,10 @@
 
 {#if currentListing}
 	<div
-		class="hero min-h-screen w-full"
+		class="hero min-h-screen w-full bg-fixed bg-cover"
 		style="background-image: url({currentListing.title_image_url});"
 	>
-		<div class="hero-overlay bg-opacity-60"></div>
+		<div class="hero-overlay bg-opacity-70"></div>
 
 		<div
 			class="h-full listing-info w-full px-4 pb-20 {$previewMode ||
@@ -70,12 +70,5 @@
 	.listing-info {
 		display: grid;
 		grid-template-rows: 70px 1fr;
-	}
-	.hero {
-		background-size: cover;
-		background-position: center;
-	}
-	.hero-overlay {
-		background-color: rgba(0, 0, 0, 0.6);
 	}
 </style>
