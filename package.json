@@ -52,6 +52,7 @@
 		"axios": "^1.7.2",
 		"dompurify": "^3.1.5",
 		"leaflet": "^1.9.4",
+		"minisearch": "^6.3.0",
 		"nanoid": "^5.0.7",
 		"netmask": "^2.0.2",
 		"postmark": "^4.0.2",

@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
 	import type { ListingCard } from '$lib/types/cards';
 	import Filter from 'virtual:icons/mdi/filter';
+	import MiniSearch from 'minisearch';
 
 	export let cards: ListingCard[] = [];
 	export let addIconFilter: boolean = false;
@@ -12,21 +13,48 @@
 	let filterDropdownOpen = false;
 	const dispatch = createEventDispatcher();
 
+	let miniSearch: MiniSearch;
+
+	onMount(() => {
+		miniSearch = new MiniSearch({
+			fields: ['title', 'type', 'icon', 'content_fields'], // fields to index for full-text search
+			storeFields: ['id'] // fields to return with search results
+		});
+		indexCards();
+		filterCards(); // Ensure initial filtering is done after indexing
+	});
+
+	function indexCards() {
+		if (miniSearch && cards.length > 0) {
+			miniSearch.addAll(
+				cards.map((card) => ({
+					...card,
+					content_fields: JSON.stringify(card.content_fields)
+				}))
+			);
+		}
+	}
+
 	function filterCards() {
+		if (!miniSearch) return; // Ensure miniSearch is initialized
+		let results = miniSearch.search(searchQuery, {
+			prefix: true,
+			fuzzy: 0.2 // Reduce the fuzzy tolerance to prevent unrelated matches
+		});
+		let resultIds = results.map((result) => result.id);
 		let filteredCards = cards.filter((card) => {
-			let lowerSearchQuery = searchQuery.toLowerCase();
-			let matchesSearch =
-				!searchQuery ||
-				card.title.toLowerCase().includes(lowerSearchQuery) ||
-				card.type?.toLowerCase().includes(lowerSearchQuery) ||
-				JSON.stringify(card.content_fields).toLowerCase().includes(lowerSearchQuery);
+			let matchesSearch = !searchQuery || resultIds.includes(card.id);
 			let matchesIcon = !selectedIcon || card.icon === selectedIcon;
 			return matchesSearch && matchesIcon;
 		});
 		dispatch('filter', { filteredCards });
 	}
 
-	$: searchQuery, selectedIcon, filterCards();
+	$: searchQuery,
+		selectedIcon,
+		() => {
+			if (miniSearch) filterCards();
+		};
 
 	function handleIconFilter(key: string, iconName: string) {
 		selectedIcon = key;
@@ -43,7 +71,7 @@
 		class="input input-bordered w-full"
 		class:pr-16={addIconFilter}
 		bind:value={searchQuery}
-		on:input={filterCards}
+		on:input={() => miniSearch && filterCards()}
 	/>
 
 	{#if addIconFilter}
