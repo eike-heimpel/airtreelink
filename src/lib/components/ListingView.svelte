@@ -27,8 +27,9 @@
 				: 'pt-24'} mb-10"
 		>
 			<div
-				class="w-full flex justify-center items-center pb-4"
-				class:hidden={activeTab !== ActiveTab.Arrival}
+				class="w-full flex justify-center items-center pb-4 {activeTab !== ActiveTab.Arrival
+					? 'hidden md:flex'
+					: 'flex'}"
 			>
 				<h1
 					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"

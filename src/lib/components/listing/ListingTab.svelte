@@ -83,7 +83,10 @@
 </script>
 
 <div class="container mx-auto">
-	<div class="max-w-2xl mx-auto mb-4" class:hidden={!$previewMode || type === ActiveTab.Arrival}>
+	<div
+		class="max-w-2xl mx-auto mb-4 lg:mb-8"
+		class:hidden={!$previewMode || type === ActiveTab.Arrival}
+	>
 		<SearchFilter
 			{cards}
 			addIconFilter={type === ActiveTab.Recommendation}
@@ -110,7 +113,10 @@
 		</p>
 	{/if}
 
-	<div id="sortable-cards" class="grid grid-cols-1 gap-4 max-w-2xl mx-auto items-center">
+	<div
+		id="sortable-cards"
+		class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 max-w-2xl lg:max-w-4xl mx-auto items-center"
+	>
 		{#each filteredCards as card (card.id)}
 			<div class="col-span-1 relative">
 				<button
