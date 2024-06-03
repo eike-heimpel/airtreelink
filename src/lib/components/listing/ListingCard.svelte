@@ -307,7 +307,9 @@
 							formLoading = false;
 							setTimeout(() => {
 								toast.success('Card deleted.', { id: toastId });
+								dispatch('deleteCard', { id: card.id }); // Dispatch deleteCard event with card id
 							}, $toastPromiseDelayMs);
+							showDeleteModal = false;
 							update();
 						};
 					}}

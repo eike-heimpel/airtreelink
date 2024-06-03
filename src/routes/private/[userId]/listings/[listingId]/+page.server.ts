@@ -10,7 +10,8 @@ export const load = async ({ request, cookies, parent, params, locals: { supabas
     const parents = await parent();
     const currentListingInfo = parents.listings.find(listing => listing.id === listingId);
 
-    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq('listing_id', listingId);
+    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq('listing_id', listingId).order('sort_order', { ascending: true });
+    ;
 
     if (listingCardsError) {
         throw error(500, listingCardsError);
@@ -75,7 +76,7 @@ export const actions = {
 
 
     },
-    updateCard: async ({ request, locals }) => {
+    updateSortOrder: async ({ request, locals }) => {
     },
     addCard: async ({ request, locals }) => {
     }

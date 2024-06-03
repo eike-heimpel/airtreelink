@@ -12,6 +12,11 @@
 
 	let currentListing: Listing = data.currentListingInfo;
 	currentListing.cards = data.cards;
+
+	$: {
+		// this should only be needed on the private side, nothing should invoke the load function to run again on the public side. But validate that.
+		currentListing = { ...data.currentListingInfo, cards: data.cards };
+	}
 </script>
 
 <ListingView {currentListing} />

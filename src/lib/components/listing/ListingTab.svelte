@@ -15,7 +15,6 @@
 	export let cards: ListingCard[] = [];
 	export let type: string;
 
-	let newCardTitle = '';
 	let tempCard: ListingCardCreate | null = null;
 	let moveCards = false;
 	let selectedCard: ListingCard | null = null;
@@ -33,8 +32,9 @@
 		const template = getTemplate(type);
 		tempCard = {
 			...template,
-			title: newCardTitle,
-			listing_id: $page.data.currentListingInfo.id
+			title: '',
+			listing_id: $page.data.currentListingInfo.id,
+			icon: ''
 		};
 	}
 
@@ -78,6 +78,36 @@
 		filteredCards = event.detail.filteredCards;
 	}
 
+	async function saveCardOrder() {
+		const updatedOrder = filteredCards.map((card, index) => ({
+			id: card.id,
+			sort_order: cards[index].sort_order // Preserve the original sort_order values
+		}));
+
+		try {
+			const response = await fetch('/api/listing/card', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ cards: updatedOrder })
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to save card order');
+			}
+		} catch (error) {
+			console.error('Error saving card order:', error);
+		}
+	}
+
+	function toggleMoveCards() {
+		moveCards = !moveCards;
+		if (!moveCards) {
+			saveCardOrder();
+		}
+	}
+
 	$: if (moveCards) {
 	}
 </script>
@@ -99,9 +129,7 @@
 			<button class="btn btn-primary ml-2" on:click={openAddModal}>Add New Card</button>
 			<button
 				class="btn {moveCards ? 'btn-secondary' : 'btn-primary'} ml-2"
-				on:click={() => {
-					moveCards = !moveCards;
-				}}
+				on:click={toggleMoveCards}
 			>
 				{moveCards ? 'Lock Cards' : 'Reorder Cards'}
 			</button>
@@ -158,6 +186,9 @@
 					card={selectedCard}
 					on:closeModal={closeCardModal}
 					on:refreshSelectedCard={refreshSelectedCard}
+					on:deleteCard={() => {
+						selectedCard = null;
+					}}
 				/>
 			</div>
 			<form method="dialog" class="modal-backdrop" on:click={closeCardModal}>

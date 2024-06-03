@@ -29,7 +29,7 @@ export const load = async ({ request, cookies, params, url, locals: { supabase }
         throw error(403, 'Listing is private')
     }
 
-    const { data: listingCards, error: listingCardsError } = await supabaseServiceClient.from('listing_cards').select('*').eq('listing_id', listingId);
+    const { data: listingCards, error: listingCardsError } = await supabaseServiceClient.from('listing_cards').select('*').eq('listing_id', listingId).order('sort_order', { ascending: true });
 
     if (listingCardsError) {
         throw error(500, "could not find listing info");

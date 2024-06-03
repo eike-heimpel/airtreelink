@@ -21,6 +21,7 @@ export type Database = {
           type: string | null
           user_id: string | null
           icon: string | null
+          sort_order: number
         }
         Insert: {
           content_fields?: Json | null
@@ -33,6 +34,8 @@ export type Database = {
           type?: string | null
           user_id?: string | null
           icon?: string | null
+          sort_order?: number | null
+
         }
         Update: {
           content_fields?: Json | null
@@ -45,6 +48,7 @@ export type Database = {
           type?: string | null
           user_id?: string | null
           icon?: string | null
+          sort_order?: number | null
         }
         Relationships: [
           {
