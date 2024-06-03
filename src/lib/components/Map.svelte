@@ -1,11 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { PUBLIC_MAPBOX_ACCESS_TOKEN } from '$env/static/public';
 	import 'leaflet/dist/leaflet.css';
 
 	let map;
 	let mapContainer;
 	let L;
+
+	const PUBLIC_MAPBOX_ACCESS_TOKEN = '';
 
 	// Example marker data
 	const markers = [
