@@ -3,6 +3,7 @@
 	import { iconMapping } from '$lib/listings/cards/cardIconMappings';
 	import type { ListingCard } from '$lib/types/cards';
 	import Filter from 'virtual:icons/mdi/filter';
+	import Close from 'virtual:icons/mdi/close'; // Import an 'x' icon
 	import MiniSearch from 'minisearch';
 
 	export let cards: ListingCard[] = [];
@@ -62,6 +63,11 @@
 		filterDropdownOpen = false;
 		filterCards();
 	}
+
+	function clearSearch() {
+		searchQuery = '';
+		filterCards();
+	}
 </script>
 
 <div class="relative w-full">
@@ -73,7 +79,12 @@
 		bind:value={searchQuery}
 		on:input={() => miniSearch && filterCards()}
 	/>
-
+	{#if searchQuery}
+		<button
+			class="absolute {addIconFilter ? 'right-16' : 'right-6'} top-0 z-10 h-full opacity-70"
+			on:click={clearSearch}>X</button
+		>
+	{/if}
 	{#if addIconFilter}
 		<div class="absolute top-0 right-0 h-full">
 			<details class="dropdown dropdown-end" bind:open={filterDropdownOpen}>
