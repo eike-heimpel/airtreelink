@@ -251,7 +251,7 @@
 					Cancel
 				</button>
 			{:else}
-				<div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
+				<div class="flex flex-col gap-4 sm:flex-row sm:justify-between mt-2">
 					<div class="flex flex-col gap-2 sm:flex-row sm:gap-2">
 						<button
 							class="btn {cardEditMode ? 'btn-outline' : 'btn-primary'} w-full sm:w-auto"
