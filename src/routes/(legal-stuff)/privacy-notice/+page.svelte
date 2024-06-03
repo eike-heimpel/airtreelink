@@ -1,9 +1,11 @@
 <script>
-	export let companyName = '[Your Company Name]';
-	export let companyEmail = '[Your Company Email]';
-	export let companyAddress = '[Your Company Address]';
-	export let dataProtectionOfficer;
-	export let dpoEmail;
+	import {
+		name,
+		privacyEmail,
+		address,
+		dataProtectionOfficer,
+		dpoEmail
+	} from '$lib/stores/business_info';
 </script>
 
 <div class="container mx-auto my-10 p-5 shadow-md rounded-lg">
@@ -18,9 +20,9 @@
 	<p class="mt-4">
 		<strong>Data Controller</strong> <br />
 		The data controller for this website is:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />Email: {companyEmail}
+		<br />{name}, operating the website GuestLink.
+		<br />{address}
+		<br />Email: {privacyEmail}
 	</p>
 	{#if dataProtectionOfficer}
 		<p class="mt-4">
@@ -57,6 +59,19 @@
 		in the US-East region. We have ensured that Supabase provides an adequate level of data protection.
 	</p>
 	<p class="mt-4">
+		<strong>Anonymous Data Collection</strong> <br />
+		We collect anonymous click and behavior data to optimize our services. For example, we may log clicks
+		on buttons like "Home" to understand usage patterns and improve the user interface. This data does
+		not contain any personal information and is not linked to any individual.
+	</p>
+	<p class="mt-4">
+		<strong>Cookies</strong> <br />
+		We use cookies to enhance your experience and ensure you have the latest information available. Specifically,
+		we use a cookie to store the last update timestamp of your data, ensuring you always receive the
+		most up-to-date information efficiently. These cookies are essential for the proper functioning of
+		our service and do not track you for advertising purposes.
+	</p>
+	<p class="mt-4">
 		<strong>Your Rights</strong> <br />
 		Under the GDPR, you have the following rights regarding your personal data:
 	</p>
@@ -67,7 +82,7 @@
 		<li>The right to restrict or object to processing</li>
 		<li>The right to data portability</li>
 	</ul>
-	To exercise these rights, please contact us at {companyEmail}.
+	To exercise these rights, please contact us at {privacyEmail}.
 	<p class="mt-4">
 		<strong>Changes to This Privacy Notice</strong> <br />
 		We may update this privacy notice from time to time to reflect changes in our practices or legal
@@ -77,9 +92,9 @@
 	<p class="mt-4">
 		<strong>Contact</strong> <br />
 		If you have any questions or concerns about this privacy notice, please contact us at:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />Email: {companyEmail}
+
+		<br />
+		<a href="mailto:{privacyEmail}" class="text-blue-500 hover:underline">{privacyEmail}</a>
 	</p>
 
 	<h2 class="text-xl font-semibold mt-8 mb-2">German Version</h2>
@@ -92,9 +107,9 @@
 	<p class="mt-4">
 		<strong>Verantwortlicher für die Datenverarbeitung</strong> <br />
 		Der Verantwortliche für die Datenverarbeitung auf dieser Website ist:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />E-Mail: {companyEmail}
+		<br />{name}, Betreiber der Website GuestLink.
+		<br />{address}
+		<br />E-Mail: {privacyEmail}
 	</p>
 	{#if dataProtectionOfficer}
 		<p class="mt-4">
@@ -134,6 +149,21 @@
 		ein angemessenes Datenschutzniveau bietet.
 	</p>
 	<p class="mt-4">
+		<strong>Erhebung anonymer Daten</strong> <br />
+		Wir sammeln anonyme Klick- und Verhaltensdaten, um unsere Dienste zu optimieren. Zum Beispiel können
+		wir Klicks auf Schaltflächen wie "Startseite" protokollieren, um Nutzungsmuster zu verstehen und
+		die Benutzeroberfläche zu verbessern. Diese Daten enthalten keine persönlichen Informationen und
+		sind nicht mit einzelnen Benutzern verknüpft.
+	</p>
+	<p class="mt-4">
+		<strong>Cookies</strong> <br />
+		Wir verwenden Cookies, um Ihre Erfahrung zu verbessern und sicherzustellen, dass Sie die neuesten
+		Informationen erhalten. Insbesondere verwenden wir ein Cookie, um den Zeitpunkt der letzten Aktualisierung
+		Ihrer Daten zu speichern und sicherzustellen, dass Sie stets die aktuellsten Informationen effizient
+		erhalten. Diese Cookies sind für das ordnungsgemäße Funktionieren unseres Dienstes unerlässlich und
+		verfolgen Sie nicht zu Werbezwecken.
+	</p>
+	<p class="mt-4">
 		<strong>Ihre Rechte</strong> <br />
 		Unter der DSGVO haben Sie folgende Rechte bezüglich Ihrer personenbezogenen Daten:
 	</p>
@@ -144,7 +174,7 @@
 		<li>Das Recht auf Einschränkung oder Widerspruch gegen die Verarbeitung</li>
 		<li>Das Recht auf Datenübertragbarkeit</li>
 	</ul>
-	Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter {companyEmail}.
+	Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter {privacyEmail}.
 	<p class="mt-4">
 		<strong>Änderungen dieser Datenschutzerklärung</strong> <br />
 		Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren, um Änderungen in unseren Praktiken
@@ -154,8 +184,6 @@
 	<p class="mt-4">
 		<strong>Kontakt</strong> <br />
 		Wenn Sie Fragen oder Bedenken zu dieser Datenschutzerklärung haben, kontaktieren Sie uns bitte unter:
-		<br />{companyName}
-		<br />{companyAddress}
-		<br />E-Mail: {companyEmail}
+		<br /><a href="mailto:{privacyEmail}" class="text-blue-500 hover:underline">{privacyEmail}</a>
 	</p>
 </div>

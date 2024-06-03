@@ -1,14 +1,34 @@
 import { STRIPE_SECRET_KEY } from '$env/static/private';
+import { PUBLIC_STRIPE_PRODUCT_ID } from '$env/static/public';
 import Stripe from 'stripe';
 import { error } from '@sveltejs/kit';
+import { form } from '../account/+page.svelte';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const load = async ({ locals: { session } }) => {
+export const load = async ({ locals: { session, supabase } }) => {
 
     if (!session || !session.user || !session.user.email) {
         throw error(403, { message: 'Not authenticated' });
     }
+
+    // Get public_listings count from supabase for the user by session user id
+    const { data: publicListings, error: publicListingsError } = await supabase
+        .from('Listings')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .eq('public', true)
+
+    if (publicListingsError) {
+        console.error('Error fetching user:', publicListingsError);
+        throw error(500, 'Error fetching user');
+    }
+
+    if (!publicListings) {
+        throw error(404, 'No listings found');
+    }
+
+    const publicListingCount = publicListings.length;
 
     let subscription = null;
 
@@ -22,20 +42,22 @@ export const load = async ({ locals: { session } }) => {
             throw error(404, { message: 'Customer not found' });
         }
 
-        const subscriptions = await stripe.subscriptions.list({
+        const { data: subscriptions } = await stripe.subscriptions.list({
             customer: customer.data[0].id,
             limit: 1
         });
 
-        if (subscriptions.data.length === 0) {
+        subscription = subscriptions.find(subscription => subscription.plan.product === PUBLIC_STRIPE_PRODUCT_ID) as Stripe.Subscription
+
+        if (!subscription) {
             console.log('Subscription not found');
-        } else subscription = subscriptions.data[0];
+        }
 
     } catch (stripeError) {
         console.error('Failed to retrieve subscription from Stripe', stripeError);
     }
 
-    return { subscription };
+    return { subscription, publicListingCount };
 };
 
 export const actions = {
@@ -51,6 +73,9 @@ export const actions = {
         if (isNaN(newQuantity) || newQuantity < 1) {
             throw error(400, { message: 'Invalid quantity' });
         }
+
+        const switchedFromMonthlyToYearly = formData.get('switchedFromMonthlyToYearly') === 'true';
+        const priceId = formData.get('priceId');
 
         let subscription = null;
 
@@ -75,13 +100,22 @@ export const actions = {
 
             subscription = subscriptions.data[0];
 
+            let items: any = [{
+                id: subscription.items.data[0].id,
+                quantity: newQuantity,
+            }]
+
+            if (switchedFromMonthlyToYearly && priceId) {
+                items[0]["price"] = priceId;
+            }
+
+
             await stripe.subscriptions.update(subscription.id, {
-                items: [{
-                    id: subscription.items.data[0].id,
-                    quantity: newQuantity,
-                }],
+                items: items,
                 proration_behavior: 'create_prorations',
             });
+
+
         } catch (stripeError) {
             console.error('Failed to update Stripe subscription', stripeError);
             throw error(500, { message: 'Failed to update subscription' });
@@ -129,11 +163,12 @@ export const actions = {
         return { success: true };
     },
 
-    renewSubscription: async ({ locals: { session } }) => {
+    renewSubscription: async ({ request, locals: { session } }) => {
 
         if (!session || !session.user || !session.user.email) {
             throw error(403, { message: 'Not authenticated' });
         }
+
 
         let subscription = null;
 

@@ -1,7 +1,14 @@
 <script>
-	export let name = '[Your Name]';
-	export let poBox = '[Your PO Box]';
-	export let emailAddress = '[Your Email Address]';
+	import {
+		name,
+		ceo,
+		address,
+		emailAddress,
+		hrb,
+		taxNumber,
+		vatId,
+		customerSupportEmail
+	} from '$lib/stores/business_info';
 </script>
 
 <div class="container mx-auto my-10 p-5 shadow-md rounded-lg">
@@ -14,12 +21,32 @@
 		{name}
 	</p>
 	<p class="mt-4">
+		<strong>CEO:</strong> <br />
+		{ceo}
+	</p>
+	<p class="mt-4">
 		<strong>Address:</strong> <br />
-		{poBox}
+		{address}
 	</p>
 	<p class="mt-4">
 		<strong>Contact:</strong> <br />
 		Email: {emailAddress}
+	</p>
+	<p class="mt-4">
+		<strong>Commercial Register:</strong> <br />
+		{hrb}
+	</p>
+	<p class="mt-4">
+		<strong>Tax Number:</strong> <br />
+		{taxNumber}
+	</p>
+	<p class="mt-4">
+		<strong>VAT ID:</strong> <br />
+		{vatId}
+	</p>
+	<p class="mt-4">
+		<strong>Customer Support:</strong> <br />
+		Email: {customerSupportEmail}
 	</p>
 	<p class="mt-4">
 		<strong>Liability for Content</strong> <br />
@@ -60,12 +87,32 @@
 		{name}
 	</p>
 	<p class="mt-4">
+		<strong>Geschäftsführer:</strong> <br />
+		{ceo}
+	</p>
+	<p class="mt-4">
 		<strong>Anschrift:</strong> <br />
-		{poBox}
+		{address}
 	</p>
 	<p class="mt-4">
 		<strong>Kontakt:</strong> <br />
 		E-Mail: {emailAddress}
+	</p>
+	<p class="mt-4">
+		<strong>Handelsregister:</strong> <br />
+		{hrb}
+	</p>
+	<p class="mt-4">
+		<strong>Steuernummer:</strong> <br />
+		{taxNumber}
+	</p>
+	<p class="mt-4">
+		<strong>USt-IdNr.:</strong> <br />
+		{vatId}
+	</p>
+	<p class="mt-4">
+		<strong>Kundenservice:</strong> <br />
+		E-Mail: {customerSupportEmail}
 	</p>
 	<p class="mt-4">
 		<strong>Haftung für Inhalte</strong> <br />

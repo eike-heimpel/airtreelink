@@ -1,11 +1,26 @@
 
-export const load = async ({ parent }) => {
+import { error } from "@sveltejs/kit";
+import { all } from "axios";
 
-    const parentData = await parent();
+export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
 
-    return {
-        listings: parentData.listings
-    };
+
+    const listingId = parseInt(params.listingId);
+
+    const parents = await parent();
+    const currentListingInfo = parents.listings.find(listing => listing.id === listingId);
+
+    const { data: listingCards, error: listingCardsError } = await supabase.from('listing_cards').select('*').eq('listing_id', listingId).order('sort_order', { ascending: true });
+    ;
+
+    if (listingCardsError) {
+        throw error(500, listingCardsError);
+    }
+
+    const cards = Object.values(listingCards);
+
+
+    return { currentListingInfo, cards};
 };
 
 export const actions = {
@@ -39,5 +54,31 @@ export const actions = {
             console.log("could not delete listing", error);
             return { error: error.message };
         }
+    },
+
+    deleteCard: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const cardId = parseInt(formData.get('cardId')?.toString() || '');
+
+        if (!cardId) {
+            error(400, { message: 'Invalid card id' });
+        }
+
+        const { data: card, error: cardError } = await locals.supabase.from('listing_cards').delete().eq('id', cardId);
+
+        if (cardError) {
+            return error(500, { message: 'Failed to delete card' });
+        }
+
+        console.log("card deleted")
+        return { success: true };
+
+
+
+    },
+    updateSortOrder: async ({ request, locals }) => {
+    },
+    addCard: async ({ request, locals }) => {
     }
+
 };

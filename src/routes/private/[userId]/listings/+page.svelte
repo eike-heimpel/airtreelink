@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { enhance } from '$app/forms';
+	import toast, { Toaster } from 'svelte-french-toast';
+
 	export let data;
 
 	let name = '';
@@ -16,18 +18,28 @@
 		showModal = false;
 	}
 
-	function enhanceForm() {
+	function createListing({ cancel }) {
+		// dont allow if they have mor ethan 5 listings already
+		if (data.listings.length >= 5) {
+			toast.error('You have reached the maximum number of listings allowed.');
+			cancel();
+			closeModal();
+		}
 		return async ({ result, update }: { result: any; update: any }) => {
 			if (result.type === 'success') {
-				console.log('Listing added successfully!');
-				closeModal();
-				invalidateAll();
-				name = '';
-				description = '';
-				title_image_url = '';
-			} else {
+				toast.success('Listing created successfully!');
 				update();
+				closeModal();
 			}
+
+			if (result.type === 'error') {
+				toast.error('Error creating listing. Please try again.');
+				closeModal();
+			}
+
+			name = '';
+			description = '';
+			title_image_url = '';
 		};
 	}
 </script>
@@ -42,6 +54,7 @@
 			}}
 		>
 			<figure class="overflow-hidden h-64 w-full">
+				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<img
 					src={listing.title_image_url}
 					alt="Listing Image"
@@ -73,10 +86,10 @@
 	</button>
 
 	{#if showModal}
-		<div class="modal modal-open">
+		<div class="modal modal-open modal-bottom sm:modal-middle">
 			<div class="modal-box">
 				<h2 class="font-bold text-lg mb-4">Add New Listing</h2>
-				<form method="post" use:enhance={enhanceForm}>
+				<form method="post" use:enhance={createListing}>
 					<div class="mb-4">
 						<label class="block text-sm font-medium mb-1">Name</label>
 						<input

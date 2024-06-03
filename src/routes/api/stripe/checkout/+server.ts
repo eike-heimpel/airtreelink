@@ -13,14 +13,14 @@ export async function GET({ url, locals }) {
     const customerEmail = locals.session.user.email;
     const userId = locals.session.user.id;
 
-    const plan = url.searchParams.get('plan');
-    const quantity = url.searchParams.get('quantity') || 1; // Default to 1 if quantity is not provided
+    const priceId = url.searchParams.get('price_id');
+    const quantity = url.searchParams.get('quantity') || 1;
     const baseUrl = `${url.protocol}//${url.host}`;
 
     if (!userId) {
         throw error(400, 'Missing user_id');
     }
-    if (!plan) {
+    if (!priceId) {
         throw error(400, 'Missing plan');
     }
 
@@ -28,7 +28,7 @@ export async function GET({ url, locals }) {
         payment_method_types: ['card'],
         line_items: [
             {
-                price: 'price_1PHMswH6fmCpvtpqM5DIJI3p',
+                price: priceId,
                 quantity: Number(quantity),
             },
         ],
@@ -38,11 +38,9 @@ export async function GET({ url, locals }) {
         cancel_url: `${baseUrl}/`,
         metadata: {
             user_id: userId,
-            plan: plan
         }
     });
 
-    console.log(session)
 
     if (!session.url) {
         throw error(500, 'No session URL');

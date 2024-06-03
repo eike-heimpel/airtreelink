@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { Session } from '@supabase/supabase-js';
+	import { onMount } from 'svelte';
+	import { PUBLIC_STRIPE_PRODUCT_ID } from '$env/static/public';
 
 	export let supabaseSession: Session;
+	export let showYearlyPrice = false;
 
 	let basicQuantity = 1;
 	function updateQuantity(plan: string, change: number) {
@@ -21,18 +24,63 @@
 		}
 
 		try {
-			goto(`/api/stripe/checkout?plan=basic&quantity=${quantity}`);
+			goto(
+				`/api/stripe/checkout?price_id=${showYearlyPrice ? yearlyPlan.id : monthlyPlan.id}&quantity=${quantity}`
+			);
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
+
+	let monthlyPrice: number;
+	let yearlyPrice: number;
+
+	let monthlyPlan;
+	let yearlyPlan;
+
+	onMount(async () => {
+		const response = await fetch(`/api/stripe/prices?product_id=${PUBLIC_STRIPE_PRODUCT_ID}`);
+
+		if (!response.ok) {
+			const { message } = await response.json();
+			console.error('Error fetching prices:', message);
+			return;
+		}
+
+		const { prices } = await response.json();
+
+		console.log(prices);
+
+		monthlyPlan = prices.find((price) => price.interval === 'month');
+		yearlyPlan = prices.find((price) => price.interval === 'year');
+
+		if (monthlyPlan) {
+			monthlyPrice = monthlyPlan.amount.includes('.00')
+				? monthlyPlan.amount.split('.')[0]
+				: monthlyPlan.amount;
+		}
+
+		if (yearlyPlan) {
+			yearlyPrice = yearlyPlan.amount.includes('.00')
+				? yearlyPlan.amount.split('.')[0]
+				: yearlyPlan.amount;
+		}
+
+		console.log(yearlyPlan);
+	});
 </script>
 
-<!-- Basic Plan -->
 <div class="card p-6 rounded-lg shadow-xl w-full max-w-sm flex flex-col justify-between">
 	<div>
 		<h2 class="text-2xl font-bold mb-4">Basic</h2>
-		<div class="text-5xl font-bold mb-4">$1<span class="text-xl">/listing</span></div>
+		<div class="text-5xl font-bold mb-4 h-10">
+			{#if monthlyPrice}
+				${showYearlyPrice ? yearlyPrice : monthlyPrice}<span class="text-xl">/listing</span>
+			{:else}
+				<div class="skeleton h-full w-full"></div>
+			{/if}
+		</div>
+
 		<ul class="mb-4 space-y-2">
 			<li class="flex items-center">
 				<span class="text-green-500 mr-2">✓</span>Host public URL with your listing

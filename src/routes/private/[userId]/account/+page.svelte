@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import Tooltip from '$components/UI/Tooltip.svelte';
 
 	export let data;
 	export let form;
@@ -28,7 +29,6 @@
 		return async ({ result, update }) => {
 			loading = false;
 			if (result.type === 'success') {
-				console.log('asd');
 				showDeleteModal = false;
 				showDeletionNotice = true;
 				update();
@@ -42,7 +42,11 @@
 		<!-- User Email -->
 		<div class="card bg-base-100 shadow-xl p-4 space-y-4">
 			<div class="form-control">
-				<label class="label" for="email">Email</label>
+				<label class="label" for="email"
+					>Email <Tooltip
+						tooltipText="To change your email, please send an email to support@myguestlink.com."
+					/>
+				</label>
 				<input
 					class="input input-bordered w-full"
 					id="email"
@@ -111,7 +115,7 @@
 </div>
 
 {#if showDeleteModal}
-	<div class="modal modal-open">
+	<div class="modal modal-open modal-bottom sm:modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Deletion</h3>
 			<p class="py-4">
