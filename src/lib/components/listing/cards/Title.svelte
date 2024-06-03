@@ -16,10 +16,10 @@
 </script>
 
 {#if editMode}
-	<div class="form-control">
+	<div class="form-control w-full mb-2 items-start">
 		<h3 class="text-primary mb-2 text-xl text-left">Title</h3>
 		<div class="flex items-center justify-center gap-4">
-			<input type="text" class="input input-primary" bind:value={title} />
+			<input type="text" class="input input-primary sm:w-96" bind:value={title} />
 			<div>
 				{#if iconMapping[icon]?.component}
 					<button

@@ -4,23 +4,23 @@ import type { TextField, AddressField } from '$lib/types/fields';
 
 export function getTemplate(type: string) {
   switch (type) {
-    case 'info':
+    case 'home':
       return {
         content_fields: [createEmptyField('text') as TextField],
         description: '',
-        type: 'info'
+        type: type
       };
     case 'recommendation':
       return {
         content_fields: [createEmptyField('text') as TextField, createEmptyField('address') as AddressField],
         description: '',
-        type: 'recommendation'
+        type: type
       };
-    case 'home':
+    case 'arrival':
       return {
-        content_fields: [createEmptyField('text') as TextField, createEmptyField('address') as AddressField],
+        content_fields: [createEmptyField('text') as TextField],
         description: '',
-        type: 'home'
+        type: type
       };
     default:
       throw new Error(`Unsupported card type: ${type}`);

@@ -103,7 +103,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ card: editedCard })
+			body: JSON.stringify({ cards: [editedCard] })
 		});
 
 		if (!resp.ok) {

@@ -49,12 +49,6 @@
 		}
 	}
 
-	onMount(async () => {
-		if (cardEditMode) {
-			await initializeQuill();
-		}
-	});
-
 	$: if (cardEditMode) {
 		initializeQuill();
 	}

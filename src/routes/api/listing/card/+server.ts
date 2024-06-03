@@ -44,7 +44,6 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
 
 
     const { cards } = await request.json();
-    console.log(cards)
 
     if (!cards || !Array.isArray(cards)) {
         console.log("Invalid payload");

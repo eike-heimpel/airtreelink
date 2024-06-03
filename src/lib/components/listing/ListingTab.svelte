@@ -20,6 +20,8 @@
 	let selectedCard: ListingCard | null = null;
 	let filteredCards: ListingCard[] = cards;
 
+	$: filteredCards = cards;
+
 	function openAddModal() {
 		createTempCard();
 	}
