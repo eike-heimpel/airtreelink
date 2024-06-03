@@ -1,4 +1,3 @@
-
 import { error } from "@sveltejs/kit";
 
 import { createServerClient } from '@supabase/ssr';
@@ -10,7 +9,7 @@ const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_S
     cookies: {}
 });
 
-export const load = async ({ request, cookies, params, url, locals: { supabase } }) => {
+export const load = async ({  params, url }) => {
 
 
     const listingId = parseInt(params.listingId);

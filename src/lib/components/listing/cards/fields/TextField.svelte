@@ -69,6 +69,7 @@
 		html = html.replace(/<li data-list="bullet">/g, '<li style="list-style-type: disc;">');
 		html = html.replace(/<li data-list="ordered">/g, '<li style="list-style-type: decimal;">');
 		html = html.replace(/<ol>/g, '<ol style="padding-left: 1.5rem">');
+		html = html.replace(/<a/g, '<a class="link"');
 
 		return html;
 	}
@@ -102,13 +103,13 @@
 	on:moveFieldUp
 	on:moveFieldDown
 >
-	<div slot="content" class="h-40 flex flex-col">
+	<div slot="content" class="h-52 md:h-80 flex flex-col">
 		<div id="editor-container" class="flex-1 overflow-hidden flex flex-col">
 			<div id="editor" bind:this={editor} class="flex-1 overflow-auto"></div>
 		</div>
 	</div>
 	<div slot="preview">
-		<div class="mt-2 text-neutral formatted-content">
+		<div class="mt-2 text-neutral">
 			{@html renderedContent || sanitizeHtml(field.content)}
 		</div>
 	</div>
@@ -123,22 +124,5 @@
 	#editor {
 		flex-grow: 1;
 		overflow-y: auto;
-	}
-
-	/* Additional styles to ensure proper rendering */
-	.formatted-content p {
-		margin: 0 0 1em 0;
-	}
-	.formatted-content ol,
-	.formatted-content ul {
-		margin-left: 20px !important; /* Ensure bullets and numbers are indented */
-		padding-left: 20px !important; /* Ensure content within the list items is indented */
-	}
-	.formatted-content li {
-		margin-bottom: 0.5em !important;
-		list-style-position: outside !important; /* Ensure bullets and numbers are outside the list items */
-	}
-	.formatted-content strong {
-		font-weight: bold !important;
 	}
 </style>

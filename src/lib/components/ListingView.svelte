@@ -27,8 +27,7 @@
 				: 'pt-24'} mb-10"
 		>
 			<div
-				class="hero-content w-full flex justify-center items-center pb-4 {activeTab !==
-				ActiveTab.Arrival
+				class="w-full flex justify-center items-center pb-4 {activeTab !== ActiveTab.Arrival
 					? 'hidden md:flex'
 					: 'flex'}"
 			>

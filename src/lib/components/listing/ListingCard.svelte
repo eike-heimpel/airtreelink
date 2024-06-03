@@ -69,6 +69,13 @@
 		errorMessage = 'Error updating card.',
 		successMessage = 'Card updated.'
 	) {
+		if (!editedCard.title || editedCard.title.trim() === '') {
+			toast.error('Title is required.', { duration: 2000 });
+			cardEditMode = !cardEditMode;
+
+			return false;
+		}
+
 		if (createNewCard) {
 			dispatch('closeModal');
 		}
@@ -109,7 +116,7 @@
 		if (!resp.ok) {
 			console.error(errorMessage, resp.statusText);
 			toast.error(errorMessage, { id: toastId });
-			return;
+			return false;
 		}
 
 		setTimeout(() => {
@@ -118,6 +125,7 @@
 
 		dispatch('refreshSelectedCard', editedCard);
 		invalidateAll();
+		return true;
 	}
 
 	async function deleteField(fieldId: string) {
@@ -180,8 +188,6 @@
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
 						on:moveFieldDown={() => moveFieldDown(index)}
-						on:save={() => saveEdit()}
-						on:cancelEdit={() => resetEditedCard(card)}
 					/>
 				{:else if field.type === 'video'}
 					<VideoField
