@@ -60,13 +60,7 @@
 		in the US-East region. We have ensured that Supabase provides an adequate level of data protection.
 	</p>
 	<p class="mt-4">
-		<strong>Anonymous Data Collection</strong> <br />
-		We collect anonymous click and behavior data to optimize our services. For example, we may log clicks
-		on buttons like "Home" to understand usage patterns and improve the user interface. This data does
-		not contain any personal information and is not linked to any individual.
-	</p>
-	<p class="mt-4">
-		<strong>Web Analytics</strong> <br />
+		<strong>Anonymous Web Analytics</strong> <br />
 		We use Vercel Web Analytics to gather aggregated and anonymized data about the usage of our website.
 		This data includes information such as page views, browser type, and geographic location, but does
 		not contain any personal information or identifiers. Vercel Web Analytics helps us improve our website
@@ -74,10 +68,7 @@
 	</p>
 	<p class="mt-4">
 		<strong>Cookies</strong> <br />
-		We use cookies to enhance your experience and ensure you have the latest information available. Specifically,
-		we use a cookie to store the last update timestamp of your data, ensuring you always receive the
-		most up-to-date information efficiently. These cookies are essential for the proper functioning of
-		our service and do not track you for advertising purposes.
+		Please refer to our <a class="link" href="/cookie-policy">Cookie Policy</a> for more information.
 	</p>
 	<p class="mt-4">
 		<strong>Your Rights</strong> <br />
@@ -157,14 +148,7 @@
 		ein angemessenes Datenschutzniveau bietet.
 	</p>
 	<p class="mt-4">
-		<strong>Erhebung anonymer Daten</strong> <br />
-		Wir sammeln anonyme Klick- und Verhaltensdaten, um unsere Dienste zu optimieren. Zum Beispiel können
-		wir Klicks auf Schaltflächen wie "Startseite" protokollieren, um Nutzungsmuster zu verstehen und
-		die Benutzeroberfläche zu verbessern. Diese Daten enthalten keine persönlichen Informationen und
-		sind nicht mit einzelnen Benutzern verknüpft.
-	</p>
-	<p class="mt-4">
-		<strong>Web-Analytik</strong> <br />
+		<strong>Anonyme Webanalytik</strong> <br />
 		Wir verwenden Vercel Web Analytics, um aggregierte und anonymisierte Daten über die Nutzung unserer
 		Website zu sammeln. Diese Daten umfassen Informationen wie Seitenaufrufe, Browsertyp und geografische
 		Lage, enthalten jedoch keine persönlichen Informationen oder Identifikatoren. Vercel Web Analytics
@@ -173,11 +157,7 @@
 	</p>
 	<p class="mt-4">
 		<strong>Cookies</strong> <br />
-		Wir verwenden Cookies, um Ihre Erfahrung zu verbessern und sicherzustellen, dass Sie die neuesten
-		Informationen erhalten. Insbesondere verwenden wir ein Cookie, um den Zeitpunkt der letzten Aktualisierung
-		Ihrer Daten zu speichern und sicherzustellen, dass Sie stets die aktuellsten Informationen effizient
-		erhalten. Diese Cookies sind für das ordnungsgemäße Funktionieren unseres Dienstes unerlässlich und
-		verfolgen Sie nicht zu Werbezwecken.
+		Hier gehts zur <a class="link" href="/cookie-policy">Cookie-Policy</a>.
 	</p>
 
 	<p class="mt-4">
