@@ -21,6 +21,24 @@
 		url.searchParams.set('page', tab);
 		goto(url.toString(), { replaceState: true });
 	}
+
+	const tabs = [
+		{
+			label: 'Arrival',
+			value: ActiveTab.Arrival,
+			icon: Directions
+		},
+		{
+			label: 'House Info',
+			value: ActiveTab.Home,
+			icon: HomeOutline
+		},
+		{
+			label: 'Recs',
+			value: ActiveTab.Recommendation,
+			icon: StarOutline
+		}
+	];
 </script>
 
 <div class="fixed bottom-0 w-full flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}">
@@ -29,97 +47,35 @@
 			? 'lg:w-1/2'
 			: 'md:w-1/2 mr-48'}"
 	>
-		<li class="flex-1">
-			<button
-				class="{!$previewMode
-					? 'md:rounded-t-lg'
-					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				ActiveTab.Arrival
-					? 'bg-accent text-white'
-					: 'bg-base-200 hover:text-accent'}"
-				on:click={() => {
-					activeTab = ActiveTab.Arrival;
-					updateQueryParam(ActiveTab.Arrival);
-				}}
-				on:keydown={(event) => {
-					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = ActiveTab.Arrival;
-						updateQueryParam(ActiveTab.Arrival);
-					}
-				}}
-				on:touchstart={() => {
-					activeTab = ActiveTab.Arrival;
-					updateQueryParam(ActiveTab.Arrival);
-				}}
-			>
-				<Directions class="w-7 h-7" />
-				<span class="hidden md:block">Arrival</span>
-			</button>
-		</li>
-		<li class="flex-1">
-			<button
-				class="{!$previewMode
-					? 'md:rounded-t-lg'
-					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				ActiveTab.Home
-					? 'bg-accent text-white'
-					: 'bg-base-200 hover:text-accent'}"
-				on:click={() => {
-					activeTab = ActiveTab.Home;
-					updateQueryParam(ActiveTab.Home);
-				}}
-				on:keydown={(event) => {
-					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = ActiveTab.Home;
-						updateQueryParam(ActiveTab.Home);
-					}
-				}}
-				on:touchstart={() => {
-					activeTab = ActiveTab.Home;
-					updateQueryParam(ActiveTab.Home);
-				}}
-			>
-				<HomeOutline class="w-7 h-7" />
-				<span class="hidden md:block">House Info</span>
-			</button>
-		</li>
-		<li class="flex-1">
-			<button
-				class="{!$previewMode
-					? 'md:rounded-t-lg'
-					: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
-				ActiveTab.Recommendation
-					? 'bg-accent text-white'
-					: 'bg-base-200 hover:text-accent'}"
-				on:click={() => {
-					activeTab = ActiveTab.Recommendation;
-					updateQueryParam(ActiveTab.Recommendation);
-				}}
-				on:keydown={(event) => {
-					if (event.key === 'Enter' || event.key === ' ') {
-						activeTab = ActiveTab.Recommendation;
-						updateQueryParam(ActiveTab.Recommendation);
-					}
-				}}
-				on:touchstart={() => {
-					activeTab = ActiveTab.Recommendation;
-					updateQueryParam(ActiveTab.Recommendation);
-				}}
-			>
-				<StarOutline class="w-7 h-7" />
-				<span class="hidden md:block">Recs</span>
-			</button>
-		</li>
+		{#each tabs as tab}
+			<li class="flex-1">
+				<button
+					aria-label={tab.label}
+					class="{!$previewMode
+						? 'md:rounded-t-lg'
+						: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+					tab.value
+						? 'bg-accent text-white'
+						: 'bg-base-200 hover:text-accent'}"
+					on:click={() => {
+						activeTab = tab.value;
+						updateQueryParam(tab.value);
+					}}
+					on:keydown={(event) => {
+						if (event.key === 'Enter' || event.key === ' ') {
+							activeTab = tab.value;
+							updateQueryParam(tab.value);
+						}
+					}}
+					on:touchstart={() => {
+						activeTab = tab.value;
+						updateQueryParam(tab.value);
+					}}
+				>
+					<svelte:component this={tab.icon} class="w-7 h-7" />
+					<span class="hidden md:block">{tab.label}</span>
+				</button>
+			</li>
+		{/each}
 	</ul>
 </div>
-
-<style>
-	.button-active {
-		background-color: var(--accent);
-		color: white;
-	}
-	.button-hover:hover {
-		background-color: var(--accent);
-		color: white;
-	}
-</style>

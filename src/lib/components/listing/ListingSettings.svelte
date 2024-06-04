@@ -105,9 +105,9 @@
 </script>
 
 {#if $showListingSettings}
-	<div class="modal modal-open modal-bottom sm:modal-middle">
+	<dialog class="modal modal-bottom sm:modal-middle" class:modal-open={$showListingSettings}>
 		<div class="modal-box">
-			<h3 class="font-bold text-lg">Edit Listing</h3>
+			<h3 class="font-bold text-lg text-center">Settings for {currentListing.name}</h3>
 			<div class="mt-4">
 				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
 			</div>
@@ -194,7 +194,10 @@
 				<button class="btn" on:click={closeEditModal}>Close</button>
 			</div>
 		</div>
-	</div>
+		<form method="dialog" class="modal-backdrop" on:click={() => ($showListingSettings = false)}>
+			<button>close</button>
+		</form>
+	</dialog>
 {/if}
 {#if showDeleteModal}
 	<div class="modal modal-open modal-bottom sm:modal-middle">
@@ -238,6 +241,7 @@
 		</div>
 	</div>
 {/if}
+class="modal modal-bottom sm:modal-middle"
 
 {#if showPublishModal}
 	<div class="modal modal-open modal-bottom sm:modal-middle">

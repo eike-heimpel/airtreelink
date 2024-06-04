@@ -42,6 +42,10 @@
 	<meta name="robots" content="noindex, nofollow" />
 	<meta name="theme-color" content="#65c3c8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta
+		name="description"
+		content="GuestLink is a simple and secure way to share all essential information with your guests."
+	/>
 
 	<title>GuestLink</title>
 </svelte:head>
