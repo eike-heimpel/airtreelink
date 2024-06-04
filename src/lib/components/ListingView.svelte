@@ -14,15 +14,14 @@
 </script>
 
 {#if currentListing}
-	<div class="w-full relative" style="min-height: 100vh;">
+	<div class="w-full" style="min-height: 100vh;">
 		<div
 			class="absolute inset-0 bg-cover bg-fixed"
 			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
 		></div>
 
 		<div
-			class="relative z-10 listing-info w-full px-4 pb-20 {$previewMode ||
-			$page.route.id?.includes('public')
+			class="listing-info w-full px-4 pb-20 {$previewMode || $page.route.id?.includes('public')
 				? 'pt-10'
 				: 'pt-24'} mb-10"
 		>
@@ -38,7 +37,7 @@
 				</h1>
 			</div>
 
-			<div class="text-center flex justify-center">
+			<div class="text-center flex justify-center relative">
 				{#if activeTab === ActiveTab.Recommendation}
 					<ListingTab
 						cards={Object.values(currentListing.cards).filter(

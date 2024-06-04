@@ -159,7 +159,7 @@
 		</nav>
 	{:else}
 		<button
-			class="btn btn-circle btn-accent btn-md md:btn-md btn-outline fixed top-2 left-2"
+			class="btn btn-circle btn-accent btn-md md:btn-md btn-outline fixed top-2 left-2 z-20"
 			type="button"
 			on:click={() => {
 				$previewMode = false;

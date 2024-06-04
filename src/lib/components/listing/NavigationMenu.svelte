@@ -24,7 +24,7 @@
 </script>
 
 <div
-	class=" fixed bottom-0 w-full {$previewMode
+	class="fixed bottom-0 w-full {$previewMode
 		? 'lg:w-1/2'
 		: 'md:w-1/2'} flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}"
 >
