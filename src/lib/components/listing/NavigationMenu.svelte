@@ -45,7 +45,7 @@
 	<ul
 		class="flex w-full {$previewMode ? 'lg:gap-4' : 'md:gap-4'}  {$previewMode
 			? 'lg:w-1/2'
-			: 'md:w-1/2 mr-48'}"
+			: 'md:w-1/2 md:mr-48'}"
 	>
 		{#each tabs as tab}
 			<li class="flex-1">

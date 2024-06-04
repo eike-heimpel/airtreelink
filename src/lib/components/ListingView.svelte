@@ -14,7 +14,7 @@
 </script>
 
 {#if currentListing}
-	<div class="w-full" style="min-height: 100vh;">
+	<div class="w-full">
 		<div
 			class="absolute inset-0 bg-cover bg-fixed -z-10"
 			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
