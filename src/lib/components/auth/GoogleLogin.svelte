@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
 	import type { SupabaseClient } from '@supabase/supabase-js';
@@ -72,4 +72,4 @@
 
 <div class="h-[44px] w-auto">
 	<div class="flex justify-center mt-2" bind:this={googleButton}></div>
-</div>
+</div> -->
