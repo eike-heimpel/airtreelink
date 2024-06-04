@@ -14,14 +14,14 @@
 </script>
 
 {#if currentListing}
-	<div
-		class="hero min-h-screen w-full bg-fixed bg-cover"
-		style="background-image: url({currentListing.title_image_url});"
-	>
-		<div class="hero-overlay bg-opacity-70"></div>
+	<div class="w-full relative" style="min-height: 100vh;">
+		<div
+			class="absolute inset-0 bg-cover bg-fixed"
+			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
+		></div>
 
 		<div
-			class="h-full listing-info w-full px-4 pb-20 {$previewMode ||
+			class="relative z-10 listing-info w-full px-4 pb-20 {$previewMode ||
 			$page.route.id?.includes('public')
 				? 'pt-10'
 				: 'pt-24'} mb-10"
@@ -69,6 +69,6 @@
 <style>
 	.listing-info {
 		display: grid;
-		grid-template-rows: 70px 1fr;
+		grid-template-rows: auto 1fr;
 	}
 </style>
