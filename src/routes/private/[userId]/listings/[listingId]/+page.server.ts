@@ -56,6 +56,26 @@ export const actions = {
         }
     },
 
+    updateListing: async ({ request, locals, params }) => {
+        const formData = await request.formData();
+
+        const id = parseInt(params.listingId);
+        
+        const name = formData.get('name') as string;
+        const description = formData.get('description') as string;
+        const title_image_url = formData.get('title_image_url') as string;
+
+        try {
+            const response = await locals.supabase.from('Listings').update({ name, description, title_image_url }).eq('id', id);
+
+            if (response.error) throw new Error(response.error.message);
+            return { success: true };
+        } catch (error) {
+            console.log("could not update listing", error);
+            return { error: error.message };
+        }
+    },
+
     deleteCard: async ({ request, locals }) => {
         const formData = await request.formData();
         const cardId = parseInt(formData.get('cardId')?.toString() || '');
@@ -76,9 +96,5 @@ export const actions = {
 
 
     },
-    updateSortOrder: async ({ request, locals }) => {
-    },
-    addCard: async ({ request, locals }) => {
-    }
 
 };

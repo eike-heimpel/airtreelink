@@ -23,12 +23,12 @@
 	}
 </script>
 
-<div
-	class="fixed bottom-0 w-full {$previewMode
-		? 'lg:w-1/2'
-		: 'md:w-1/2'} flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}"
->
-	<ul class="flex w-full {$previewMode ? 'lg:gap-4' : 'md:gap-4'}">
+<div class="fixed bottom-0 w-full flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}">
+	<ul
+		class="flex w-full {$previewMode ? 'lg:gap-4' : 'md:gap-4'}  {$previewMode
+			? 'lg:w-1/2'
+			: 'md:w-1/2 mr-48'}"
+	>
 		<li class="flex-1">
 			<button
 				class="{!$previewMode
