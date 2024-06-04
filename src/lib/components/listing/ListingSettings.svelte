@@ -194,8 +194,8 @@
 				<button class="btn" on:click={closeEditModal}>Close</button>
 			</div>
 		</div>
-		<form method="dialog" class="modal-backdrop" on:click={() => ($showListingSettings = false)}>
-			<button>close</button>
+		<form method="dialog" class="modal-backdrop">
+			<button on:click={() => ($showListingSettings = false)}>close</button>
 		</form>
 	</dialog>
 {/if}

@@ -32,8 +32,8 @@
 				>
 			</div>
 		</div>
-		<form method="dialog" class="modal-backdrop" on:click={() => (showAsModal = false)}>
-			<button>close</button>
+		<form method="dialog" class="modal-backdrop">
+			<button on:click={() => (showAsModal = false)}>close</button>
 		</form>
 	</dialog>
 {/if}

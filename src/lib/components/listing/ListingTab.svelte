@@ -193,8 +193,8 @@
 					}}
 				/>
 			</div>
-			<form method="dialog" class="modal-backdrop" on:click={closeCardModal}>
-				<button>close</button>
+			<form method="dialog" class="modal-backdrop">
+				<button on:click={closeCardModal}>close</button>
 			</form>
 		</dialog>
 	{/if}
