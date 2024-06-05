@@ -54,7 +54,7 @@
 		<div
 			class="flex items-center justify-around md:hidden p-2 fixed top-0 left-0 w-full z-50 bg-base-100"
 		>
-			<label class="btn btn-circle btn-ghost swap swap-rotate">
+			<button class="btn btn-circle btn-ghost swap swap-rotate">
 				<!-- this hidden checkbox controls the state -->
 				<input type="checkbox" bind:checked={mobileMenuOpen} />
 				<!-- hamburger icon -->
@@ -77,13 +77,21 @@
 						points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49"
 					/></svg
 				>
-			</label>
+			</button>
 			<!-- Action buttons -->
 			{#if $page.params.listingId !== undefined}
-				<button class="btn btn-sm btn-outline ml-1" on:click={startPreviewMode}>
+				<button
+					class="btn btn-sm btn-outline ml-1"
+					aria-label="Preview"
+					on:click={startPreviewMode}
+				>
 					<EyeOutline class="h-6 w-6" />
 				</button>
-				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>
+				<button
+					class="btn btn-sm btn-outline ml-1"
+					aria-label="Settings"
+					on:click={openSettingsModal}
+				>
 					<SettingsOutline class="h-6 w-6" />
 				</button>
 			{/if}
@@ -146,11 +154,19 @@
 			<!-- Action buttons for desktop -->
 			{#if $page.params.listingId !== undefined}
 				<div class="hidden md:flex flex-col items-center justify-around w-full mt-4 h-48">
-					<button class="btn btn-outline mb-2 flex items-center" on:click={startPreviewMode}>
+					<button
+						class="btn btn-outline mb-2 flex items-center"
+						aria-label="Preview"
+						on:click={startPreviewMode}
+					>
 						<EyeOutline class="w-6 h-6 mr-2" />
 						<span>Preview</span>
 					</button>
-					<button class="btn btn-outline mb-2 flex items-center" on:click={openSettingsModal}>
+					<button
+						class="btn btn-outline mb-2 flex items-center"
+						aria-label="Settings"
+						on:click={openSettingsModal}
+					>
 						<SettingsOutline class="w-6 h-6 mr-2" />
 						<span>Settings</span>
 					</button>
