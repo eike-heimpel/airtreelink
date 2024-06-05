@@ -4,12 +4,13 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
 	import ContentCopy from 'virtual:icons/mdi/content-copy';
-	import { toast } from 'svelte-french-toast';
+	import { copyTextToClipboard } from '$lib/utils/helpers';
 
 	export let field: AddressField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
+	export let previewClasses: string;
 
 	let showDirections = field.showDirections ?? true;
 	let showAddressAsText = field.showAddressAsText ?? true;
@@ -95,18 +96,6 @@
 			window.open(googleMapsWebUrl, '_blank');
 		}
 	}
-
-	function copyToClipboard(text) {
-		navigator.clipboard.writeText(text).then(
-			() => {
-				console.log('Address copied to clipboard');
-				toast.success('Address copied to clipboard!');
-			},
-			(err) => {
-				console.error('Could not copy text: ', err);
-			}
-		);
-	}
 </script>
 
 <BaseField
@@ -164,15 +153,15 @@
 			</label>
 		</div>
 	</div>
-	<div slot="preview">
+	<div slot="preview" class={previewClasses}>
 		{#if showAddressAsText}
-			<div
+			<button
 				class="flex items-center mt-2 cursor-pointer"
-				on:click={() => copyToClipboard(field.content)}
+				on:click={() => copyTextToClipboard(field.content)}
 			>
-				<p class="text-neutral">{field.content}</p>
+				<p>{field.content}</p>
 				<ContentCopy class="ml-2 w-5 h-5 text-primary" />
-			</div>
+			</button>
 		{/if}
 		{#if showDirections}
 			<address class="mt-2 not-italic">

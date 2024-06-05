@@ -25,6 +25,8 @@
 
 	export let cardEditMode = false;
 	export let createNewCard = false;
+	export let hideTitle = false;
+	export let lockCards = false;
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
@@ -163,17 +165,21 @@
 			saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
 		}
 	}
+
+	$: console.log(hideTitle);
 </script>
 
-<div class="modal-header">
-	<div class="flex flex-row gap-4">
-		<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+{#if !hideTitle}
+	<div class="modal-header">
+		<div class="flex flex-row gap-4">
+			<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+		</div>
+		<button
+			class="btn btn-md btn-circle btn-ghost absolute right-0 top-0"
+			on:click={() => dispatch('closeModal')}>X</button
+		>
 	</div>
-	<button
-		class="btn btn-md btn-circle btn-ghost absolute right-0 top-0"
-		on:click={() => dispatch('closeModal')}>X</button
-	>
-</div>
+{/if}
 <div class="modal-body">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
@@ -272,7 +278,7 @@
 							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}
 						</button>
 
-						{#if cardEditMode}
+						{#if cardEditMode && !lockCards}
 							<button
 								class="btn btn-outline w-full sm:w-auto"
 								on:click={() => (addingField = true)}

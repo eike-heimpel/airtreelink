@@ -16,12 +16,7 @@ export function getTemplate(type: string) {
         description: '',
         type: type
       };
-    case 'arrival':
-      return {
-        content_fields: [createEmptyField('text') as TextField],
-        description: '',
-        type: type
-      };
+
     default:
       throw new Error(`Unsupported card type: ${type}`);
   }

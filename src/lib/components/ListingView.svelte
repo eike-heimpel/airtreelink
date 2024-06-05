@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import type { Database } from '$lib/types/supabase';
 	import { ActiveTab } from '$lib/types/listing';
+	import ArrivalTab from '$components/listing/ArrivalTab.svelte';
 
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
@@ -52,10 +53,11 @@
 						)}
 						type={ActiveTab.Home}
 					/>
-				{:else if activeTab === 'arrival'}
-					<ListingTab
-						cards={Object.values(currentListing.cards).filter((card) => card.type === 'arrival')}
-						type="arrival"
+				{:else if activeTab === ActiveTab.Arrival}
+					<ArrivalTab
+						cards={Object.values(currentListing.cards).filter(
+							(card) => card.type === ActiveTab.Arrival
+						)}
 					/>
 				{/if}
 			</div>
