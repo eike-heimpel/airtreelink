@@ -11,6 +11,7 @@
 	export let totalFields: number;
 	export let cardEditMode: boolean;
 	export let previewClasses: string;
+	export let lock = false;
 
 	let showDirections = field.showDirections ?? true;
 	let showAddressAsText = field.showAddressAsText ?? true;
@@ -104,6 +105,7 @@
 	{totalFields}
 	editMode={cardEditMode}
 	title="Address Field"
+	{lock}
 	on:deleteField
 	on:moveFieldUp
 	on:moveFieldDown

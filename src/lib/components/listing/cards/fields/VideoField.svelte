@@ -7,6 +7,7 @@
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
+	export let lock = false;
 
 	const dispatch = createEventDispatcher();
 	let consentGiven = false;
@@ -66,6 +67,7 @@
 	{totalFields}
 	editMode={cardEditMode}
 	title="Video Field"
+	{lock}
 	on:deleteField
 	on:moveFieldUp
 	on:moveFieldDown

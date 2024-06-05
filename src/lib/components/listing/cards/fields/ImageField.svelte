@@ -8,6 +8,7 @@
 	export let totalFields: number;
 	export let cardEditMode: boolean;
 	export let tempImage: { url: string; file: File } | null;
+	export let lock = false;
 	export let onTempImageUpdate: (
 		index: number,
 		tempImage: { url: string; file: File; altText: string } | null
@@ -46,6 +47,7 @@
 	{totalFields}
 	editMode={cardEditMode}
 	title="Image Field"
+	{lock}
 	on:deleteField
 	on:moveFieldUp
 	on:moveFieldDown

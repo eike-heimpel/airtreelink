@@ -32,7 +32,7 @@
 					: 'flex'}"
 			>
 				<h1
-					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
+					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-30"
 				>
 					{currentListing.name}
 				</h1>

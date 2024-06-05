@@ -165,8 +165,6 @@
 			saveEdit('Saving changes ...', 'Error saving changes.', 'Changes saved.');
 		}
 	}
-
-	$: console.log(hideTitle);
 </script>
 
 {#if !hideTitle}
@@ -190,6 +188,7 @@
 						{index}
 						totalFields={editedCard.content_fields.length}
 						{cardEditMode}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -201,6 +200,7 @@
 						{index}
 						totalFields={editedCard.content_fields.length}
 						{cardEditMode}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -211,17 +211,7 @@
 						{field}
 						{index}
 						{cardEditMode}
-						totalFields={editedCard.content_fields.length}
-						on:updateField={(e) => updateField(index, e.detail)}
-						on:deleteField={() => deleteField(field.id)}
-						on:moveFieldUp={() => moveFieldUp(index)}
-						on:moveFieldDown={() => moveFieldDown(index)}
-					/>
-				{:else if field.type === 'link'}
-					<LinkField
-						{field}
-						{index}
-						{cardEditMode}
+						lock={lockCards}
 						totalFields={editedCard.content_fields.length}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
@@ -236,6 +226,7 @@
 						totalFields={editedCard.content_fields.length}
 						tempImage={tempImages[index]}
 						onTempImageUpdate={updateTempImage}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}

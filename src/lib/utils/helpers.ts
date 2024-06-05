@@ -1,4 +1,5 @@
 import { toast } from 'svelte-french-toast';
+import DOMPurify from 'dompurify';
 
 export function copyTextToClipboard(text: string) {
     navigator.clipboard.writeText(text).then(
@@ -10,4 +11,8 @@ export function copyTextToClipboard(text: string) {
             console.error('Could not copy text: ', err);
         }
     );
+}
+
+export function sanitizeHtml(html) {
+    return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }
