@@ -346,7 +346,6 @@
 					card={selectedCard}
 					hideTitle={true}
 					lockCards={true}
-					cardEditMode={true}
 					on:closeModal={closeCardModal}
 					on:refreshSelectedCard={refreshSelectedCard}
 					on:deleteCard={() => {
