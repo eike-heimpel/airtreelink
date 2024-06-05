@@ -36,17 +36,19 @@
 				<!-- Close icon -->
 				<CloseIcon class="swap-on fill-current w-6 h-6" />
 			</label>
-			<a href="/" class="text-2xl font-bold flex items-center" on:click={closeMobileMenu}>
-				<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
+			<a href="/" class="text-2xl font-bold flex items-end" on:click={closeMobileMenu}>
+				<img src="/logo_black.png" alt="Logo" class="w-10 sm:w-14 h-fit" />
+				<span class="mb-1 ml-1">GuestLink</span>
 			</a>
 		</div>
 		<!-- Desktop menu and logo -->
 		<a
 			href="/"
-			class="text-2xl font-bold flex items-center md:order-1 hidden md:flex"
+			class="text-2xl font-bold flex items-end md:order-1 hidden md:flex"
 			on:click={closeMobileMenu}
 		>
-			<img src="/logo.webp" alt="Logo" class="w-8 sm:w-12 mx-auto" />GuestLink
+			<img src="/logo_black.png" alt="Logo" class="w-10 sm:w-14 h-fit" />
+			<span class="mb-2 ml-2">GuestLink</span>
 		</a>
 		{#if session}
 			<a

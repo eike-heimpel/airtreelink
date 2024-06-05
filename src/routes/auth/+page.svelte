@@ -156,7 +156,7 @@
 	<div class="card w-96 bg-base-100 shadow-xl">
 		<div class="card-body">
 			<div class="flex justify-center mb-6">
-				<img src="/logo.webp" alt="Logo" class="h-12" />
+				<img src="/logo_black.png" alt="Logo" class="h-12" />
 			</div>
 			<h2 class="card-title justify-center text-3xl mb-8">Login</h2>
 			<form

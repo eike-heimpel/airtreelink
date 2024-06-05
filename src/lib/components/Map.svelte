@@ -39,7 +39,7 @@
 		).addTo(map);
 
 		const customIcon = L.icon({
-			iconUrl: '/logo.webp', // Your custom icon URL
+			iconUrl: '/logo.png', // Your custom icon URL
 			iconSize: [45, 45], // size of the icon
 			iconAnchor: [22, 45], // point of the icon which will correspond to marker's location
 			popupAnchor: [0, -45] // point from which the popup should open relative to the iconAnchor

@@ -89,8 +89,6 @@
 			quill = null;
 		}
 	});
-
-	$: console.log('renderedContent', renderedContent);
 </script>
 
 <BaseField
