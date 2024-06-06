@@ -21,11 +21,11 @@
 
 	type ContentTitle = 'welcome_message' | 'contact_info' | 'checkin_time' | 'how_to_get_in';
 
-	let renderedContents: {
-		welcome_message: '';
-		contact_info: '';
-		checkin_time: '';
-		how_to_get_in: '';
+	let renderedContents = {
+		welcome_message: '',
+		contact_info: '',
+		checkin_time: '',
+		how_to_get_in: ''
 	};
 
 	async function renderContent(field: ContentField, cardTitle: ContentTitle) {
@@ -39,9 +39,9 @@
 
 			if (html) {
 				renderedContents[cardTitle] = html;
+			} else {
+				renderedContents[cardTitle] = sanitizeHtml(field.content);
 			}
-		} else {
-			renderedContents[cardTitle] = sanitizeHtml(field.content);
 		}
 	}
 
