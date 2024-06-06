@@ -40,6 +40,7 @@ export type ImageField = {
 }
 
 export type ContentField = TextField | VideoField | AddressField | LinkField | ImageField;
+export type ArrivalContentField = TextField | AddressField;
 
 export type FieldTypes = 'text' | 'video' | 'address' | 'link' | 'image';
 

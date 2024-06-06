@@ -1,4 +1,5 @@
 import { toast } from 'svelte-french-toast';
+import { browser } from '$app/environment';
 import DOMPurify from 'dompurify';
 
 export function copyTextToClipboard(text: string) {
@@ -14,5 +15,7 @@ export function copyTextToClipboard(text: string) {
 }
 
 export function sanitizeHtml(html) {
-    return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+    if (browser) {
+        return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+    }
 }

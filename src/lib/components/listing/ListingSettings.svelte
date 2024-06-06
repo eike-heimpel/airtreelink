@@ -241,7 +241,6 @@
 		</div>
 	</div>
 {/if}
-class="modal modal-bottom sm:modal-middle"
 
 {#if showPublishModal}
 	<div class="modal modal-open modal-bottom sm:modal-middle">

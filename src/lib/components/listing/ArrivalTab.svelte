@@ -2,42 +2,56 @@
 	import { previewMode } from '$lib/stores/store';
 	import ListingCardComponent from '$components/listing/ListingCard.svelte';
 	import { page } from '$app/stores';
-	import type { ListingCardCreate, ListingCard } from '$lib/types/cards';
+	import type { ArrivalCard, ArrivalCardCreate } from '$lib/types/cards';
 	import { ActiveTab } from '$lib/types/listing';
 	import type { AddressField as AddressFieldType } from '$lib/types/fields';
-	import type { TextField as TextFieldType } from '$lib/types/fields';
+	import type { TextField as TextFieldType, ContentField } from '$lib/types/fields';
 	import ContentCopy from 'virtual:icons/mdi/content-copy';
 	import { renderDeltaToHtml } from '$lib/utils/quill';
 	import { sanitizeHtml } from '$lib/utils/helpers';
+	import { browser } from '$app/environment';
 
 	import { copyTextToClipboard } from '$lib/utils/helpers';
+	import { onMount, tick } from 'svelte';
 
-	export let cards: ListingCard[] = [];
+	export let cards: ArrivalCard[] = [];
 
-	let tempCard: ListingCardCreate | null = null;
-	let selectedCard: ListingCard | null = null;
-	let filteredCards: ListingCard[] = cards;
+	let tempCard: ArrivalCardCreate | null = null;
+	let selectedCard: ArrivalCard | null = null;
 
-	let renderedContents = {
-		welcome_message: '',
-		contact_info: '',
-		checkin_time: '',
-		how_to_get_in: ''
+	type ContentTitle = 'welcome_message' | 'contact_info' | 'checkin_time' | 'how_to_get_in';
+
+	let renderedContents: {
+		welcome_message: '';
+		contact_info: '';
+		checkin_time: '';
+		how_to_get_in: '';
 	};
 
-	function renderContent(card: ListingCard) {
-		renderDeltaToHtml(card.content_fields[0].delta, card.content_fields[0].content).then((html) => {
-			renderedContents[card.title] = html;
-		});
+	async function renderContent(field: ContentField, cardTitle: ContentTitle) {
+		if (!field) return;
+		if (field.type !== 'text') return;
+
+		await tick();
+
+		if (browser) {
+			const html = await renderDeltaToHtml(field.delta, field.content);
+
+			if (html) {
+				renderedContents[cardTitle] = html;
+			}
+		} else {
+			renderedContents[cardTitle] = sanitizeHtml(field.content);
+		}
 	}
 
-	$: cards.forEach((card) => renderContent(card));
+	onMount(async () => {
+		cards.forEach((card) => renderContent(card.content_fields[0], card.title as ContentTitle));
+	});
 
-	$: filteredCards = cards;
+	$: cards.forEach((card) => renderContent(card.content_fields[0], card.title as ContentTitle));
 
 	function addAddress() {
-		// addressField = createEmptyField('address') as AddressFieldType;
-		// console.log(addressField);
 		tempCard = {
 			content_fields: [{ type: 'address', content: '' } as AddressFieldType],
 			title: 'main_address',
@@ -101,18 +115,14 @@
 		tempCard = null;
 	}
 
-	function openCardModal(card: ListingCard) {
-		selectedCard = card;
-	}
-
 	function closeCardModal() {
 		selectedCard = null;
 	}
 
-	function refreshSelectedCard(e) {
+	function refreshSelectedCard(e: CustomEvent<ArrivalCard>) {
 		selectedCard = e.detail;
 	}
-	function openDirections(address) {
+	function openDirections(address: string) {
 		const encodedAddress = encodeURIComponent(address);
 		const googleMapsAppUrl = `comgooglemaps://?daddr=${encodedAddress}`;
 		const googleMapsWebUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
@@ -139,7 +149,7 @@
 					<div class="flex justify-center items-center text-white">
 						<p>
 							{#if field.type === 'text'}
-								{@html renderedContents[card.title] || sanitizeHtml(field.content)}
+								{@html renderedContents[card.title]}
 							{:else}{field.content}{/if}
 						</p>
 
@@ -199,7 +209,7 @@
 					<div class="flex justify-center items-center text-white">
 						<p>
 							{#if field.type === 'text'}
-								{@html renderedContents[card.title] || sanitizeHtml(field.content)}
+								{@html renderedContents[card.title]}
 							{:else}{field.content}{/if}
 						</p>
 						{#if !$previewMode}
@@ -222,7 +232,7 @@
 					<div class="flex justify-center items-center text-white">
 						<p>
 							{#if field.type === 'text'}
-								{@html renderedContents[card.title] || sanitizeHtml(field.content)}
+								{@html renderedContents[card.title]}
 							{:else}{field.content}{/if}
 						</p>
 						{#if !$previewMode}
@@ -244,7 +254,7 @@
 					<div class="flex justify-center items-center text-white">
 						<p>
 							{#if field.type === 'text'}
-								{@html renderedContents[card.title] || sanitizeHtml(field.content)}
+								{@html renderedContents[card.title]}
 							{:else}{field.content}{/if}
 						</p>
 						{#if !$previewMode}
