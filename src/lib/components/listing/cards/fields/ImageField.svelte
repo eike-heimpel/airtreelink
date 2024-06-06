@@ -11,7 +11,7 @@
 	export let lock = false;
 	export let onTempImageUpdate: (
 		index: number,
-		tempImage: { url: string; file: File; altText: string } | null
+		tempImage: { url: string; file: string; altText: string } | null
 	) => void;
 
 	const dispatch = createEventDispatcher();
@@ -20,9 +20,14 @@
 	function handleFileUpload(event) {
 		const file = event.target.files[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
-			dispatch('updateField', { key: 'altText', value: file.name });
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
+				const imageUrl = URL.createObjectURL(file);
+				onTempImageUpdate(index, { url: imageUrl, file: base64String, altText: file.name });
+				dispatch('updateField', { key: 'altText', value: file.name });
+			};
+			reader.readAsDataURL(file);
 		}
 	}
 
@@ -30,13 +35,19 @@
 		event.preventDefault();
 		const file = event.dataTransfer.files[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
-			dispatch('updateField', { key: 'altText', value: file.name });
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
+				const imageUrl = URL.createObjectURL(file);
+				onTempImageUpdate(index, { url: imageUrl, file: base64String, altText: file.name });
+				dispatch('updateField', { key: 'altText', value: file.name });
+			};
+			reader.readAsDataURL(file);
 		}
 	}
 
 	function deleteTempImage() {
+		onTempImageUpdate(index, null);
 		dispatch('updateField', { key: 'url', value: '' });
 	}
 </script>

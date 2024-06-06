@@ -23,6 +23,8 @@
 
 	export let card: ListingCard | ListingCardCreate;
 
+	console.log($page);
+
 	export let cardEditMode = false;
 	export let createNewCard = false;
 	export let hideTitle = false;
@@ -54,7 +56,7 @@
 
 	function updateTempImage(
 		index: number,
-		tempImage: { url: string; file: File; altText: string } | null
+		tempImage: { url: string; file: string; altText: string } | null
 	) {
 		tempImages = { ...tempImages, [index]: tempImage };
 	}
@@ -83,27 +85,20 @@
 		}
 
 		editedCard.last_changed = new Date().toISOString();
+		const listingHash = $page.data.currentListingInfo.hash;
 
-		// Upload new images to Supabase before saving the card
-		for (const [index, tempImage] of Object.entries(tempImages)) {
-			if (tempImage) {
-				const { data, error } = await supabase.storage
-					.from('listing_images')
-					.upload(`${tempImage.file.name}`, tempImage.file);
-
-				if (error) {
-					console.error('Error uploading file:', error.message);
-					toast.error(errorMessage);
-					return;
+		// Collect image data to send to the backend
+		const images = Object.entries(tempImages)
+			.map(([index, tempImage]) => {
+				if (tempImage) {
+					return {
+						index: Number(index), // Convert to number
+						file: tempImage.file,
+						altText: tempImage.altText
+					};
 				}
-				const { data: image } = await supabase.storage
-					.from('listing_images')
-					.getPublicUrl(data.path);
-				editedCard.content_fields[index].url = image.publicUrl;
-				editedCard.content_fields[index].path = data.path;
-				editedCard.content_fields[index].altText = tempImage.altText;
-			}
-		}
+			})
+			.filter(Boolean);
 
 		const toastId = toast.loading(loadingMessage);
 
@@ -112,7 +107,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ cards: [editedCard] })
+			body: JSON.stringify({ cards: [editedCard], images, listingHash })
 		});
 
 		if (!resp.ok) {

@@ -10,7 +10,6 @@
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
-	export let previewClasses: string;
 	export let lock = false;
 
 	let showDirections = field.showDirections ?? true;

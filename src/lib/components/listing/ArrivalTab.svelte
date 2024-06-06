@@ -143,7 +143,7 @@
 </script>
 
 {#if contentLoaded}
-	<div class="container mx-auto" transition:fade={{ duration: 1000 }}>
+	<div class="container mx-auto" transition:fade={{ duration: 100 }}>
 		<div
 			class="grid grid-cols-1 gap-4 lg:gap-12 max-w-2xl lg:max-w-4xl mx-auto items-center mt-4 md:mt-6 lg:mt-8 md:text-xl"
 		>

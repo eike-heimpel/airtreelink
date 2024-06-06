@@ -41,7 +41,7 @@
 	];
 </script>
 
-<div class="fixed bottom-0 w-full flex justify-center z-10 {$previewMode ? 'bg-opacity-90' : ''}">
+<div class="fixed bottom-0 w-full flex justify-center z-10">
 	<ul
 		class="flex w-full {$previewMode ? 'lg:gap-4' : 'md:gap-4'}  {$previewMode
 			? 'lg:w-1/2'
@@ -53,7 +53,7 @@
 					aria-label={tab.label}
 					class="{!$previewMode
 						? 'md:rounded-t-lg'
-						: ''} w-full py-3 flex flex-col items-center justify-center border-r border-neutral lg:text-lg {activeTab ===
+						: ''} w-full py-3 flex flex-col items-center justify-center bg-opacity-95 border-r border-neutral lg:text-lg {activeTab ===
 					tab.value
 						? 'bg-accent text-white'
 						: 'bg-base-200 hover:text-accent'}"
