@@ -144,23 +144,28 @@ async function processImagesAndUpdateCards(cards, images, listingHash, supabase)
     try {
       // Resize and compress image using Sharp
       const optimizedBuffer = await sharp(buffer)
-        .webp({ quality: 75 }) // Convert to WebP format with quality setting
-        .toBuffer();
+      .resize({ width: 1920, height: 1080, fit: sharp.fit.inside, withoutEnlargement: true }) // Enforce max size, maintaining aspect ratio
+      .webp({ quality: 75 }) // Convert to WebP format with quality setting
+      .toBuffer();
+
+        const newFileName = fileName.replace(/\.[^/.]+$/, '.webp');
+        const newFilePath = `${listingHash}/${newFileName}`;
+
 
       const { data: imageData, error: imageUploadError } = await supabase.storage
         .from('listing_images')
-        .upload(filePath, optimizedBuffer, { upsert: true });
+        .upload(newFilePath, optimizedBuffer, { upsert: true });
 
       if (imageUploadError) {
         if (imageUploadError.message === 'The resource already exists') {
           updatedCards.forEach(card => {
             if (card.content_fields[index]) {
-              card.content_fields[index].fileName = fileName;
+              card.content_fields[index].fileName = newFileName;
               card.content_fields[index].altText = altText;
             }
           });
 
-          console.log(`Image already exists. Using existing file: ${listingHash}/${fileName}`);
+          console.log(`Image already exists. Using existing file: ${listingHash}/${newFileName}`);
           continue;
         }
 
@@ -170,7 +175,7 @@ async function processImagesAndUpdateCards(cards, images, listingHash, supabase)
 
       updatedCards.forEach(card => {
         if (card.content_fields[index]) {
-          card.content_fields[index].fileName = fileName;
+          card.content_fields[index].fileName = newFileName;
           card.content_fields[index].altText = altText;
         }
       });

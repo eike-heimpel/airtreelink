@@ -79,7 +79,6 @@
 		onTempImageUpdate(index, null);
 		dispatch('updateField', { key: 'fileName', value: '' });
 	}
-
 	$: console.log(tempImage);
 </script>
 
@@ -98,9 +97,9 @@
 		{#if tempImage?.fileName || field.fileName}
 			<div class="relative">
 				<img
-					src={tempImage ? tempImage.fullTempFile : fileUrl}
+					src={tempImage ? tempImage.fullTempFile : fileUrl.replace(/\.[^/.]+$/, '.webp')}
 					alt={field.altText}
-					class="mb-3 w-full rounded"
+					class="mb-3 w-full rounded w-1/2 md:w-1/3"
 				/>
 				<button class="btn btn-sm btn-circle absolute top-2 right-2" on:click={deleteTempImage}
 					>✕</button
@@ -148,9 +147,9 @@
 		{#if tempImage?.fileName || field.fileName}
 			<div class="relative">
 				<img
-					src={tempImage ? tempImage.fileName : fileUrl}
+					src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
 					alt={field.altText}
-					class="rounded cursor-pointer w-1/2 mx-auto"
+					class="rounded cursor-pointer w-1/2 md:w-1/3 mx-auto"
 					on:click={() => (isModalOpen = true)}
 				/>
 			</div>
@@ -161,7 +160,7 @@
 						on:click={() => (isModalOpen = false)}>✕</label
 					>
 					<img
-						src={tempImage ? tempImage.fileName : fileUrl}
+						src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
 						alt={field.altText}
 						class="w-full rounded"
 					/>
