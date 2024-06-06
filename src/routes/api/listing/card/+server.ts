@@ -172,7 +172,6 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
           }
         });
   
-        console.log(`Uploaded new image. File: ${listingHash}/${fileName}`);
       } catch (uploadError) {
         console.error('Error processing image upload:', uploadError);
         throw uploadError;
