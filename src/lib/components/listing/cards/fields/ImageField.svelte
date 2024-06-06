@@ -2,6 +2,7 @@
 	import BaseField from './BaseField.svelte';
 	import type { ImageField } from '$lib/types/fields';
 	import { createEventDispatcher } from 'svelte';
+	import { nanoid } from 'nanoid';
 
 	export let field: ImageField;
 	export let index: number;
@@ -23,9 +24,16 @@
 			const reader = new FileReader();
 			reader.onload = function (event) {
 				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
-				const imageUrl = URL.createObjectURL(file);
-				onTempImageUpdate(index, { url: imageUrl, file: base64String, altText: file.name });
+				const hash = nanoid(12);
+				const extension = file.name.split('.').pop(); // Get the file extension
+				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				onTempImageUpdate(index, {
+					url: hashedFileName,
+					file: base64String,
+					altText: file.name
+				});
 				dispatch('updateField', { key: 'altText', value: file.name });
+				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
 			};
 			reader.readAsDataURL(file);
 		}
@@ -38,9 +46,16 @@
 			const reader = new FileReader();
 			reader.onload = function (event) {
 				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
-				const imageUrl = URL.createObjectURL(file);
-				onTempImageUpdate(index, { url: imageUrl, file: base64String, altText: file.name });
+				const hash = nanoid(12);
+				const extension = file.name.split('.').pop(); // Get the file extension
+				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				onTempImageUpdate(index, {
+					url: hashedFileName,
+					file: base64String,
+					altText: file.name
+				});
 				dispatch('updateField', { key: 'altText', value: file.name });
+				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
 			};
 			reader.readAsDataURL(file);
 		}

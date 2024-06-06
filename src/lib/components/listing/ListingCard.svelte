@@ -23,8 +23,6 @@
 
 	export let card: ListingCard | ListingCardCreate;
 
-	console.log($page);
-
 	export let cardEditMode = false;
 	export let createNewCard = false;
 	export let hideTitle = false;
@@ -37,7 +35,7 @@
 	let formLoading = false;
 	let cardHasBeenEdited = false;
 	let tempImages: { [key: number]: { url: string; file: File; altText: string } | null } = {};
-	let supabase = $page.data.supabase;
+	let imagesToDelete: string[] = [];
 
 	const dispatch = createEventDispatcher();
 
@@ -46,11 +44,17 @@
 	function resetEditedCard(card: ListingCard) {
 		editedCard = JSON.parse(JSON.stringify(card));
 		tempImages = {};
+		imagesToDelete = []; // Reset imagesToDelete
 	}
 
 	$: resetEditedCard(card);
 
 	function updateField(index: number, eventDetail) {
+		const oldField = editedCard.content_fields[index];
+		if (eventDetail.key === 'url' && oldField.url) {
+			imagesToDelete.push($page.data.currentListingInfo.hash + '/' + oldField.url);
+		}
+
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
@@ -58,6 +62,10 @@
 		index: number,
 		tempImage: { url: string; file: string; altText: string } | null
 	) {
+		if (tempImages[index] && tempImages[index].path) {
+			console.log(tempImages[index].path);
+			imagesToDelete.push(tempImages[index].path); // Track old image to delete
+		}
 		tempImages = { ...tempImages, [index]: tempImage };
 	}
 
@@ -76,7 +84,6 @@
 		if (!editedCard.title || editedCard.title.trim() === '') {
 			toast.error('Title is required.', { duration: 2000 });
 			cardEditMode = !cardEditMode;
-
 			return false;
 		}
 
@@ -94,7 +101,8 @@
 					return {
 						index: Number(index), // Convert to number
 						file: tempImage.file,
-						altText: tempImage.altText
+						altText: tempImage.altText,
+						url: tempImage.url
 					};
 				}
 			})
@@ -107,7 +115,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ cards: [editedCard], images, listingHash })
+			body: JSON.stringify({ cards: [editedCard], images, imagesToDelete, listingHash })
 		});
 
 		if (!resp.ok) {
@@ -126,6 +134,10 @@
 	}
 
 	async function deleteField(fieldId: string) {
+		const fieldToDelete = editedCard.content_fields.find((f) => f.id === fieldId);
+		if (fieldToDelete && fieldToDelete.path) {
+			imagesToDelete.push(fieldToDelete.path); // Track image to delete
+		}
 		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
 
