@@ -122,62 +122,65 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
   };
   
-  async function processImagesAndUpdateCards(cards: ListingCard[], images: any[], listingHash: string,  supabase: any) {
-    const updatedCards = cards.map(card => ({ ...card }));
-  
-    for (const image of images) {
-      const { index, file, altText, fileName } = image;
-  
-      if (typeof index !== 'number') {
-        console.error('Invalid index:', index);
-        throw error(400, 'Invalid index');
-      }
-  
-      // Convert base64 image to buffer
-      const buffer = Buffer.from(file, 'base64');
-      const filePath = `${listingHash}/${fileName}`;
-  
-      console.log(`Processing image for card content field at index ${index}, path: ${filePath}`);
-  
-      try {
-        const { data: imageData, error: imageUploadError } = await supabase.storage
-          .from('listing_images')
-          .upload(filePath, buffer, { upsert: true });
-  
-        if (imageUploadError) {
-          if (imageUploadError.message === 'The resource already exists') {
+  import sharp from 'sharp';
 
+export async function processImagesAndUpdateCards(cards, images, listingHash, supabase) {
+  const updatedCards = cards.map(card => ({ ...card }));
 
-            // Update the corresponding content field for each card
-            updatedCards.forEach(card => {
-              if (card.content_fields[index]) {
-                card.content_fields[index].fileName = fileName;
-                card.content_fields[index].altText = altText;
-              }
-            });
-  
-            console.log(`Image already exists. Using existing file: ${listingHash}/${fileName}`);
-            continue;
-          }
-  
-          console.error('Error uploading file:', imageUploadError.message);
-          throw error
-        }
-  
-        // Update the corresponding content field for each card
-        updatedCards.forEach(card => {
-          if (card.content_fields[index]) {
-            card.content_fields[index].fileName = fileName
-            card.content_fields[index].altText = altText;
-          }
-        });
-  
-      } catch (uploadError) {
-        console.error('Error processing image upload:', uploadError);
-        throw uploadError;
-      }
+  for (const image of images) {
+    const { index, file, altText, fileName } = image;
+
+    if (typeof index !== 'number') {
+      console.error('Invalid index:', index);
+      throw new Error('Invalid index');
     }
-  
-    return updatedCards;
+
+    // Convert base64 image to buffer
+    const buffer = Buffer.from(file, 'base64');
+    const filePath = `${listingHash}/${fileName}`;
+
+    console.log(`Processing image for card content field at index ${index}, path: ${filePath}`);
+
+    try {
+      // Resize and compress image using Sharp
+      const optimizedBuffer = await sharp(buffer)
+        .resize({ width: 1920, height: 1080, fit: sharp.fit.cover }) // Resize to desired dimensions
+        .webp({ quality: 75 }) // Convert to WebP format with quality setting
+        .toBuffer();
+
+      const { data: imageData, error: imageUploadError } = await supabase.storage
+        .from('listing_images')
+        .upload(filePath, optimizedBuffer, { upsert: true });
+
+      if (imageUploadError) {
+        if (imageUploadError.message === 'The resource already exists') {
+          updatedCards.forEach(card => {
+            if (card.content_fields[index]) {
+              card.content_fields[index].fileName = fileName;
+              card.content_fields[index].altText = altText;
+            }
+          });
+
+          console.log(`Image already exists. Using existing file: ${listingHash}/${fileName}`);
+          continue;
+        }
+
+        console.error('Error uploading file:', imageUploadError.message);
+        throw new Error(imageUploadError.message);
+      }
+
+      updatedCards.forEach(card => {
+        if (card.content_fields[index]) {
+          card.content_fields[index].fileName = fileName;
+          card.content_fields[index].altText = altText;
+        }
+      });
+
+    } catch (uploadError) {
+      console.error('Error processing image upload:', uploadError);
+      throw uploadError;
+    }
   }
-  
+
+  return updatedCards;
+}

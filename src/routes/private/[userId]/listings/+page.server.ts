@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createHash, randomBytes } from 'crypto';
 import type { Database } from '$lib/types/supabase';
+import type { ContentField } from '$lib/types/fields';
 
 type Listing = Database['public']['Tables']['Listings']['Row'];
 
@@ -22,12 +23,15 @@ export const load = async ({ locals: { session }, parent }) => {
 export const actions: Actions = {
     default: async ({ request, locals }) => {
 
-        const data = await request.formData();
-        const name = data.get('name');
-        const description = data.get('description');
-        const title_image_url = data.get('title_image_url');
 
-        if (!name || !description || !title_image_url) {
+
+        const data = await request.formData();
+
+        const name = data.get('name');
+        const description: string | null = "";
+        const title_image_url: string = data.get('title_image_url')?.toString() || '';
+
+        if (!name || !title_image_url) {
             return error(400, { message: 'All fields are required' });
         }
 
@@ -39,7 +43,7 @@ export const actions: Actions = {
                 .from('Listings')
                 .insert([{ name, description, title_image_url, public: false, hash} as Listing]);
 
-        
+            
             if (response.error) {
                 console.log(response.error);
                 return error(500, { message: 'Failed to add listing' });

@@ -101,15 +101,6 @@
 						/>
 					</div>
 					<div class="mb-4">
-						<label class="block text-sm font-medium mb-1">Description</label>
-						<textarea
-							name="description"
-							bind:value={description}
-							class="textarea textarea-bordered w-full"
-							required
-						></textarea>
-					</div>
-					<div class="mb-4">
 						<label class="block text-sm font-medium mb-1">Title Image URL</label>
 						<input
 							type="url"
