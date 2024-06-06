@@ -25,6 +25,8 @@
 
 	export let cardEditMode = false;
 	export let createNewCard = false;
+	export let hideTitle = false;
+	export let lockCards = false;
 
 	let editedCard: ListingCard = JSON.parse(JSON.stringify(card));
 	let checked = false;
@@ -33,7 +35,7 @@
 	let formLoading = false;
 	let cardHasBeenEdited = false;
 	let tempImages: { [key: number]: { url: string; file: File; altText: string } | null } = {};
-	let supabase = $page.data.supabase;
+	let imagesToDelete: string[] = [];
 
 	const dispatch = createEventDispatcher();
 
@@ -42,18 +44,27 @@
 	function resetEditedCard(card: ListingCard) {
 		editedCard = JSON.parse(JSON.stringify(card));
 		tempImages = {};
+		imagesToDelete = []; // Reset imagesToDelete
 	}
 
 	$: resetEditedCard(card);
 
 	function updateField(index: number, eventDetail) {
+		const oldField = editedCard.content_fields[index];
+		if (eventDetail.key === 'url' && oldField.url) {
+			imagesToDelete.push($page.data.currentListingInfo.hash + '/' + oldField.url);
+		}
+
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
 	}
 
 	function updateTempImage(
 		index: number,
-		tempImage: { url: string; file: File; altText: string } | null
+		tempImage: { url: string; file: string; altText: string } | null
 	) {
+		if (tempImages[index] && tempImages[index].path) {
+			imagesToDelete.push(tempImages[index].path); // Track old image to delete
+		}
 		tempImages = { ...tempImages, [index]: tempImage };
 	}
 
@@ -72,7 +83,6 @@
 		if (!editedCard.title || editedCard.title.trim() === '') {
 			toast.error('Title is required.', { duration: 2000 });
 			cardEditMode = !cardEditMode;
-
 			return false;
 		}
 
@@ -81,27 +91,21 @@
 		}
 
 		editedCard.last_changed = new Date().toISOString();
+		const listingHash = $page.data.currentListingInfo.hash;
 
-		// Upload new images to Supabase before saving the card
-		for (const [index, tempImage] of Object.entries(tempImages)) {
-			if (tempImage) {
-				const { data, error } = await supabase.storage
-					.from('listing_images')
-					.upload(`${tempImage.file.name}`, tempImage.file);
-
-				if (error) {
-					console.error('Error uploading file:', error.message);
-					toast.error(errorMessage);
-					return;
+		// Collect image data to send to the backend
+		const images = Object.entries(tempImages)
+			.map(([index, tempImage]) => {
+				if (tempImage) {
+					return {
+						index: Number(index), // Convert to number
+						file: tempImage.file,
+						altText: tempImage.altText,
+						url: tempImage.url
+					};
 				}
-				const { data: image } = await supabase.storage
-					.from('listing_images')
-					.getPublicUrl(data.path);
-				editedCard.content_fields[index].url = image.publicUrl;
-				editedCard.content_fields[index].path = data.path;
-				editedCard.content_fields[index].altText = tempImage.altText;
-			}
-		}
+			})
+			.filter(Boolean);
 
 		const toastId = toast.loading(loadingMessage);
 
@@ -110,7 +114,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ cards: [editedCard] })
+			body: JSON.stringify({ cards: [editedCard], images, imagesToDelete, listingHash })
 		});
 
 		if (!resp.ok) {
@@ -129,6 +133,10 @@
 	}
 
 	async function deleteField(fieldId: string) {
+		const fieldToDelete = editedCard.content_fields.find((f) => f.id === fieldId);
+		if (fieldToDelete && fieldToDelete.path) {
+			imagesToDelete.push(fieldToDelete.path); // Track image to delete
+		}
 		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
 
@@ -165,15 +173,17 @@
 	}
 </script>
 
-<div class="modal-header">
-	<div class="flex flex-row gap-4">
-		<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+{#if !hideTitle}
+	<div class="modal-header">
+		<div class="flex flex-row gap-4">
+			<Title bind:title={editedCard.title} editMode={cardEditMode} bind:icon={editedCard.icon} />
+		</div>
+		<button
+			class="btn btn-md btn-circle btn-ghost absolute right-0 top-0"
+			on:click={() => dispatch('closeModal')}>X</button
+		>
 	</div>
-	<button
-		class="btn btn-md btn-circle btn-ghost absolute right-0 top-0"
-		on:click={() => dispatch('closeModal')}>X</button
-	>
-</div>
+{/if}
 <div class="modal-body">
 	{#if editedCard.content_fields}
 		{#each editedCard.content_fields as field, index (field.id)}
@@ -184,6 +194,7 @@
 						{index}
 						totalFields={editedCard.content_fields.length}
 						{cardEditMode}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -195,6 +206,7 @@
 						{index}
 						totalFields={editedCard.content_fields.length}
 						{cardEditMode}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -205,17 +217,7 @@
 						{field}
 						{index}
 						{cardEditMode}
-						totalFields={editedCard.content_fields.length}
-						on:updateField={(e) => updateField(index, e.detail)}
-						on:deleteField={() => deleteField(field.id)}
-						on:moveFieldUp={() => moveFieldUp(index)}
-						on:moveFieldDown={() => moveFieldDown(index)}
-					/>
-				{:else if field.type === 'link'}
-					<LinkField
-						{field}
-						{index}
-						{cardEditMode}
+						lock={lockCards}
 						totalFields={editedCard.content_fields.length}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
@@ -230,6 +232,7 @@
 						totalFields={editedCard.content_fields.length}
 						tempImage={tempImages[index]}
 						onTempImageUpdate={updateTempImage}
+						lock={lockCards}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}
@@ -272,7 +275,7 @@
 							{cardEditMode ? 'Cancel Edit' : 'Edit Card'}
 						</button>
 
-						{#if cardEditMode}
+						{#if cardEditMode && !lockCards}
 							<button
 								class="btn btn-outline w-full sm:w-auto"
 								on:click={() => (addingField = true)}

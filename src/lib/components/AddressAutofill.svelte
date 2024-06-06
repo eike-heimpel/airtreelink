@@ -1,12 +1,13 @@
 <!-- MapboxSearchAutocomplete.svelte -->
 <script>
-	import { PUBLIC_MAPBOX_ACCESS_TOKEN } from '$env/static/public';
 	import { v4 as uuidv4 } from 'uuid';
 
 	let query = '';
 	let suggestions = [];
 	let selectedAddress = null;
 	let sessionToken = uuidv4();
+
+	const PUBLIC_MAPBOX_ACCESS_TOKEN = '';
 
 	async function searchAddress() {
 		const accessToken = PUBLIC_MAPBOX_ACCESS_TOKEN;

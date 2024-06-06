@@ -8,6 +8,7 @@
 	export let totalFields: number;
 	export let editMode: boolean;
 	export let title: string;
+	export let lock = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -28,13 +29,15 @@
 	<div class="form-control p-4 bg-base-100">
 		<div class="flex justify-between items-center mb-2">
 			<h3 class="text-primary text-xl cursor-auto">{title}</h3>
-			<FieldControls
-				{index}
-				{totalFields}
-				on:deleteField={deleteField}
-				on:moveFieldUp={moveFieldUp}
-				on:moveFieldDown={moveFieldDown}
-			/>
+			{#if !lock}
+				<FieldControls
+					{index}
+					{totalFields}
+					on:deleteField={deleteField}
+					on:moveFieldUp={moveFieldUp}
+					on:moveFieldDown={moveFieldDown}
+				/>
+			{/if}
 		</div>
 		<slot name="content"></slot>
 	</div>

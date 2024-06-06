@@ -2,15 +2,17 @@
 	import BaseField from './BaseField.svelte';
 	import type { ImageField } from '$lib/types/fields';
 	import { createEventDispatcher } from 'svelte';
+	import { nanoid } from 'nanoid';
 
 	export let field: ImageField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
 	export let tempImage: { url: string; file: File } | null;
+	export let lock = false;
 	export let onTempImageUpdate: (
 		index: number,
-		tempImage: { url: string; file: File; altText: string } | null
+		tempImage: { url: string; file: string; altText: string } | null
 	) => void;
 
 	const dispatch = createEventDispatcher();
@@ -19,9 +21,21 @@
 	function handleFileUpload(event) {
 		const file = event.target.files[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
-			dispatch('updateField', { key: 'altText', value: file.name });
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
+				const hash = nanoid(12);
+				const extension = file.name.split('.').pop(); // Get the file extension
+				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				onTempImageUpdate(index, {
+					url: hashedFileName,
+					file: base64String,
+					altText: file.name
+				});
+				dispatch('updateField', { key: 'altText', value: file.name });
+				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
+			};
+			reader.readAsDataURL(file);
 		}
 	}
 
@@ -29,13 +43,26 @@
 		event.preventDefault();
 		const file = event.dataTransfer.files[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			onTempImageUpdate(index, { url: imageUrl, file, altText: file.name });
-			dispatch('updateField', { key: 'altText', value: file.name });
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
+				const hash = nanoid(12);
+				const extension = file.name.split('.').pop(); // Get the file extension
+				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				onTempImageUpdate(index, {
+					url: hashedFileName,
+					file: base64String,
+					altText: file.name
+				});
+				dispatch('updateField', { key: 'altText', value: file.name });
+				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
+			};
+			reader.readAsDataURL(file);
 		}
 	}
 
 	function deleteTempImage() {
+		onTempImageUpdate(index, null);
 		dispatch('updateField', { key: 'url', value: '' });
 	}
 </script>
@@ -46,6 +73,7 @@
 	{totalFields}
 	editMode={cardEditMode}
 	title="Image Field"
+	{lock}
 	on:deleteField
 	on:moveFieldUp
 	on:moveFieldDown
@@ -122,8 +150,8 @@
 						class="w-full rounded"
 					/>
 				</div>
-				<form method="dialog" class="modal-backdrop" on:click={() => (isModalOpen = false)}>
-					<button>close</button>
+				<form method="dialog" class="modal-backdrop">
+					<button on:click={() => (isModalOpen = false)}>close</button>
 				</form>
 			</dialog>
 		{/if}

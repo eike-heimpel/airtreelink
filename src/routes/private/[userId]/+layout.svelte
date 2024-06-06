@@ -80,10 +80,18 @@
 			</label>
 			<!-- Action buttons -->
 			{#if $page.params.listingId !== undefined}
-				<button class="btn btn-sm btn-outline ml-1" on:click={startPreviewMode}>
+				<button
+					class="btn btn-sm btn-outline ml-1"
+					aria-label="Preview"
+					on:click={startPreviewMode}
+				>
 					<EyeOutline class="h-6 w-6" />
 				</button>
-				<button class="btn btn-sm btn-outline ml-1" on:click={openSettingsModal}>
+				<button
+					class="btn btn-sm btn-outline ml-1"
+					aria-label="Settings"
+					on:click={openSettingsModal}
+				>
 					<SettingsOutline class="h-6 w-6" />
 				</button>
 			{/if}
@@ -94,7 +102,7 @@
 			class={`navbar bg-base-100 shadow-xl w-full md:w-56 md:block fixed md:static top-12 md:top-0 left-0 z-40 ${mobileMenuOpen ? 'block h-full' : 'hidden'} md:block`}
 		>
 			<a href="/" class="w-full flex justify-center" on:click={closeMobileMenu}>
-				<img src="/logo.webp" alt="Logo" class="w-16 mx-auto mt-4 mb-6" />
+				<img src="/logo_black.png" alt="Logo" class="w-16 mx-auto mt-4 mb-6" />
 			</a>
 			<ul class="menu gap-4 md:text-lg flex-col items-center w-full p-4 md:p-0">
 				<li
@@ -146,11 +154,19 @@
 			<!-- Action buttons for desktop -->
 			{#if $page.params.listingId !== undefined}
 				<div class="hidden md:flex flex-col items-center justify-around w-full mt-4 h-48">
-					<button class="btn btn-outline mb-2 flex items-center" on:click={startPreviewMode}>
+					<button
+						class="btn btn-outline mb-2 flex items-center"
+						aria-label="Preview"
+						on:click={startPreviewMode}
+					>
 						<EyeOutline class="w-6 h-6 mr-2" />
 						<span>Preview</span>
 					</button>
-					<button class="btn btn-outline mb-2 flex items-center" on:click={openSettingsModal}>
+					<button
+						class="btn btn-outline mb-2 flex items-center"
+						aria-label="Settings"
+						on:click={openSettingsModal}
+					>
 						<SettingsOutline class="w-6 h-6 mr-2" />
 						<span>Settings</span>
 					</button>
@@ -159,7 +175,7 @@
 		</nav>
 	{:else}
 		<button
-			class="btn btn-circle btn-accent btn-md md:btn-md btn-outline fixed top-2 left-2"
+			class="btn btn-circle btn-accent btn-md md:btn-md btn-outline fixed top-2 left-2 z-20"
 			type="button"
 			on:click={() => {
 				$previewMode = false;

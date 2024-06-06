@@ -45,6 +45,15 @@
 		};
 	}
 
+	function onUpdate() {
+		return async ({ result }: { result: any }) => {
+			if (result.type === 'success') {
+				toast.success('Listing updated successfully!');
+				$showListingSettings = false;
+			}
+		};
+	}
+
 	function closeEditModal() {
 		$showListingSettings = false;
 	}
@@ -96,9 +105,9 @@
 </script>
 
 {#if $showListingSettings}
-	<div class="modal modal-open modal-bottom sm:modal-middle">
+	<dialog class="modal modal-bottom sm:modal-middle" class:modal-open={$showListingSettings}>
 		<div class="modal-box">
-			<h3 class="font-bold text-lg">Edit Listing</h3>
+			<h3 class="font-bold text-lg text-center">Settings for {currentListing.name}</h3>
 			<div class="mt-4">
 				<PublicLink {isPublic} listingId={currentListing.id} listingHash={currentListing.hash} />
 			</div>
@@ -130,7 +139,49 @@
 					{/if}
 				{/await}
 			</div>
+			<div class="mt-4">
+				<form method="post" action="?/updateListing" use:enhance={onUpdate}>
+					<div class="form-control">
+						<label class="label" for="name">
+							<span class="label-text">Name</span>
+						</label>
+						<input
+							type="text"
+							name="name"
+							bind:value={currentListing.name}
+							class="input input-bordered w-full"
+							required
+						/>
+					</div>
+					<div class="form-control">
+						<label class="label" for="description">
+							<span class="label-text">Description</span>
+						</label>
+						<textarea
+							name="description"
+							bind:value={currentListing.description}
+							class="textarea textarea-bordered w-full"
+							required
+						></textarea>
+					</div>
+					<div class="form-control">
+						<label class="label" for="title_image_url">
+							<span class="label-text">Title Image URL</span>
+						</label>
+						<input
+							type="url"
+							name="title_image_url"
+							bind:value={currentListing.title_image_url}
+							class="input input-bordered w-full"
+							required
+						/>
+					</div>
 
+					<div class="flex justify-end gap-2 mt-2 form-control">
+						<button type="submit" class="btn btn-primary">Update</button>
+					</div>
+				</form>
+			</div>
 			<button
 				type="button"
 				class="btn btn-error btn-outline btn-block mt-4"
@@ -143,7 +194,10 @@
 				<button class="btn" on:click={closeEditModal}>Close</button>
 			</div>
 		</div>
-	</div>
+		<form method="dialog" class="modal-backdrop">
+			<button on:click={() => ($showListingSettings = false)}>close</button>
+		</form>
+	</dialog>
 {/if}
 {#if showDeleteModal}
 	<div class="modal modal-open modal-bottom sm:modal-middle">

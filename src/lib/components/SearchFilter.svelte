@@ -82,7 +82,7 @@
 	{#if searchQuery}
 		<button
 			class="absolute {addIconFilter ? 'right-16' : 'right-6'} top-0 z-10 h-full opacity-70"
-			on:click={clearSearch}>X</button
+			on:click={clearSearch}><Close /></button
 		>
 	{/if}
 	{#if addIconFilter}

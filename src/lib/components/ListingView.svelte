@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import type { Database } from '$lib/types/supabase';
 	import { ActiveTab } from '$lib/types/listing';
+	import ArrivalTab from '$components/listing/ArrivalTab.svelte';
 
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
@@ -14,14 +15,14 @@
 </script>
 
 {#if currentListing}
-	<div
-		class="hero min-h-screen w-full bg-fixed bg-cover"
-		style="background-image: url({currentListing.title_image_url});"
-	>
-		<div class="hero-overlay bg-opacity-70"></div>
+	<div class="relative w-full h-full min-h-screen">
+		<div
+			class="absolute inset-0 bg-cover bg-fixed -z-10"
+			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
+		></div>
 
 		<div
-			class="h-full listing-info w-full px-4 pb-20 {$previewMode ||
+			class="listing-info h-full w-full px-4 pb-20 overflow-auto {$previewMode ||
 			$page.route.id?.includes('public')
 				? 'pt-10'
 				: 'pt-24'} mb-10"
@@ -32,13 +33,13 @@
 					: 'flex'}"
 			>
 				<h1
-					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-50"
+					class="text-center text-2xl text-primary font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-10 shadow-md"
 				>
 					{currentListing.name}
 				</h1>
 			</div>
 
-			<div class="text-center flex justify-center">
+			<div class="text-center flex justify-center relative">
 				{#if activeTab === ActiveTab.Recommendation}
 					<ListingTab
 						cards={Object.values(currentListing.cards).filter(
@@ -53,10 +54,11 @@
 						)}
 						type={ActiveTab.Home}
 					/>
-				{:else if activeTab === 'arrival'}
-					<ListingTab
-						cards={Object.values(currentListing.cards).filter((card) => card.type === 'arrival')}
-						type="arrival"
+				{:else if activeTab === ActiveTab.Arrival}
+					<ArrivalTab
+						cards={Object.values(currentListing.cards).filter(
+							(card) => card.type === ActiveTab.Arrival
+						)}
 					/>
 				{/if}
 			</div>
@@ -68,7 +70,7 @@
 
 <style>
 	.listing-info {
-		display: grid;
-		grid-template-rows: 70px 1fr;
+		display: flex;
+		flex-direction: column;
 	}
 </style>
