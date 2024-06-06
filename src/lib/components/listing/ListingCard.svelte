@@ -7,7 +7,7 @@
 	import type { ListingCard } from '$lib/types/cards';
 	import { createEventDispatcher } from 'svelte';
 	import { createEmptyField } from '$lib/types/fields';
-	import type { FieldTypes } from '$lib/types/fields';
+	import type { ContentField, FieldTypes } from '$lib/types/fields';
 	import { fade } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { flip } from 'svelte/animate';
@@ -34,8 +34,18 @@
 	let showDeleteModal = false;
 	let formLoading = false;
 	let cardHasBeenEdited = false;
-	let tempImages: { [key: number]: { url: string; file: File; altText: string } | null } = {};
+	let tempImages: {
+		[key: number]: {
+			fileName: string;
+			file: File;
+			altText: string;
+			fullTempFile?: ArrayBuffer | string | null | undefined;
+		};
+	} = {};
 	let imagesToDelete: string[] = [];
+	let listingHash: string;
+
+	$: listingHash = $page.data.currentListingInfo.hash;
 
 	const dispatch = createEventDispatcher();
 
@@ -47,12 +57,12 @@
 		imagesToDelete = []; // Reset imagesToDelete
 	}
 
-	$: resetEditedCard(card);
+	$: resetEditedCard(card as ListingCard);
 
-	function updateField(index: number, eventDetail) {
-		const oldField = editedCard.content_fields[index];
-		if (eventDetail.key === 'url' && oldField.url) {
-			imagesToDelete.push($page.data.currentListingInfo.hash + '/' + oldField.url);
+	function updateField(index: number, eventDetail: any) {
+		const oldField: ContentField = editedCard.content_fields[index];
+		if (oldField.type === 'image' && eventDetail.key === 'fileName' && oldField.fileName) {
+			imagesToDelete.push($page.data.currentListingInfo.hash + '/' + oldField.fileName);
 		}
 
 		editedCard.content_fields[index][eventDetail.key] = eventDetail.value;
@@ -60,10 +70,10 @@
 
 	function updateTempImage(
 		index: number,
-		tempImage: { url: string; file: string; altText: string } | null
+		tempImage: { fileName: string; file: string; altText: string } | null
 	) {
-		if (tempImages[index] && tempImages[index].path) {
-			imagesToDelete.push(tempImages[index].path); // Track old image to delete
+		if (tempImages[index] && tempImages[index]?.fileName) {
+			imagesToDelete.push(listingHash + '/' + tempImages[index]?.fileName);
 		}
 		tempImages = { ...tempImages, [index]: tempImage };
 	}
@@ -101,7 +111,7 @@
 						index: Number(index), // Convert to number
 						file: tempImage.file,
 						altText: tempImage.altText,
-						url: tempImage.url
+						fileName: tempImage.fileName
 					};
 				}
 			})
@@ -134,8 +144,8 @@
 
 	async function deleteField(fieldId: string) {
 		const fieldToDelete = editedCard.content_fields.find((f) => f.id === fieldId);
-		if (fieldToDelete && fieldToDelete.path) {
-			imagesToDelete.push(fieldToDelete.path); // Track image to delete
+		if (fieldToDelete?.type === 'image' && fieldToDelete && fieldToDelete.fileName) {
+			imagesToDelete.push(listingHash + '/' + fieldToDelete.fileName);
 		}
 		editedCard.content_fields = editedCard.content_fields.filter((f) => f.id !== fieldId);
 	}
@@ -233,6 +243,7 @@
 						tempImage={tempImages[index]}
 						onTempImageUpdate={updateTempImage}
 						lock={lockCards}
+						{listingHash}
 						on:updateField={(e) => updateField(index, e.detail)}
 						on:deleteField={() => deleteField(field.id)}
 						on:moveFieldUp={() => moveFieldUp(index)}

@@ -2,38 +2,52 @@
 	import BaseField from './BaseField.svelte';
 	import type { ImageField } from '$lib/types/fields';
 	import { createEventDispatcher } from 'svelte';
-	import { nanoid } from 'nanoid';
+	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 	export let field: ImageField;
 	export let index: number;
 	export let totalFields: number;
 	export let cardEditMode: boolean;
-	export let tempImage: { url: string; file: File } | null;
+	export let tempImage: {
+		fileName: string;
+		file: File;
+		altText: string;
+		fullTempFile?: ArrayBuffer | string | null | undefined;
+	};
 	export let lock = false;
 	export let onTempImageUpdate: (
 		index: number,
-		tempImage: { url: string; file: string; altText: string } | null
+		tempImage: {
+			fileName: string;
+			file: string;
+			altText: string;
+			fullTempFile?: ArrayBuffer | string | null | undefined;
+		}
 	) => void;
+	export let listingHash: string;
 
 	const dispatch = createEventDispatcher();
 	let isModalOpen = false;
+	let fileUrl: string;
+
+	$: fileUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${listingHash}/${field.fileName}`;
 
 	function handleFileUpload(event) {
 		const file = event.target.files[0];
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = function (event) {
-				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
-				const hash = nanoid(12);
-				const extension = file.name.split('.').pop(); // Get the file extension
-				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				const base64String = event?.target?.result?.split(',')[1];
+				const extension = file.name.split('.').pop();
+				const fileName = field.id + '.' + extension;
 				onTempImageUpdate(index, {
-					url: hashedFileName,
+					fileName: fileName,
 					file: base64String,
-					altText: file.name
+					altText: file.name,
+					fullTempFile: event?.target?.result
 				});
 				dispatch('updateField', { key: 'altText', value: file.name });
-				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
+				dispatch('updateField', { key: 'fileName', value: fileName });
 			};
 			reader.readAsDataURL(file);
 		}
@@ -45,17 +59,17 @@
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = function (event) {
-				const base64String = event.target.result.split(',')[1]; // Get base64 string without the prefix
-				const hash = nanoid(12);
-				const extension = file.name.split('.').pop(); // Get the file extension
-				const hashedFileName = `${hash}.${extension}`; // Combine hash with extension
+				const base64String = event?.target?.result?.split(',')[1];
+				const extension = file.name.split('.').pop();
+				const fileName = field.id + '.' + extension;
 				onTempImageUpdate(index, {
-					url: hashedFileName,
+					fileName: fileName,
 					file: base64String,
-					altText: file.name
+					altText: file.name,
+					fullTempFile: event?.target?.result
 				});
 				dispatch('updateField', { key: 'altText', value: file.name });
-				dispatch('updateField', { key: 'url', value: hashedFileName }); // Use hash with extension as URL
+				dispatch('updateField', { key: 'fileName', value: fileName });
 			};
 			reader.readAsDataURL(file);
 		}
@@ -63,8 +77,10 @@
 
 	function deleteTempImage() {
 		onTempImageUpdate(index, null);
-		dispatch('updateField', { key: 'url', value: '' });
+		dispatch('updateField', { key: 'fileName', value: '' });
 	}
+
+	$: console.log(tempImage);
 </script>
 
 <BaseField
@@ -79,10 +95,10 @@
 	on:moveFieldDown
 >
 	<div slot="content" class="form-control">
-		{#if tempImage?.url || field.url}
+		{#if tempImage?.fileName || field.fileName}
 			<div class="relative">
 				<img
-					src={tempImage ? tempImage.url : field.url}
+					src={tempImage ? tempImage.fullTempFile : fileUrl}
 					alt={field.altText}
 					class="mb-3 w-full rounded"
 				/>
@@ -129,10 +145,10 @@
 		{/if}
 	</div>
 	<div slot="preview">
-		{#if tempImage?.url || field.url}
+		{#if tempImage?.fileName || field.fileName}
 			<div class="relative">
 				<img
-					src={tempImage ? tempImage.url : field.url}
+					src={tempImage ? tempImage.fileName : fileUrl}
 					alt={field.altText}
 					class="rounded cursor-pointer w-1/2 mx-auto"
 					on:click={() => (isModalOpen = true)}
@@ -145,7 +161,7 @@
 						on:click={() => (isModalOpen = false)}>✕</label
 					>
 					<img
-						src={tempImage ? tempImage.url : field.url}
+						src={tempImage ? tempImage.fileName : fileUrl}
 						alt={field.altText}
 						class="w-full rounded"
 					/>

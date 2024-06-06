@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
+import type { ListingCard } from '$lib/types/cards';
 
 
 const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -25,7 +26,7 @@ export const POST: RequestHandler = async ({ request, locals: { session, supabas
     }
 
     // Upload images and update card data
-    const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, session.user.id, supabaseServiceClient);
+    const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, supabaseServiceClient);
 
     const inserts = updatedCards.map((card) => {
         card.user_id = session.user.id;
@@ -72,7 +73,7 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
   
     // Upload images and update card data
-    const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, session.user.id, supabaseServiceClient);
+    const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, supabaseServiceClient);
   
     const updates = updatedCards.map((card) => {
       if (!card.id) {
@@ -121,11 +122,11 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
   };
   
-  async function processImagesAndUpdateCards(cards, images, listingHash, userId, supabase) {
+  async function processImagesAndUpdateCards(cards: ListingCard[], images: any[], listingHash: string,  supabase: any) {
     const updatedCards = cards.map(card => ({ ...card }));
   
     for (const image of images) {
-      const { index, file, altText, url } = image;
+      const { index, file, altText, fileName } = image;
   
       if (typeof index !== 'number') {
         console.error('Invalid index:', index);
@@ -134,62 +135,44 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
   
       // Convert base64 image to buffer
       const buffer = Buffer.from(file, 'base64');
-      const filePath = `${listingHash}/${url}`;
+      const filePath = `${listingHash}/${fileName}`;
   
       console.log(`Processing image for card content field at index ${index}, path: ${filePath}`);
   
       try {
-        const { data, error } = await supabase.storage
+        const { data: imageData, error: imageUploadError } = await supabase.storage
           .from('listing_images')
           .upload(filePath, buffer, { upsert: true });
   
-        if (error) {
-          if (error.message === 'The resource already exists') {
-            const { data: imageData, error: urlError } = await supabase.storage
-              .from('listing_images')
-              .getPublicUrl(filePath);
-  
-            if (urlError) {
-              console.error('Error fetching existing image URL:', urlError);
-              throw urlError;
-            }
-  
+        if (imageUploadError) {
+          if (imageUploadError.message === 'The resource already exists') {
+
+
             // Update the corresponding content field for each card
             updatedCards.forEach(card => {
               if (card.content_fields[index]) {
-                card.content_fields[index].url = imageData.publicUrl;
-                card.content_fields[index].path = filePath;
+                card.content_fields[index].fileName = fileName;
                 card.content_fields[index].altText = altText;
               }
             });
   
-            console.log(`Image already exists. Using existing URL: ${imageData.publicUrl}`);
+            console.log(`Image already exists. Using existing file: ${listingHash}/${fileName}`);
             continue;
           }
   
-          console.error('Error uploading file:', error.message);
-          throw error;
-        }
-  
-        const { data: imageData, error: urlError } = await supabase.storage
-          .from('listing_images')
-          .getPublicUrl(filePath);
-  
-        if (urlError) {
-          console.error('Error fetching uploaded image URL:', urlError);
-          throw urlError;
+          console.error('Error uploading file:', imageUploadError.message);
+          throw error
         }
   
         // Update the corresponding content field for each card
         updatedCards.forEach(card => {
           if (card.content_fields[index]) {
-            card.content_fields[index].url = imageData.publicUrl;
-            card.content_fields[index].path = filePath;
+            card.content_fields[index].fileName = fileName
             card.content_fields[index].altText = altText;
           }
         });
   
-        console.log(`Uploaded new image. URL: ${imageData.publicUrl}`);
+        console.log(`Uploaded new image. File: ${listingHash}/${fileName}`);
       } catch (uploadError) {
         console.error('Error processing image upload:', uploadError);
         throw uploadError;
