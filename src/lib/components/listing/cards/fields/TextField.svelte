@@ -77,7 +77,7 @@
 	on:moveFieldUp
 	on:moveFieldDown
 >
-	<div slot="content" class="h-52 md:h-80 flex flex-col">
+	<div slot="content" class="h-44 lg:h-72 flex flex-col">
 		<div id="editor-container" class="flex-1 overflow-hidden flex flex-col">
 			<div id="editor" bind:this={editor} class="flex-1 overflow-auto"></div>
 		</div>
