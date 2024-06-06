@@ -5,7 +5,7 @@
 	import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
 	import ContentCopy from 'virtual:icons/mdi/content-copy';
 	import { copyTextToClipboard } from '$lib/utils/helpers';
-	import { slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	export let field: AddressField;
 	export let index: number;
@@ -115,9 +115,17 @@
 	on:moveFieldUp
 	on:moveFieldDown
 >
-	<div slot="content" class="form-control relative {isSearching ? 'h-96' : ''}">
+	<div
+		slot="content"
+		class="form-control relative {isSearching
+			? 'h-96'
+			: ''}  transition-transform duration-300 ease-in-out"
+	>
 		{#if autocompleteEnabled && suggestions.length > 0}
-			<ul class="menu border-4 border-black bg-base-100 rounded-box w-full z-50">
+			<ul
+				transition:fade={{ duration: 200, delay: 200 }}
+				class="menu border-4 border-black bg-base-100 rounded-box w-full z-50"
+			>
 				<div class="flex items-center text-accent italic">
 					Choose an address from the list below (optional):
 				</div>
