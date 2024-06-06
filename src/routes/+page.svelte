@@ -37,8 +37,7 @@
 				<CloseIcon class="swap-on fill-current w-6 h-6" />
 			</label>
 			<a href="/" class="text-2xl font-bold flex items-end" on:click={closeMobileMenu}>
-				<img src="/logo_black.png" alt="Logo" class="w-10 sm:w-14 h-fit" />
-				<span class="mb-1 ml-1">GuestLink</span>
+				<span class="ml-4">GuestLink</span>
 			</a>
 		</div>
 		<!-- Desktop menu and logo -->
