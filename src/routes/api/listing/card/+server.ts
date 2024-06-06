@@ -111,7 +111,6 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
           throw error(500, 'Error deleting images');
         }
 
-        console.log()
         console.log(`Deleted images: ${imagesToDelete.join(', ')}`);
       }
   

@@ -63,7 +63,6 @@
 		tempImage: { url: string; file: string; altText: string } | null
 	) {
 		if (tempImages[index] && tempImages[index].path) {
-			console.log(tempImages[index].path);
 			imagesToDelete.push(tempImages[index].path); // Track old image to delete
 		}
 		tempImages = { ...tempImages, [index]: tempImage };
