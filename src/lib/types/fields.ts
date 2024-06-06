@@ -35,8 +35,7 @@ export type ImageField = {
     id: string;
     type: "image"; 
     altText: string;
-    url: string;
-    path: string;
+    fileName: string;
 }
 
 export type ContentField = TextField | VideoField | AddressField | LinkField | ImageField;
