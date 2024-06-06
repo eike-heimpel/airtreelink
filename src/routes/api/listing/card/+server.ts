@@ -124,7 +124,7 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
   
   import sharp from 'sharp';
 
-export async function processImagesAndUpdateCards(cards, images, listingHash, supabase) {
+async function processImagesAndUpdateCards(cards, images, listingHash, supabase) {
   const updatedCards = cards.map(card => ({ ...card }));
 
   for (const image of images) {
@@ -144,7 +144,6 @@ export async function processImagesAndUpdateCards(cards, images, listingHash, su
     try {
       // Resize and compress image using Sharp
       const optimizedBuffer = await sharp(buffer)
-        .resize({ width: 1920, height: 1080, fit: sharp.fit.cover }) // Resize to desired dimensions
         .webp({ quality: 75 }) // Convert to WebP format with quality setting
         .toBuffer();
 
