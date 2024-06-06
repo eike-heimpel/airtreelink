@@ -15,14 +15,15 @@
 </script>
 
 {#if currentListing}
-	<div class="w-full">
+	<div class="relative w-full h-full">
 		<div
 			class="absolute inset-0 bg-cover bg-fixed -z-10"
 			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
 		></div>
 
 		<div
-			class="listing-info w-full px-4 pb-20 {$previewMode || $page.route.id?.includes('public')
+			class="listing-info h-full w-full px-4 pb-20 overflow-auto {$previewMode ||
+			$page.route.id?.includes('public')
 				? 'pt-10'
 				: 'pt-24'} mb-10"
 		>
@@ -32,7 +33,7 @@
 					: 'flex'}"
 			>
 				<h1
-					class="text-center text-2xl font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-30"
+					class="text-center text-2xl text-primary font-bold inline-block bg-base-100 rounded-lg px-4 py-2 bg-opacity-10 shadow-md"
 				>
 					{currentListing.name}
 				</h1>
@@ -69,7 +70,7 @@
 
 <style>
 	.listing-info {
-		display: grid;
-		grid-template-rows: auto 1fr;
+		display: flex;
+		flex-direction: column;
 	}
 </style>

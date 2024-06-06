@@ -13,6 +13,7 @@
 
 	import { copyTextToClipboard } from '$lib/utils/helpers';
 	import { onMount, tick } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	export let cards: ArrivalCard[] = [];
 
@@ -27,6 +28,8 @@
 		checkin_time: '',
 		how_to_get_in: ''
 	};
+
+	let contentLoaded = false;
 
 	async function renderContent(field: ContentField, cardTitle: ContentTitle) {
 		if (!field) return;
@@ -46,10 +49,12 @@
 	}
 
 	onMount(async () => {
-		cards.forEach((card) => renderContent(card.content_fields[0], card.title as ContentTitle));
+		const renderPromises = cards.map((card) =>
+			renderContent(card.content_fields[0], card.title as ContentTitle)
+		);
+		await Promise.all(renderPromises);
+		contentLoaded = true;
 	});
-
-	$: cards.forEach((card) => renderContent(card.content_fields[0], card.title as ContentTitle));
 
 	function addAddress() {
 		tempCard = {
@@ -137,235 +142,237 @@
 	}
 </script>
 
-<div class="container mx-auto">
-	<div
-		class="grid grid-cols-1 gap-4 lg:gap-12 max-w-2xl lg:max-w-4xl mx-auto items-center mt-4 md:mt-6 lg:mt-8 md:text-xl"
-	>
-		{#each cards as card (card.id)}
-			{@const field = card.content_fields[0]}
+{#if contentLoaded}
+	<div class="container mx-auto" transition:fade={{ duration: 1000 }}>
+		<div
+			class="grid grid-cols-1 gap-4 lg:gap-12 max-w-2xl lg:max-w-4xl mx-auto items-center mt-4 md:mt-6 lg:mt-8 md:text-xl"
+		>
+			{#each cards as card (card.id)}
+				{@const field = card.content_fields[0]}
 
-			{#if card.title === 'welcome_message'}
-				<div>
-					<div class="flex justify-center items-center text-white">
-						<p>
-							{#if field.type === 'text'}
-								{@html renderedContents[card.title]}
-							{:else}{field.content}{/if}
-						</p>
+				{#if card.title === 'welcome_message'}
+					<div>
+						<div class="flex justify-center items-center text-white">
+							<p>
+								{#if field.type === 'text'}
+									{@html renderedContents[card.title]}
+								{:else}{field.content}{/if}
+							</p>
 
-						{#if !$previewMode}
+							{#if !$previewMode}
+								<button
+									class="btn ml-4 btn-primary btn-outline"
+									on:click={() => {
+										selectedCard = card;
+									}}
+								>
+									Edit
+								</button>
+							{/if}
+						</div>
+					</div>
+				{/if}
+				{#if card.title === 'main_address'}
+					<div class="flex flex-col gap-2">
+						<div class="divider divider-primary text-primary w-5/6 mx-auto">Address</div>
+
+						<div class="flex justify-center items-center text-white">
+							<p>{field.content}</p>
+
 							<button
-								class="btn ml-4 btn-primary btn-outline"
-								on:click={() => {
-									selectedCard = card;
-								}}
+								class="flex items-center mt-2 cursor-pointer mb-2"
+								on:click={() => copyTextToClipboard(field.content)}
 							>
-								Edit
+								<ContentCopy class="ml-2 w-5 h-5 text-primary" />
 							</button>
-						{/if}
-					</div>
-				</div>
-			{/if}
-			{#if card.title === 'main_address'}
-				<div class="flex flex-col gap-2">
-					<div class="divider divider-primary text-primary w-5/6 mx-auto">Address</div>
 
-					<div class="flex justify-center items-center text-white">
-						<p>{field.content}</p>
-
-						<button
-							class="flex items-center mt-2 cursor-pointer mb-2"
-							on:click={() => copyTextToClipboard(field.content)}
-						>
-							<ContentCopy class="ml-2 w-5 h-5 text-primary" />
-						</button>
-
-						{#if !$previewMode}
+							{#if !$previewMode}
+								<button
+									class="btn ml-4 btn-primary btn-outline"
+									on:click={() => {
+										selectedCard = card;
+									}}
+								>
+									Edit
+								</button>
+							{/if}
+						</div>
+						<address class="ml-2 not-italic">
 							<button
-								class="btn ml-4 btn-primary btn-outline"
-								on:click={() => {
-									selectedCard = card;
-								}}
+								class="btn btn-sm btn-accent btn-outline"
+								on:click={() => openDirections(field.content)}
 							>
-								Edit
+								Get Directions
 							</button>
-						{/if}
+						</address>
 					</div>
-					<address class="ml-2 not-italic">
-						<button
-							class="btn btn-sm btn-accent btn-outline"
-							on:click={() => openDirections(field.content)}
-						>
-							Get Directions
-						</button>
-					</address>
-				</div>
-			{/if}
+				{/if}
 
-			{#if card.title === 'contact_info'}
-				<div class="flex flex-col gap-2">
-					<div class="divider divider-primary text-primary w-5/6 mx-auto">Contact Info</div>
+				{#if card.title === 'contact_info'}
+					<div class="flex flex-col gap-2">
+						<div class="divider divider-primary text-primary w-5/6 mx-auto">Contact Info</div>
 
-					<div class="flex justify-center items-center text-white">
-						<p>
-							{#if field.type === 'text'}
-								{@html renderedContents[card.title]}
-							{:else}{field.content}{/if}
-						</p>
-						{#if !$previewMode}
-							<button
-								class="btn ml-4 btn-primary btn-outline"
-								on:click={() => {
-									selectedCard = card;
-								}}
-							>
-								Edit
-							</button>
-						{/if}
+						<div class="flex justify-center items-center text-white">
+							<p>
+								{#if field.type === 'text'}
+									{@html renderedContents[card.title]}
+								{:else}{field.content}{/if}
+							</p>
+							{#if !$previewMode}
+								<button
+									class="btn ml-4 btn-primary btn-outline"
+									on:click={() => {
+										selectedCard = card;
+									}}
+								>
+									Edit
+								</button>
+							{/if}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if card.title === 'checkin_time'}
-				<div class="flex flex-col gap-2">
-					<div class="divider divider-primary text-primary w-5/6 mx-auto">Check-in Time</div>
+				{/if}
+				{#if card.title === 'checkin_time'}
+					<div class="flex flex-col gap-2">
+						<div class="divider divider-primary text-primary w-5/6 mx-auto">Check-in Time</div>
 
-					<div class="flex justify-center items-center text-white">
-						<p>
-							{#if field.type === 'text'}
-								{@html renderedContents[card.title]}
-							{:else}{field.content}{/if}
-						</p>
-						{#if !$previewMode}
-							<button
-								class="btn ml-4 btn-primary btn-outline"
-								on:click={() => {
-									selectedCard = card;
-								}}
-							>
-								Edit
+						<div class="flex justify-center items-center text-white">
+							<p>
+								{#if field.type === 'text'}
+									{@html renderedContents[card.title]}
+								{:else}{field.content}{/if}
+							</p>
+							{#if !$previewMode}
+								<button
+									class="btn ml-4 btn-primary btn-outline"
+									on:click={() => {
+										selectedCard = card;
+									}}
+								>
+									Edit
+								</button>
+							{/if}
+						</div>
+					</div>
+				{/if}
+				{#if card.title === 'how_to_get_in'}
+					<div class="flex flex-col gap-2">
+						<div class="divider divider-primary text-primary w-5/6 mx-auto">How to Get In</div>
+						<div class="flex justify-center items-center text-white">
+							<p>
+								{#if field.type === 'text'}
+									{@html renderedContents[card.title]}
+								{:else}{field.content}{/if}
+							</p>
+							{#if !$previewMode}
+								<button
+									class="btn ml-4 btn-primary btn-outline"
+									on:click={() => {
+										selectedCard = card;
+									}}
+								>
+									Edit
+								</button>
+							{/if}
+						</div>
+					</div>
+				{/if}
+			{/each}
+			{#if !$previewMode}
+				{#if !cards.some((card) => card.title === 'main_address')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
+						>
+							<button class="text-base-100 hover:text-primary" on:click={addAddress}>
+								<span class="text-primary mr-4"> Add </span>Address
 							</button>
-						{/if}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if card.title === 'how_to_get_in'}
-				<div class="flex flex-col gap-2">
-					<div class="divider divider-primary text-primary w-5/6 mx-auto">How to Get In</div>
-					<div class="flex justify-center items-center text-white">
-						<p>
-							{#if field.type === 'text'}
-								{@html renderedContents[card.title]}
-							{:else}{field.content}{/if}
-						</p>
-						{#if !$previewMode}
-							<button
-								class="btn ml-4 btn-primary btn-outline"
-								on:click={() => {
-									selectedCard = card;
-								}}
+				{/if}
+				{#if !cards.some((card) => card.title === 'welcome_message')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
+						>
+							<button class="text-base-100 hover:text-primary" on:click={addWelcomeMessage}
+								><span class="text-primary mr-4"> Add </span>Welcome Message</button
 							>
-								Edit
-							</button>
-						{/if}
+						</div>
 					</div>
-				</div>
-			{/if}
-		{/each}
-		{#if !$previewMode}
-			{#if !cards.some((card) => card.title === 'main_address')}
-				<div class="col-span-1 relative">
-					<div
-						class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-					>
-						<button class="text-base-100 hover:text-primary" on:click={addAddress}>
-							<span class="text-primary mr-4"> Add </span>Address
-						</button>
-					</div>
-				</div>
-			{/if}
-			{#if !cards.some((card) => card.title === 'welcome_message')}
-				<div class="col-span-1 relative">
-					<div
-						class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-					>
-						<button class="text-base-100 hover:text-primary" on:click={addWelcomeMessage}
-							><span class="text-primary mr-4"> Add </span>Welcome Message</button
+				{/if}
+				{#if !cards.some((card) => card.title === 'contact_info')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
 						>
+							<button class="text-base-100 hover:text-primary" on:click={addContactInfo}>
+								<span class="text-primary mr-4"> Add </span>Contact Info</button
+							>
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if !cards.some((card) => card.title === 'contact_info')}
-				<div class="col-span-1 relative">
-					<div
-						class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-					>
-						<button class="text-base-100 hover:text-primary" on:click={addContactInfo}>
-							<span class="text-primary mr-4"> Add </span>Contact Info</button
+				{/if}
+				{#if !cards.some((card) => card.title === 'checkin_time')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
 						>
+							<button class="text-base-100 hover:text-primary" on:click={addCheckinTime}>
+								<span class="text-primary mr-4"> Add </span>Check-in Time</button
+							>
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if !cards.some((card) => card.title === 'checkin_time')}
-				<div class="col-span-1 relative">
-					<div
-						class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-					>
-						<button class="text-base-100 hover:text-primary" on:click={addCheckinTime}>
-							<span class="text-primary mr-4"> Add </span>Check-in Time</button
+				{/if}
+				{#if !cards.some((card) => card.title === 'how_to_get_in')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
 						>
+							<button class="text-base-100 hover:text-primary" on:click={addHowToGetIn}>
+								<span class="text-primary mr-4"> Add </span>How to Get In</button
+							>
+						</div>
 					</div>
-				</div>
+				{/if}
 			{/if}
-			{#if !cards.some((card) => card.title === 'how_to_get_in')}
-				<div class="col-span-1 relative">
-					<div
-						class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-					>
-						<button class="text-base-100 hover:text-primary" on:click={addHowToGetIn}>
-							<span class="text-primary mr-4"> Add </span>How to Get In</button
-						>
-					</div>
+		</div>
+
+		{#if tempCard}
+			<dialog class="modal modal-open modal-bottom sm:modal-middle">
+				<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
+					<ListingCardComponent
+						card={tempCard}
+						cardEditMode={true}
+						createNewCard={true}
+						hideTitle={true}
+						lockCards={true}
+						on:closeModal={closeAddModal}
+					/>
 				</div>
-			{/if}
+			</dialog>
+		{/if}
+
+		{#if selectedCard}
+			<dialog
+				class="modal modal-bottom sm:modal-middle"
+				id="card-modal"
+				class:modal-open={selectedCard}
+			>
+				<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
+					<ListingCardComponent
+						card={selectedCard}
+						hideTitle={true}
+						lockCards={true}
+						on:closeModal={closeCardModal}
+						on:refreshSelectedCard={refreshSelectedCard}
+						on:deleteCard={() => {
+							selectedCard = null;
+						}}
+					/>
+				</div>
+				<form method="dialog" class="modal-backdrop">
+					<button on:click={closeCardModal}>close</button>
+				</form>
+			</dialog>
 		{/if}
 	</div>
-
-	{#if tempCard}
-		<dialog class="modal modal-open modal-bottom sm:modal-middle">
-			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
-				<ListingCardComponent
-					card={tempCard}
-					cardEditMode={true}
-					createNewCard={true}
-					hideTitle={true}
-					lockCards={true}
-					on:closeModal={closeAddModal}
-				/>
-			</div>
-		</dialog>
-	{/if}
-
-	{#if selectedCard}
-		<dialog
-			class="modal modal-bottom sm:modal-middle"
-			id="card-modal"
-			class:modal-open={selectedCard}
-		>
-			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
-				<ListingCardComponent
-					card={selectedCard}
-					hideTitle={true}
-					lockCards={true}
-					on:closeModal={closeCardModal}
-					on:refreshSelectedCard={refreshSelectedCard}
-					on:deleteCard={() => {
-						selectedCard = null;
-					}}
-				/>
-			</div>
-			<form method="dialog" class="modal-backdrop">
-				<button on:click={closeCardModal}>close</button>
-			</form>
-		</dialog>
-	{/if}
-</div>
+{/if}
