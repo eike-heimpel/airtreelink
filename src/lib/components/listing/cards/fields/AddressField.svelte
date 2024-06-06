@@ -5,6 +5,7 @@
 	import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
 	import ContentCopy from 'virtual:icons/mdi/content-copy';
 	import { copyTextToClipboard } from '$lib/utils/helpers';
+	import { slide } from 'svelte/transition';
 
 	export let field: AddressField;
 	export let index: number;
@@ -35,12 +36,17 @@
 		placeService = new google.maps.places.PlacesService(document.createElement('div'));
 	}
 
+	let isSearching = false;
+
 	function searchAddress(event) {
 		const query = event.target.value;
 		dispatch('updateField', { key: 'content', value: query });
 
 		if (query.length === 0) {
 			autocompleteEnabled = true;
+			isSearching = false;
+		} else {
+			isSearching = true;
 		}
 
 		if (autocompleteEnabled && query.length > 0) {
@@ -109,11 +115,9 @@
 	on:moveFieldUp
 	on:moveFieldDown
 >
-	<div slot="content" class="form-control relative">
+	<div slot="content" class="form-control relative {isSearching ? 'h-96' : ''}">
 		{#if autocompleteEnabled && suggestions.length > 0}
-			<ul
-				class="menu border-4 border-black bg-base-100 rounded-box absolute w-full bottom-full z-10 mb-1"
-			>
+			<ul class="menu border-4 border-black bg-base-100 rounded-box w-full z-50">
 				<div class="flex items-center text-accent italic">
 					Choose an address from the list below (optional):
 				</div>
@@ -154,7 +158,7 @@
 			</label>
 		</div>
 	</div>
-	<div slot="preview" class={previewClasses}>
+	<div slot="preview">
 		{#if showAddressAsText}
 			<button
 				class="flex items-center mt-2 cursor-pointer"
