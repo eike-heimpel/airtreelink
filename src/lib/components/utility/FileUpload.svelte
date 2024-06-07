@@ -3,10 +3,55 @@
 
 	export let minimumImageWidth = 0;
 	export let minimumImageHeight = 0;
+	export let maxImageWidth = 1920;
+	export let maxImageHeight = 1080;
+	export let quality = 0.8;
 
 	const dispatch = createEventDispatcher();
+	async function resizeImage(file: File, maxWidth: number, maxHeight: number, quality: number) {
+		return new Promise<File>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const img = new Image();
+				img.onload = function () {
+					const canvas = document.createElement('canvas');
+					let width = img.width;
+					let height = img.height;
 
-	function validateImageDimensions(file: File) {
+					if (width > maxWidth || height > maxHeight) {
+						const aspectRatio = width / height;
+						if (aspectRatio > 1) {
+							width = maxWidth;
+							height = width / aspectRatio;
+						} else {
+							height = maxHeight;
+							width = height * aspectRatio;
+						}
+					}
+
+					canvas.width = width;
+					canvas.height = height;
+					const ctx = canvas.getContext('2d');
+					ctx.drawImage(img, 0, 0, width, height);
+
+					canvas.toBlob(
+						(blob) => {
+							const resizedFile = new File([blob], file.name, {
+								type: 'image/webp',
+								lastModified: Date.now()
+							});
+							resolve(resizedFile);
+						},
+						'image/webp',
+						quality
+					);
+				};
+				img.src = event?.target?.result as string;
+			};
+			reader.readAsDataURL(file);
+		});
+	}
+	async function validateImageDimensions(file: File) {
 		return new Promise<{
 			valid: boolean;
 			file: File;
@@ -14,12 +59,22 @@
 			fullTempFile: string | null;
 		}>((resolve, reject) => {
 			const reader = new FileReader();
-			reader.onload = function (event) {
+			reader.onload = async function (event) {
 				const img = new Image();
-				img.onload = function () {
+				img.onload = async function () {
 					if (img.width >= minimumImageWidth && img.height >= minimumImageHeight) {
-						const base64String = event?.target?.result?.split(',')[1];
-						resolve({ valid: true, file, base64String, fullTempFile: event?.target?.result });
+						const resizedFile = await resizeImage(file, maxImageWidth, maxImageHeight, quality);
+						const resizedReader = new FileReader();
+						resizedReader.onload = function (resizedEvent) {
+							const base64String = resizedEvent?.target?.result?.split(',')[1];
+							resolve({
+								valid: true,
+								file: resizedFile,
+								base64String,
+								fullTempFile: resizedEvent?.target?.result
+							});
+						};
+						resizedReader.readAsDataURL(resizedFile);
 					} else {
 						resolve({ valid: false, file, base64String: '', fullTempFile: null });
 					}
@@ -29,7 +84,6 @@
 			reader.readAsDataURL(file);
 		});
 	}
-
 	async function handleFileUpload(event) {
 		const file = event.target.files[0];
 		if (file) {

@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
-import sharp from 'sharp';
 
 
 const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -141,11 +140,6 @@ async function processImagesAndUpdateCards(cards, images, listingHash, supabase)
     console.log(`Processing image for card content field at index ${index}, path: ${filePath}`);
 
     try {
-      // Resize and compress image using Sharp
-      const optimizedBuffer = await sharp(buffer)
-      .resize({ width: 1920, height: 1080, fit: sharp.fit.inside, withoutEnlargement: true }) // Enforce max size, maintaining aspect ratio
-      .webp({ quality: 75 }) // Convert to WebP format with quality setting
-      .toBuffer();
 
         const newFileName = fileName.replace(/\.[^/.]+$/, '.webp');
         const newFilePath = `${listingHash}/${newFileName}`;
@@ -153,7 +147,7 @@ async function processImagesAndUpdateCards(cards, images, listingHash, supabase)
 
       const { data: imageData, error: imageUploadError } = await supabase.storage
         .from('listing_images')
-        .upload(newFilePath, optimizedBuffer, { upsert: true });
+        .upload(newFilePath, buffer, { upsert: true });
 
       if (imageUploadError) {
         if (imageUploadError.message === 'The resource already exists') {
