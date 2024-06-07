@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
-import type { ListingCard } from '$lib/types/cards';
+import sharp from 'sharp';
 
 
 const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -122,7 +122,6 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
   };
   
-  import sharp from 'sharp';
 
 async function processImagesAndUpdateCards(cards, images, listingHash, supabase) {
   const updatedCards = cards.map(card => ({ ...card }));
