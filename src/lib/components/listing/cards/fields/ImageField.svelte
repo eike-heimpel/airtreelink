@@ -96,11 +96,14 @@
 	<div slot="content" class="form-control">
 		{#if tempImage?.fileName || field.fileName}
 			<div class="relative">
-				<img
-					src={tempImage ? tempImage.fullTempFile : fileUrl.replace(/\.[^/.]+$/, '.webp')}
-					alt={field.altText}
-					class="mb-3 w-full rounded w-1/2 md:w-1/3"
-				/>
+				<div class="flex justify-center items-center">
+					<img
+						src={tempImage ? tempImage.fullTempFile : fileUrl.replace(/\.[^/.]+$/, '.webp')}
+						alt={field.altText}
+						class="mb-3 w-full rounded w-1/2 md:w-1/3"
+					/>
+				</div>
+
 				<button class="btn btn-sm btn-circle absolute top-2 right-2" on:click={deleteTempImage}
 					>✕</button
 				>
@@ -148,9 +151,9 @@
 			{#if isModalOpen}
 				<dialog class="modal" class:modal-open={isModalOpen}>
 					<div class="modal-box">
-						<label
+						<button
 							class="btn btn-sm btn-circle absolute right-2 top-2"
-							on:click={() => (isModalOpen = false)}>✕</label
+							on:click={() => (isModalOpen = false)}>✕</button
 						>
 						<img
 							src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
@@ -163,14 +166,18 @@
 					</form>
 				</dialog>
 			{:else}
-				<div class="relative">
+				<button
+					class="relative"
+					on:click={() => {
+						isModalOpen = true;
+					}}
+				>
 					<img
 						src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
 						alt={field.altText}
 						class="rounded cursor-pointer w-1/2 md:w-1/3 mx-auto"
-						on:click={() => (isModalOpen = true)}
 					/>
-				</div>
+				</button>
 			{/if}
 		{/if}
 	</div>
