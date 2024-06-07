@@ -53,8 +53,10 @@
 					aria-label={tab.label}
 					class="{!$previewMode
 						? 'md:rounded-t-lg'
-						: ''} w-full py-3 flex flex-col items-center justify-center bg-opacity-95 border-r border-neutral lg:text-lg {activeTab ===
-					tab.value
+						: ''} w-full py-3 flex flex-col items-center justify-center {activeTab ===
+					ActiveTab.Arrival
+						? 'bg-opacity-75'
+						: 'bg-opacity-95'} border-r border-neutral lg:text-lg {activeTab === tab.value
 						? 'bg-accent text-white'
 						: 'bg-base-200 hover:text-accent'}"
 					on:click={() => {

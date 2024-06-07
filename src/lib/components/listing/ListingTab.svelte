@@ -145,7 +145,7 @@
 
 	<div
 		id="sortable-cards"
-		class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 max-w-2xl lg:max-w-4xl mx-auto items-center"
+		class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 max-w-lg lg:max-w-2xl mx-auto items-center"
 	>
 		{#each filteredCards as card (card.id)}
 			<div class="col-span-1 relative">
