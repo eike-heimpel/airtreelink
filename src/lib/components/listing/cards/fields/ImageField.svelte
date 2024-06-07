@@ -143,32 +143,35 @@
 			</div>
 		{/if}
 	</div>
-	<div slot="preview">
+	<div slot="preview" class:h-screen={isModalOpen}>
 		{#if tempImage?.fileName || field.fileName}
-			<div class="relative">
-				<img
-					src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
-					alt={field.altText}
-					class="rounded cursor-pointer w-1/2 md:w-1/3 mx-auto"
-					on:click={() => (isModalOpen = true)}
-				/>
-			</div>
-			<dialog class="modal" class:modal-open={isModalOpen}>
-				<div class="modal-box relative">
-					<label
-						class="btn btn-sm btn-circle absolute right-2 top-2"
-						on:click={() => (isModalOpen = false)}>✕</label
-					>
+			{#if isModalOpen}
+				<dialog class="modal" class:modal-open={isModalOpen}>
+					<div class="modal-box">
+						<label
+							class="btn btn-sm btn-circle absolute right-2 top-2"
+							on:click={() => (isModalOpen = false)}>✕</label
+						>
+						<img
+							src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
+							alt={field.altText}
+							class="max-w-full h-auto rounded"
+						/>
+					</div>
+					<form method="dialog" class="modal-backdrop">
+						<button on:click={() => (isModalOpen = false)}>close</button>
+					</form>
+				</dialog>
+			{:else}
+				<div class="relative">
 					<img
 						src={tempImage ? tempImage.fileName : fileUrl.replace(/\.[^/.]+$/, '.webp')}
 						alt={field.altText}
-						class="w-full rounded"
+						class="rounded cursor-pointer w-1/2 md:w-1/3 mx-auto"
+						on:click={() => (isModalOpen = true)}
 					/>
 				</div>
-				<form method="dialog" class="modal-backdrop">
-					<button on:click={() => (isModalOpen = false)}>close</button>
-				</form>
-			</dialog>
+			{/if}
 		{/if}
 	</div>
 </BaseField>
