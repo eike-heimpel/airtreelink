@@ -1,6 +1,14 @@
 
 import { error } from "@sveltejs/kit";
-import { all } from "axios";
+import { nanoid } from "nanoid";
+import { createServerClient } from '@supabase/ssr';
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
+import { PUBLIC_SUPABASE_URL } from '$env/static/public';
+import sharp from 'sharp';
+
+const supabaseServiceClient = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    cookies: {}
+});
 
 export const load = async ({ request, cookies, parent, params, locals: { supabase, session } }) => {
 
@@ -44,11 +52,23 @@ export const actions = {
         const formData = await request.formData();
 
         const id = parseInt(formData.get('id')?.toString() || '');
+        const imageHash = formData.get('imageHash')?.toString() || '';
+        const listingHash = formData.get('listingHash')?.toString() || '';
 
         try {
             const response = await locals.supabase.from('Listings').delete().eq('id', id);
 
             if (response.error) throw new Error(response.error.message);
+
+            // delete the image now
+            const { data: deleteImage, error: deleteImageError } = await supabaseServiceClient.storage
+                .from('listing_images')
+                .remove([`${listingHash}/${imageHash}.webp`]);
+
+            if (deleteImageError) {
+                console.error('Error deleting image:', deleteImageError);
+            }
+
             return { success: true };
         } catch (error) {
             console.log("could not delete listing", error);
@@ -62,11 +82,55 @@ export const actions = {
         const id = parseInt(params.listingId);
         
         const name = formData.get('name') as string;
-        const description = formData.get('description') as string;
-        const title_image_url = formData.get('title_image_url') as string;
+        const titleImageBase64 = formData.get('titleImageBase64') as string;
+        const listingHash = formData.get('listingHash') as string;
+        const oldImageHash = formData.get('oldImageHash') as string;
+        const description = "";
+        const imageHash = nanoid(12);
+
 
         try {
-            const response = await locals.supabase.from('Listings').update({ name, description, title_image_url }).eq('id', id);
+
+            const buffer = Buffer.from(titleImageBase64, 'base64');
+            const filePath = `${listingHash}/${imageHash}.webp`;
+            const metadata = await sharp(buffer).metadata();
+
+            if (metadata.width && metadata.height && metadata.width < 1920 && metadata.height < 1080) throw error(400, 'Image is too small, please upload at least 1920x1080');
+
+            const optimizedBuffer = await sharp(buffer)
+                .resize({ width: 1920, height: 1080, fit: sharp.fit.cover }) 
+                .webp({ quality: 75 }) 
+                .toBuffer();
+
+                const { data: imageData, error: imageUploadError } = await supabaseServiceClient.storage
+                .from('listing_images')
+                .upload(filePath, optimizedBuffer, { upsert: true });
+
+    
+            if (imageUploadError) {
+
+                if (imageUploadError.message === 'The resource already exists') {
+        
+                    console.log(`Image already exists. Using existing file: ${filePath}`);
+
+                } else {
+                    console.error(`Failed to upload file: ${filePath}`, imageUploadError.message);
+                    throw error(500, 'Failed to upload file');
+                }
+            }
+
+            console.log(`Uploaded image: ${filePath}`);
+
+            // now we need to delete the old image
+            const { data: deleteImage, error: deleteImageError } = await supabaseServiceClient.storage
+                .from('listing_images')
+                .remove([`${listingHash}/${oldImageHash}.webp`]);
+
+            if (deleteImageError) {
+                console.error('Error deleting old image:', deleteImageError);
+            }
+
+            const response = await locals.supabase.from('Listings').update({ name, description, title_image_hash: imageHash }).eq('id', id);
 
             if (response.error) throw new Error(response.error.message);
             return { success: true };

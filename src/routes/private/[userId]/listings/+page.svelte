@@ -33,8 +33,6 @@
 		};
 	}
 
-	$: console.log(tempImage);
-
 	function createListing({ cancel }) {
 		// don't allow if they have more than 5 listings already
 		if (data.listings.length >= 5) {
@@ -60,10 +58,6 @@
 			tempImage = null;
 		};
 	}
-
-	function deleteTempImage() {
-		tempImage = null;
-	}
 </script>
 
 <div class="min-h-screen flex flex-wrap gap-10 items-center justify-center p-4 relative">
@@ -78,7 +72,7 @@
 			<figure class="overflow-hidden h-64 w-full">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<img
-					src={`${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${listing.hash}/${listing.title_image_url}.webp`}
+					src={`${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${listing.hash}/${listing.title_image_hash}.webp`}
 					alt="Listing Image"
 					class="transition-transform duration-300 ease-in-out hover:scale-105 object-cover w-full h-full"
 				/>
@@ -137,7 +131,7 @@
 
 								<button
 									class="btn btn-sm btn-circle absolute top-2 right-2"
-									on:click={deleteTempImage}>✕</button
+									on:click={() => (tempImage = null)}>✕</button
 								>
 							</div>
 							<input type="hidden" name="titleImageBase64" value={tempImage.base64String} />

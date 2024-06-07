@@ -13,7 +13,9 @@
 	export let currentListing: Listing;
 
 	let activeTab = 'arrival';
-	let listingBackgroundImageUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${currentListing.hash}/${currentListing.title_image_url}.webp`;
+	let listingBackgroundImageUrl: string;
+
+	$: listingBackgroundImageUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${currentListing.hash}/${currentListing.title_image_hash}.webp`;
 </script>
 
 {#if currentListing}

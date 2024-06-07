@@ -55,7 +55,7 @@ export const actions: Actions = {
             if (metadata.width && metadata.height && metadata.width < 1920 && metadata.height < 1080) throw error(400, 'Image is too small, please upload at least 1920x1080');
 
             const optimizedBuffer = await sharp(buffer)
-                .resize({ width: 1920, height: 1080, fit: sharp.fit.inside, withoutEnlargement: true }) 
+                .resize({ width: 1920, height: 1080, fit: sharp.fit.cover }) 
                 .webp({ quality: 75 }) 
                 .toBuffer();
 
@@ -80,7 +80,7 @@ export const actions: Actions = {
 
             const response = await locals.supabase
                 .from('Listings')
-                .insert([{ name, description, title_image_url: imageHash, public: false, hash} as Listing]);
+                .insert([{ name, description, title_image_hash: imageHash, public: false, hash} as Listing]);
 
             
             if (response.error) {

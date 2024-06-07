@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 	import { toast } from 'svelte-french-toast';
 	import { onMount } from 'svelte';
+	import FileUpload from '$components/utility/FileUpload.svelte';
 
 	$showListingSettings = false;
 
@@ -18,6 +19,19 @@
 	let showPublishModal = false;
 	let userInputName = '';
 	let deleteConfirmed = false;
+	let tempImage: {
+		file: File;
+		base64String: null;
+		fullTempFile: null;
+	} | null = null;
+
+	function handleFileUploaded({ detail: { file, base64String, fullTempFile } }) {
+		tempImage = {
+			file,
+			base64String,
+			fullTempFile
+		};
+	}
 
 	function onSubmit() {
 		return async ({ result, update }: { result: any; update: any }) => {
@@ -46,10 +60,12 @@
 	}
 
 	function onUpdate() {
-		return async ({ result }: { result: any }) => {
+		return async ({ result, update }: { result: any; update: any }) => {
 			if (result.type === 'success') {
 				toast.success('Listing updated successfully!');
 				$showListingSettings = false;
+				tempImage = null;
+				update();
 			}
 		};
 	}
@@ -141,10 +157,8 @@
 			</div>
 			<div class="mt-4">
 				<form method="post" action="?/updateListing" use:enhance={onUpdate}>
-					<div class="form-control">
-						<label class="label" for="name">
-							<span class="label-text">Name</span>
-						</label>
+					<div class="mb-4">
+						<label class="block text-sm font-medium mb-1" for="name">Name</label>
 						<input
 							type="text"
 							name="name"
@@ -153,30 +167,40 @@
 							required
 						/>
 					</div>
-					<div class="form-control">
-						<label class="label" for="description">
-							<span class="label-text">Description</span>
-						</label>
-						<textarea
-							name="description"
-							bind:value={currentListing.description}
-							class="textarea textarea-bordered w-full"
-							required
-						></textarea>
-					</div>
-					<div class="form-control">
-						<label class="label" for="title_image_url">
-							<span class="label-text">Title Image URL</span>
-						</label>
-						<input
-							type="url"
-							name="title_image_url"
-							bind:value={currentListing.title_image_url}
-							class="input input-bordered w-full"
-							required
-						/>
-					</div>
+					<div class="mb-4">
+						<div class="text-sm font-medium mb-1 flex justify-center items-center">
+							Upload New Title Image
+						</div>
 
+						{#if tempImage?.file}
+							<div class="relative">
+								<div class="flex justify-center items-center">
+									<img
+										src={tempImage.fullTempFile}
+										alt={tempImage.file.name}
+										class="mb-3 rounded w-1/2 md:w-1/3"
+									/>
+								</div>
+
+								<button
+									class="btn btn-sm btn-circle absolute top-2 right-2"
+									on:click={() => (tempImage = null)}>✕</button
+								>
+							</div>
+							<input type="hidden" name="titleImageBase64" value={tempImage.base64String} />
+							<input type="hidden" name="listingHash" value={currentListing.hash} />
+							<input type="hidden" name="oldImageHash" value={currentListing.title_image_hash} />
+						{:else}
+							<FileUpload
+								on:fileUploaded={handleFileUploaded}
+								minimumImageWidth={1920}
+								minimumImageHeight={1080}
+							/>
+							<p class="italic text-accent text-sm p-2">
+								Minimum 1920x1080, we will resize it for different devices
+							</p>
+						{/if}
+					</div>
 					<div class="flex justify-end gap-2 mt-2 form-control">
 						<button type="submit" class="btn btn-primary">Update</button>
 					</div>
@@ -211,6 +235,8 @@
 				<button class="btn mr-2" on:click={closeDeleteModal}>Cancel</button>
 				<form method="POST" action="?/delete" class="inline" use:enhance={onDelete}>
 					<input type="hidden" name="id" value={currentListing.id} />
+					<input type="hidden" name="imageHash" value={currentListing.title_image_hash} />
+					<input type="hidden" name="listingHash" value={currentListing.hash} />
 					<button
 						type="submit"
 						class="btn btn-error"
