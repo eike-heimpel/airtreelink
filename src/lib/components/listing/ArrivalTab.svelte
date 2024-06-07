@@ -151,25 +151,24 @@
 				{@const field = card.content_fields[0]}
 
 				{#if card.title === 'welcome_message'}
-					<div>
+					<div class="flex flex-col gap-2">
 						<div class="flex justify-center items-center text-white">
 							<p>
 								{#if field.type === 'text'}
 									{@html renderedContents[card.title]}
 								{:else}{field.content}{/if}
 							</p>
-
-							{#if !$previewMode}
-								<button
-									class="btn ml-4 btn-primary btn-outline"
-									on:click={() => {
-										selectedCard = card;
-									}}
-								>
-									Edit
-								</button>
-							{/if}
 						</div>
+						{#if !$previewMode}
+							<button
+								class="btn mt-2 btn-primary btn-outline w-fit mx-auto"
+								on:click={() => {
+									selectedCard = card;
+								}}
+							>
+								Edit
+							</button>
+						{/if}
 					</div>
 				{/if}
 				{#if card.title === 'main_address'}
@@ -185,17 +184,6 @@
 							>
 								<ContentCopy class="ml-2 w-5 h-5 text-primary" />
 							</button>
-
-							{#if !$previewMode}
-								<button
-									class="btn ml-4 btn-primary btn-outline"
-									on:click={() => {
-										selectedCard = card;
-									}}
-								>
-									Edit
-								</button>
-							{/if}
 						</div>
 						<address class="ml-2 not-italic">
 							<button
@@ -205,6 +193,16 @@
 								Get Directions
 							</button>
 						</address>
+						{#if !$previewMode}
+							<button
+								class="btn mt-2 btn-primary btn-outline w-fit mx-auto"
+								on:click={() => {
+									selectedCard = card;
+								}}
+							>
+								Edit
+							</button>
+						{/if}
 					</div>
 				{/if}
 
@@ -218,17 +216,17 @@
 									{@html renderedContents[card.title]}
 								{:else}{field.content}{/if}
 							</p>
-							{#if !$previewMode}
-								<button
-									class="btn ml-4 btn-primary btn-outline"
-									on:click={() => {
-										selectedCard = card;
-									}}
-								>
-									Edit
-								</button>
-							{/if}
 						</div>
+						{#if !$previewMode}
+							<button
+								class="btn mt-2 btn-primary btn-outline w-fit mx-auto"
+								on:click={() => {
+									selectedCard = card;
+								}}
+							>
+								Edit
+							</button>
+						{/if}
 					</div>
 				{/if}
 				{#if card.title === 'checkin_time'}
@@ -241,17 +239,17 @@
 									{@html renderedContents[card.title]}
 								{:else}{field.content}{/if}
 							</p>
-							{#if !$previewMode}
-								<button
-									class="btn ml-4 btn-primary btn-outline"
-									on:click={() => {
-										selectedCard = card;
-									}}
-								>
-									Edit
-								</button>
-							{/if}
 						</div>
+						{#if !$previewMode}
+							<button
+								class="btn mt-2 btn-primary btn-outline w-fit mx-auto"
+								on:click={() => {
+									selectedCard = card;
+								}}
+							>
+								Edit
+							</button>
+						{/if}
 					</div>
 				{/if}
 				{#if card.title === 'how_to_get_in'}
@@ -263,17 +261,17 @@
 									{@html renderedContents[card.title]}
 								{:else}{field.content}{/if}
 							</p>
-							{#if !$previewMode}
-								<button
-									class="btn ml-4 btn-primary btn-outline"
-									on:click={() => {
-										selectedCard = card;
-									}}
-								>
-									Edit
-								</button>
-							{/if}
 						</div>
+						{#if !$previewMode}
+							<button
+								class="btn mt-2 btn-primary btn-outline w-fit mx-auto"
+								on:click={() => {
+									selectedCard = card;
+								}}
+							>
+								Edit
+							</button>
+						{/if}
 					</div>
 				{/if}
 			{/each}
