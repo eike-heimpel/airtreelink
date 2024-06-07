@@ -22,10 +22,9 @@
 		></div>
 
 		<div
-			class="listing-info h-full w-full px-4 pb-20 overflow-auto {$previewMode ||
-			$page.route.id?.includes('public')
+			class="flex flex-col h-full w-full px-4 pb-20 overflow-auto pt-20 {$previewMode
 				? 'pt-10'
-				: 'pt-24'} mb-10"
+				: 'md:pt-10'}"
 		>
 			<div
 				class="w-full flex justify-center items-center pb-4 {activeTab !== ActiveTab.Arrival
@@ -67,10 +66,3 @@
 		<NavigationMenu bind:activeTab />
 	</div>
 {/if}
-
-<style>
-	.listing-info {
-		display: flex;
-		flex-direction: column;
-	}
-</style>
