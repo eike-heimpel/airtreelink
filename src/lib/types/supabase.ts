@@ -77,7 +77,7 @@ export type Database = {
           last_changed: string
           name: string
           public: boolean
-          title_image_url: string | null
+          title_image_hash: string | null
           user_id: string
         }
         Insert: {
@@ -89,7 +89,7 @@ export type Database = {
           last_changed?: string
           name: string
           public: boolean
-          title_image_url?: string | null
+          title_image_hash?: string | null
           user_id?: string
         }
         Update: {
@@ -101,7 +101,7 @@ export type Database = {
           last_changed?: string
           name?: string
           public?: boolean
-          title_image_url?: string | null
+          title_image_hash?: string | null
           user_id?: string
         }
         Relationships: [
