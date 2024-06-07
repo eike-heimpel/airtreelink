@@ -11,10 +11,6 @@ const config = {
 	kit: {
 		// Vercel adapter for deployment
 		adapter: adapter(),
-		files: {
-			// Path to the service worker file
-			serviceWorker: 'src/service-worker.ts'
-		},
 		alias: {
 			$components: "src/lib/components",
 			"$components/*": "src/lib/components/*",
