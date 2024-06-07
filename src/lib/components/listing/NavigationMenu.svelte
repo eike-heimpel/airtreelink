@@ -53,7 +53,7 @@
 					aria-label={tab.label}
 					class="{!$previewMode
 						? 'md:rounded-t-lg'
-						: ''} w-full pt-2 pb-1 flex flex-col items-center justify-center {activeTab ===
+						: ''} w-full py-2 md:pt-2 md:pb-1 flex flex-col items-center justify-center {activeTab ===
 					ActiveTab.Arrival
 						? 'bg-opacity-75'
 						: 'bg-opacity-95'} border-r border-neutral lg:text-lg {activeTab === tab.value

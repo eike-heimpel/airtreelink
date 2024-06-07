@@ -26,9 +26,9 @@
 		></div>
 
 		<div
-			class="flex flex-col h-full w-full px-4 pb-20 overflow-auto pt-20 {$previewMode
+			class="flex flex-col h-full w-full px-4 pb-20 overflow-auto {$previewMode
 				? 'pt-10'
-				: 'md:pt-10'}"
+				: 'pt-20 md:pt-10'}"
 		>
 			<div
 				class="w-full flex justify-center items-center pb-4 {activeTab !== ActiveTab.Arrival
