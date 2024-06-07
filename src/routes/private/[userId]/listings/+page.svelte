@@ -91,7 +91,7 @@
 				<h2 class="font-bold text-lg mb-4">Add New Listing</h2>
 				<form method="post" use:enhance={createListing}>
 					<div class="mb-4">
-						<label class="block text-sm font-medium mb-1">Name</label>
+						<label class="block text-sm font-medium mb-1" for="name">Name</label>
 						<input
 							type="text"
 							name="name"
@@ -101,7 +101,10 @@
 						/>
 					</div>
 					<div class="mb-4">
-						<label class="block text-sm font-medium mb-1">Title Image URL</label>
+						<label class="block text-sm font-medium mb-1" for="title_image_url"
+							>Title Image URL</label
+						>
+
 						<input
 							type="url"
 							name="title_image_url"
@@ -109,6 +112,9 @@
 							class="input input-bordered w-full"
 							required
 						/>
+						<p class="italic text-accent text-sm p-2">
+							Minimum 1920x1080, we will resize it for different devices
+						</p>
 					</div>
 
 					<div class="flex justify-end gap-2">
