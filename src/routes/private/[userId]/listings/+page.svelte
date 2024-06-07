@@ -2,12 +2,19 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import FileUpload from '$components/utility/FileUpload.svelte';
+	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 	export let data;
 
 	let name = '';
 	let description = '';
-	let title_image_url = 'https://picsum.photos/500/700';
+	let tempImage: {
+		file: File;
+		base64String: null;
+		fullTempFile: null;
+	} | null = null;
+
 	let showModal = false;
 
 	function openModal() {
@@ -18,13 +25,24 @@
 		showModal = false;
 	}
 
+	function handleFileUploaded({ detail: { file, base64String, fullTempFile } }) {
+		tempImage = {
+			file,
+			base64String,
+			fullTempFile
+		};
+	}
+
+	$: console.log(tempImage);
+
 	function createListing({ cancel }) {
-		// dont allow if they have mor ethan 5 listings already
+		// don't allow if they have more than 5 listings already
 		if (data.listings.length >= 5) {
 			toast.error('You have reached the maximum number of listings allowed.');
 			cancel();
 			closeModal();
 		}
+
 		return async ({ result, update }: { result: any; update: any }) => {
 			if (result.type === 'success') {
 				toast.success('Listing created successfully!');
@@ -39,8 +57,12 @@
 
 			name = '';
 			description = '';
-			title_image_url = '';
+			tempImage = null;
 		};
+	}
+
+	function deleteTempImage() {
+		tempImage = null;
 	}
 </script>
 
@@ -56,7 +78,7 @@
 			<figure class="overflow-hidden h-64 w-full">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<img
-					src={listing.title_image_url}
+					src={`${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${listing.hash}/${listing.title_image_url}.webp`}
 					alt="Listing Image"
 					class="transition-transform duration-300 ease-in-out hover:scale-105 object-cover w-full h-full"
 				/>
@@ -87,7 +109,7 @@
 
 	{#if showModal}
 		<div class="modal modal-open modal-bottom sm:modal-middle">
-			<div class="modal-box">
+			<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
 				<h2 class="font-bold text-lg mb-4">Add New Listing</h2>
 				<form method="post" use:enhance={createListing}>
 					<div class="mb-4">
@@ -101,20 +123,34 @@
 						/>
 					</div>
 					<div class="mb-4">
-						<label class="block text-sm font-medium mb-1" for="title_image_url"
-							>Title Image URL</label
-						>
+						<div class="text-sm font-medium mb-1 flex justify-center items-center">Title Image</div>
 
-						<input
-							type="url"
-							name="title_image_url"
-							bind:value={title_image_url}
-							class="input input-bordered w-full"
-							required
-						/>
-						<p class="italic text-accent text-sm p-2">
-							Minimum 1920x1080, we will resize it for different devices
-						</p>
+						{#if tempImage?.file}
+							<div class="relative">
+								<div class="flex justify-center items-center">
+									<img
+										src={tempImage.fullTempFile}
+										alt={tempImage.file.name}
+										class="mb-3 rounded w-1/2 md:w-1/3"
+									/>
+								</div>
+
+								<button
+									class="btn btn-sm btn-circle absolute top-2 right-2"
+									on:click={deleteTempImage}>✕</button
+								>
+							</div>
+							<input type="hidden" name="titleImageBase64" value={tempImage.base64String} />
+						{:else}
+							<FileUpload
+								on:fileUploaded={handleFileUploaded}
+								minimumImageWidth={1920}
+								minimumImageHeight={1080}
+							/>
+							<p class="italic text-accent text-sm p-2">
+								Minimum 1920x1080, we will resize it for different devices
+							</p>
+						{/if}
 					</div>
 
 					<div class="flex justify-end gap-2">

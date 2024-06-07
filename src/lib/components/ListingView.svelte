@@ -6,19 +6,21 @@
 	import type { Database } from '$lib/types/supabase';
 	import { ActiveTab } from '$lib/types/listing';
 	import ArrivalTab from '$components/listing/ArrivalTab.svelte';
+	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 	type Listing = Database['public']['Tables']['Listings']['Row'];
 
 	export let currentListing: Listing;
 
 	let activeTab = 'arrival';
+	let listingBackgroundImageUrl = `${PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing_images/${currentListing.hash}/${currentListing.title_image_url}.webp`;
 </script>
 
 {#if currentListing}
 	<div class="relative w-full h-full min-h-screen">
 		<div
-			class="absolute inset-0 bg-cover bg-fixed -z-10"
-			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({currentListing.title_image_url});"
+			class="absolute inset-0 bg-cover bg-center bg-fixed -z-10"
+			style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url({listingBackgroundImageUrl});"
 		></div>
 
 		<div
