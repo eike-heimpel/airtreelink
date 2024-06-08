@@ -7,6 +7,7 @@
 	import AccountCircleOutline from 'virtual:icons/mdi/account-circle-outline';
 	import LoginIcon from 'virtual:icons/mdi/login';
 	import PricingPlans from '$components/PricingPlans/PricingPlans.svelte';
+	import { goto } from '$app/navigation';
 
 	export let data;
 	$: ({ session, supabase } = data);
@@ -120,7 +121,7 @@
 	{/if}
 </nav>
 <section id="home" class="min-h-screen bg-base-100 flex items-center p-4">
-	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-8 mt-8 md:mt-0">
+	<div class="w-full max-w-5xl mx-auto text-center py-12 flex flex-col gap-8 mt-8 xl:mt-0">
 		<h1 class="text-3xl sm:text-5xl font-bold">Simplify Guest Communication with GuestLink</h1>
 		<p class="text-lg md:text-xl">
 			Streamline your guest experience by sharing all the essential information in one place. Get
@@ -196,26 +197,39 @@
 </section>
 <section
 	id="demo"
-	class="min-h-screen bg-base-100 flex flex-col items-center justify-center gap-4 md:gap-12 p-4 text-center"
+	class="min-h-screen bg-base-100 flex flex-col items-center justify-center gap-4 p-4 text-center"
 >
 	<h2 class="text-2xl sm:text-4xl font-bold">
 		Experience GuestLink's <span class="text-accent"> Simplicity </span>
 	</h2>
 	<p class="text-lg">Take a peek at what your guests will see</p>
-	<div class="flex justify-center">
-		<div class="mockup-phone">
+	<button
+		class="flex justify-center"
+		on:click={() => goto('/public/listings/80?hash=Mim8eFYJ3N9QicKJzljNIBu0nFm4VZiaeyt5yvK4HB8=')}
+	>
+		<div class="mockup-phone lg:scale-90">
 			<div class="camera"></div>
-			<div class="display h-96">
-				<img src="https://picsum.photos/200/800" alt="Demo" />
+			<div class="display h-[844px] w-[390px] overflow-hidden hidden lg:block">
+				<iframe
+					src="/public/listings/80?hash=Mim8eFYJ3N9QicKJzljNIBu0nFm4VZiaeyt5yvK4HB8="
+					title="GuestLink Demo"
+					class="w-full h-full border-none"
+					scrolling="no"
+				/>
+			</div>
+			<div class="display h-[550px] w-[250px] lg:hidden">
+				<img src="examples/example.png" alt="Demo" class="w-full h-auto" />
 			</div>
 		</div>
-	</div>
+	</button>
+	<a href="/auth" class="btn btn-primary btn-outline 2xl:btn-lg lg:-mt-8">Visit Demo Listing</a>
+
 	<div class="flex gap-2 sm:gap-8 md:gap-16">
-		<a href="/auth" class="btn btn-primary btn-lg">Get Started</a>
+		<a href="/auth" class="btn btn-primary 2xl:btn-lg">Get Started</a>
 		<a
 			href="#pricing"
 			on:click={(e) => scrollToSection(e, 'pricing')}
-			class="btn btn-accent btn-lg"
+			class="btn btn-accent 2xl:btn-lg"
 		>
 			Pricing
 		</a>
