@@ -77,6 +77,8 @@ export const actions = {
     },
 
     updateListing: async ({ request, locals, params }) => {
+
+
         const formData = await request.formData();
 
         const id = parseInt(params.listingId);
@@ -88,39 +90,42 @@ export const actions = {
         const description = "";
         const imageHash = nanoid(12);
 
-
         try {
 
-            const buffer = Buffer.from(titleImageBase64, 'base64');
-            const filePath = `${listingHash}/${imageHash}.webp`;
+
+            if (titleImageBase64) {
+                const buffer = Buffer.from(titleImageBase64, 'base64');
+                const filePath = `${listingHash}/${imageHash}.webp`;
 
 
-                const { data: imageData, error: imageUploadError } = await supabaseServiceClient.storage
-                .from('listing_images')
-                .upload(filePath, buffer, { upsert: true });
+                    const { data: imageData, error: imageUploadError } = await supabaseServiceClient.storage
+                    .from('listing_images')
+                    .upload(filePath, buffer, { upsert: true });
 
-    
-            if (imageUploadError) {
-
-                if (imageUploadError.message === 'The resource already exists') {
         
-                    console.log(`Image already exists. Using existing file: ${filePath}`);
+                if (imageUploadError) {
 
-                } else {
-                    console.error(`Failed to upload file: ${filePath}`, imageUploadError.message);
-                    throw error(500, 'Failed to upload file');
+                    if (imageUploadError.message === 'The resource already exists') {
+            
+                        console.log(`Image already exists. Using existing file: ${filePath}`);
+
+                    } else {
+                        console.error(`Failed to upload file: ${filePath}`, imageUploadError.message);
+                        throw error(500, 'Failed to upload file');
+                    }
                 }
-            }
 
-            console.log(`Uploaded image: ${filePath}`);
+                console.log(`Uploaded image: ${filePath}`);
 
-            // now we need to delete the old image
-            const { data: deleteImage, error: deleteImageError } = await supabaseServiceClient.storage
-                .from('listing_images')
-                .remove([`${listingHash}/${oldImageHash}.webp`]);
+                // now we need to delete the old image
+                const { data: deleteImage, error: deleteImageError } = await supabaseServiceClient.storage
+                    .from('listing_images')
+                    .remove([`${listingHash}/${oldImageHash}.webp`]);
 
-            if (deleteImageError) {
-                console.error('Error deleting old image:', deleteImageError);
+                if (deleteImageError) {
+                    console.error('Error deleting old image:', deleteImageError);
+                }
+
             }
 
             const response = await locals.supabase.from('Listings').update({ name, description, title_image_hash: imageHash }).eq('id', id);

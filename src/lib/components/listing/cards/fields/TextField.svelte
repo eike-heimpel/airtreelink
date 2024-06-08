@@ -98,5 +98,6 @@
 	#editor {
 		flex-grow: 1;
 		overflow-y: auto;
+		font-size: 16px; /* Ensures that the browser does not zoom in */
 	}
 </style>

@@ -276,17 +276,6 @@
 				{/if}
 			{/each}
 			{#if !$previewMode}
-				{#if !cards.some((card) => card.title === 'main_address')}
-					<div class="col-span-1 relative">
-						<div
-							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
-						>
-							<button class="text-base-100 hover:text-primary" on:click={addAddress}>
-								<span class="text-primary mr-4"> Add </span>Address
-							</button>
-						</div>
-					</div>
-				{/if}
 				{#if !cards.some((card) => card.title === 'welcome_message')}
 					<div class="col-span-1 relative">
 						<div
@@ -298,6 +287,18 @@
 						</div>
 					</div>
 				{/if}
+				{#if !cards.some((card) => card.title === 'main_address')}
+					<div class="col-span-1 relative">
+						<div
+							class="border-2 border-dashed rounded-2xl border-primary p-4 flex items-center justify-center h-full"
+						>
+							<button class="text-base-100 hover:text-primary" on:click={addAddress}>
+								<span class="text-primary mr-4"> Add </span>Address
+							</button>
+						</div>
+					</div>
+				{/if}
+
 				{#if !cards.some((card) => card.title === 'contact_info')}
 					<div class="col-span-1 relative">
 						<div
@@ -335,7 +336,7 @@
 		</div>
 
 		{#if tempCard}
-			<dialog class="modal modal-open modal-bottom sm:modal-middle">
+			<dialog class="modal modal-bottom sm:modal-middle" class:modal-open={tempCard}>
 				<div class="modal-box w-full max-w-4xl sm:max-w-6xl">
 					<ListingCardComponent
 						card={tempCard}
@@ -346,6 +347,9 @@
 						on:closeModal={closeAddModal}
 					/>
 				</div>
+				<form method="dialog" class="modal-backdrop">
+					<button on:click={closeAddModal}>close</button>
+				</form>
 			</dialog>
 		{/if}
 
