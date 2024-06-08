@@ -4,6 +4,7 @@
 	import type { ImageField } from '$lib/types/fields';
 	import { createEventDispatcher } from 'svelte';
 	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
+	import { nanoid } from 'nanoid';
 
 	export let field: ImageField;
 	export let index: number;
@@ -35,7 +36,8 @@
 
 	function handleFileUploaded({ detail: { file, base64String, fullTempFile } }) {
 		const extension = file.name.split('.').pop();
-		const fileName = field.id + '.' + extension;
+		const fileName = nanoid(12) + '.' + extension;
+		console.log(fileName);
 		onTempImageUpdate(index, {
 			fileName: fileName,
 			file: base64String,

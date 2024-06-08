@@ -76,6 +76,8 @@
 			imagesToDelete.push(listingHash + '/' + tempImages[index]?.fileName);
 		}
 		tempImages = { ...tempImages, [index]: tempImage };
+
+		console.log(tempImages);
 	}
 
 	function addField(type: FieldTypes) {

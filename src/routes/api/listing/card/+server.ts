@@ -72,6 +72,8 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
     }
   
     // Upload images and update card data
+    console.log(images)
+    console.log(imagesToDelete)
     const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, supabaseServiceClient);
   
     const updates = updatedCards.map((card) => {

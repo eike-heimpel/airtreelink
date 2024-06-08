@@ -88,12 +88,15 @@ export const actions = {
         const listingHash = formData.get('listingHash') as string;
         const oldImageHash = formData.get('oldImageHash') as string;
         const description = "";
-        const imageHash = nanoid(12);
+        let imageHash = "";
 
         try {
 
 
             if (titleImageBase64) {
+
+                imageHash = nanoid(12);
+
                 const buffer = Buffer.from(titleImageBase64, 'base64');
                 const filePath = `${listingHash}/${imageHash}.webp`;
 
@@ -115,7 +118,11 @@ export const actions = {
                     }
                 }
 
-                console.log(`Uploaded image: ${filePath}`);
+                if (!imageUploadError){
+                    console.log(`Uploaded image: ${filePath}`);
+                }
+            
+
 
                 // now we need to delete the old image
                 const { data: deleteImage, error: deleteImageError } = await supabaseServiceClient.storage
@@ -128,12 +135,18 @@ export const actions = {
 
             }
 
-            const response = await locals.supabase.from('Listings').update({ name, description, title_image_hash: imageHash }).eq('id', id);
+            let response;
+
+            if (!titleImageBase64) {
+                response = await locals.supabase.from('Listings').update({ name, description }).eq('id', id);
+            } else {
+                response = await locals.supabase.from('Listings').update({ name, description, title_image_hash: imageHash }).eq('id', id);
+            }
 
             if (response.error) throw new Error(response.error.message);
             return { success: true };
         } catch (error) {
-            console.log("could not update listing", error);
+            console.error("could not update listing", error);
             return { error: error.message };
         }
     },
