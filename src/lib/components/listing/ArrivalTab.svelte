@@ -48,13 +48,21 @@
 		}
 	}
 
-	onMount(async () => {
+	async function renderAllCards() {
 		const renderPromises = cards.map((card) =>
 			renderContent(card.content_fields[0], card.title as ContentTitle)
 		);
 		await Promise.all(renderPromises);
 		contentLoaded = true;
+	}
+
+	onMount(async () => {
+		renderAllCards();
 	});
+
+	$: if (cards) {
+		renderAllCards();
+	}
 
 	function addAddress() {
 		tempCard = {
