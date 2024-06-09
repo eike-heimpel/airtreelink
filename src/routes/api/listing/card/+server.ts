@@ -70,13 +70,24 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
       console.log("Invalid payload: Cards array is required");
       throw error(400, 'Cards array is required');
     }
+
+    let updatedCards = cards;
   
-    // Upload images and update card data
-    console.log(images)
-    console.log(imagesToDelete)
-    const updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, supabaseServiceClient);
-  
-    const updates = updatedCards.map((card) => {
+    if (images) {
+      updatedCards = await processImagesAndUpdateCards(cards, images, listingHash, supabaseServiceClient);
+    }
+
+    let updates;
+
+
+    if (!Array.isArray(updatedCards)) {
+      console.error('updatedCards is not an array');
+      throw error(400, 'Invalid input data');
+    }
+
+    try {
+      updates = updatedCards.map((card) => {
+
       if (!card.id) {
         console.log("Card ID is required");
         throw error(400, 'Card ID is required');
@@ -91,6 +102,12 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
         .eq('user_id', session.user.id)
         .eq('id', card.id);
     });
+
+  } catch (err) {
+    console.error('Error updating cards:', err);
+    throw error(500, 'Error updating cards');
+
+  }
   
     try {
       const results = await Promise.all(updates);
@@ -102,8 +119,9 @@ export const PUT: RequestHandler = async ({ request, locals: { session, supabase
         }
       });
   
-      // Delete images marked for deletion
-      if (imagesToDelete.length > 0) {
+
+
+      if (imagesToDelete && imagesToDelete.length > 0) {
         const { data, error: deleteError } = await supabaseServiceClient.storage
           .from('listing_images')
           .remove(imagesToDelete);

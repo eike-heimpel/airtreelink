@@ -60,6 +60,8 @@
 
 		if (!moveCards) sortable.options.disabled = true;
 		else sortable.options.disabled = false;
+
+		sortable = sortable;
 	}
 
 	$: updateSortable(moveCards);
@@ -81,10 +83,16 @@
 	}
 
 	async function saveCardOrder() {
+		// Extract and sort existing sort_order values from the original cards array
+		const sortedOrderValues = cards.map((card) => card.sort_order).sort((a, b) => a - b);
+
+		// Generate the updated order array using the sortedOrderValues
 		const updatedOrder = filteredCards.map((card, index) => ({
 			id: card.id,
-			sort_order: cards[index].sort_order // Preserve the original sort_order values
+			sort_order: sortedOrderValues[index] // Assign sorted order values to the new indices
 		}));
+
+		console.log(updatedOrder);
 
 		try {
 			const response = await fetch('/api/listing/card', {
