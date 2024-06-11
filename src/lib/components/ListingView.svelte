@@ -26,7 +26,7 @@
 		></div>
 
 		<div
-			class="flex flex-col h-full w-full px-4 pb-20 overflow-auto {$previewMode
+			class="flex flex-col w-full min-h-screen px-4 pb-20 overflow-auto {$previewMode
 				? 'pt-10'
 				: 'pt-20 md:pt-10'}"
 		>

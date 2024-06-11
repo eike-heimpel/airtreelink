@@ -314,7 +314,7 @@
 	{/if}
 </div>
 {#if showDeleteModal}
-	<dialog class="modal modal-open modal-bottom sm:modal-middle">
+	<dialog class="modal modal-open modal-middle">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Confirm Delete</h3>
 			<p class="py-4">Are you sure you want to delete your "{card.title}" card?</p>

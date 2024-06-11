@@ -66,6 +66,8 @@
 
 	function clearSearch() {
 		searchQuery = '';
+		selectedIcon = null;
+		filterDropdownOpen = false;
 		filterCards();
 	}
 </script>
