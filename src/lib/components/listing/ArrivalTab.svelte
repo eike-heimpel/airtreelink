@@ -193,7 +193,7 @@
 								<ContentCopy class="ml-2 w-5 h-5 text-primary" />
 							</button>
 						</div>
-						<address class="ml-2 not-italic">
+						<address class="not-italic">
 							<button
 								class="btn btn-sm btn-accent btn-outline"
 								on:click={() => openDirections(field.content)}

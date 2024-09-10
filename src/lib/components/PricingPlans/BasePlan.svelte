@@ -49,8 +49,6 @@
 
 		const { prices } = await response.json();
 
-		console.log(prices);
-
 		monthlyPlan = prices.find((price) => price.interval === 'month');
 		yearlyPlan = prices.find((price) => price.interval === 'year');
 
@@ -65,8 +63,6 @@
 				? yearlyPlan.amount.split('.')[0]
 				: yearlyPlan.amount;
 		}
-
-		console.log(yearlyPlan);
 	});
 </script>
 

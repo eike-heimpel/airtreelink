@@ -17,7 +17,7 @@
 		const country = '';
 
 		const url = `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&language=${language}&limit=${limit}&session_token=${sessionToken}&proximity=${proximity}&country=${country}&access_token=${accessToken}`;
-		console.log(url);
+
 		try {
 			const response = await fetch(url);
 

@@ -3,8 +3,6 @@
 
 	export let tooltipText = '';
 	let showAsModal = false;
-
-	$: console.log(showAsModal);
 </script>
 
 <button

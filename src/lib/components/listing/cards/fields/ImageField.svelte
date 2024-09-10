@@ -37,7 +37,7 @@
 	function handleFileUploaded({ detail: { file, base64String, fullTempFile } }) {
 		const extension = file.name.split('.').pop();
 		const fileName = nanoid(12) + '.' + extension;
-		console.log(fileName);
+
 		onTempImageUpdate(index, {
 			fileName: fileName,
 			file: base64String,

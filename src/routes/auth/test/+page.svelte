@@ -18,8 +18,6 @@
 		});
 	});
 	async function handleCredentialResponse(response) {
-		console.log('ASDASDASD');
-		console.log(response);
 		const resp = await data.supabase.auth.signInWithIdToken({
 			provider: 'google',
 			token: response.credential

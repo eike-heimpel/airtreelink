@@ -69,7 +69,7 @@
 		const { prices } = await response.json();
 
 		const yearlyPlan = prices.find((price) => price.interval === 'year');
-		console.log(yearlyPlan);
+
 		return yearlyPlan;
 	}
 </script>

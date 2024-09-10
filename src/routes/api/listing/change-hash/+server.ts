@@ -100,7 +100,7 @@ async function moveFolder( bucketName: string, oldFolderPath: string, newFolderP
             console.error('Error listing files:', listError);
             throw listError;
         }
-        console.log(files)
+
         // Copy each file to the new folder
         for (const file of files) {
             const oldFilePath = `${oldFolderPath}/${file.name}`;
