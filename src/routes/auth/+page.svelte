@@ -160,7 +160,10 @@
 					<img src="/logo_black.png" alt="Logo" class="h-12" />
 				</button>
 			</div>
-			<h2 class="card-title justify-center text-3xl mb-8">Login</h2>
+			<h2 class="card-title justify-center text-3xl">Login</h2>
+			<p class="italic text-center text-sm mb-2">
+				To sign up, just type your desired email and password.
+			</p>
 			<form
 				use:enhance={signInWithEmail}
 				method="POST"
