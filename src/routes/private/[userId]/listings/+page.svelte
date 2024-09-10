@@ -4,6 +4,7 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 	import FileUpload from '$components/utility/FileUpload.svelte';
 	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
+	import { MAX_NUMBER_OF_LISTINGS } from '$lib/stores/store';
 
 	export let data;
 
@@ -35,7 +36,7 @@
 
 	function createListing({ cancel }) {
 		// don't allow if they have more than 5 listings already
-		if (data.listings.length >= 5) {
+		if (data.listings.length >= $MAX_NUMBER_OF_LISTINGS) {
 			toast.error('You have reached the maximum number of listings allowed.');
 			cancel();
 			closeModal();

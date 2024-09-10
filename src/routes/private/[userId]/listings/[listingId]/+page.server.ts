@@ -76,6 +76,90 @@ export const actions = {
         }
     },
 
+    duplicateListing: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const id = parseInt(formData.get('id')?.toString() || '');
+    
+        try {
+            // Get the original listing by id
+            const { data: originalListing, error: originalListingError } = await locals.supabase
+                .from('Listings')
+                .select('*')
+                .eq('id', id)
+                .single();
+    
+            if (originalListingError) {
+                throw new Error(originalListingError.message);
+            }
+    
+            // Generate a new listing with the same fields, but with a modified name and set public to false
+            const newListing = {
+                ...originalListing,
+                name: `${originalListing.name} Copy`,
+                public: false
+            };
+    
+            // Remove fields that should not be duplicated
+            delete newListing.id;
+            delete newListing.created_at;
+            delete newListing.last_changed;
+            delete newListing.user_id;
+    
+            // Insert the new listing
+            const { data: insertedListing, error: insertListingError } = await locals.supabase
+                .from('Listings')
+                .insert(newListing)
+                .single()
+                .select();
+    
+            if (insertListingError) {
+                throw new Error(insertListingError.message);
+            }
+    
+            // Get the cards for the original listing
+            const { data: originalCards, error: originalCardsError } = await locals.supabase
+                .from('listing_cards')
+                .select('*')
+                .eq('listing_id', id);
+    
+            if (originalCardsError) {
+                throw new Error(originalCardsError.message);
+            }
+            
+            // Create copies of each card for the new listing
+            const newCards = originalCards.map(card => {
+                return {
+                    ...card,
+                    listing_id: insertedListing.id
+                };
+            });
+    
+            // Remove fields that should not be duplicated
+            newCards.forEach(card => {
+                delete card.id;
+                delete card.created_at;
+                delete card.last_changed;
+                delete card.user_id;
+            });
+            
+            // Insert the new cards
+            const { error: insertCardsError } = await locals.supabase
+                .from('listing_cards')
+                .insert(newCards);
+    
+            if (insertCardsError) {
+                throw new Error(insertCardsError.message);
+            }
+    
+            return { success: true};
+        } catch (error) {
+            console.error("could not duplicate listing", error);
+            return { error: error.message };
+        }
+    }
+    ,
+    
+
     updateListing: async ({ request, locals, params }) => {
 
 
@@ -167,8 +251,6 @@ export const actions = {
 
         console.log("card deleted")
         return { success: true };
-
-
 
     },
 

@@ -8,8 +8,11 @@
 	import { toast } from 'svelte-french-toast';
 	import { onMount } from 'svelte';
 	import FileUpload from '$components/utility/FileUpload.svelte';
+	import { MAX_NUMBER_OF_LISTINGS } from '$lib/stores/store';
 
 	$showListingSettings = false;
+
+	$: console.log($MAX_NUMBER_OF_LISTINGS);
 
 	export let currentListing;
 
@@ -24,6 +27,7 @@
 		base64String: null;
 		fullTempFile: null;
 	} | null = null;
+	let duplicateModalOpen = false;
 
 	function handleFileUploaded({ detail: { file, base64String, fullTempFile } }) {
 		tempImage = {
@@ -118,6 +122,26 @@
 	function closePublishModal() {
 		showPublishModal = false;
 	}
+
+	function duplicateListingOpen() {
+		if ($page.data.listings.length >= $MAX_NUMBER_OF_LISTINGS) {
+			toast.error('You have reached the maximum number of listings allowed.');
+			return;
+		} else {
+			duplicateModalOpen = true;
+		}
+	}
+
+	function duplicateListing() {
+		return async ({ result, update }: { result: any; update: any }) => {
+			if (result.type === 'success') {
+				toast.success('Listing duplicated successfully!');
+				$showListingSettings = false;
+				duplicateModalOpen = false;
+				goto('/private/' + $page.data.session.user.id + '/listings');
+			}
+		};
+	}
 </script>
 
 {#if $showListingSettings}
@@ -206,6 +230,11 @@
 					</div>
 				</form>
 			</div>
+
+			<button class="btn btn-outline btn-block mt-4" on:click={duplicateListingOpen}>
+				Duplicate Listing
+			</button>
+
 			<button
 				type="button"
 				class="btn btn-error btn-outline btn-block mt-4"
@@ -282,6 +311,30 @@
 					<input type="hidden" name="id" value={currentListing.id} />
 					<input type="hidden" name="public" value={!isPublic} />
 					<button type="submit" class="btn btn-primary">Publish</button>
+				</form>
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if duplicateModalOpen}
+	<div class="modal modal-open modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Confirm Duplicate</h3>
+			<p class="py-4">
+				This will duplicate the listing with a new ID and set it to private. You will be redirected
+				to the listing overview.
+			</p>
+			<div class="modal-action justify-end align-center">
+				<button class="btn mr-2" on:click={closePublishModal}>Cancel</button>
+				<form
+					method="POST"
+					action="?/duplicateListing"
+					class="inline"
+					use:enhance={duplicateListing}
+				>
+					<input type="hidden" name="id" value={currentListing.id} />
+					<button type="submit" class="btn btn-primary">Duplicate</button>
 				</form>
 			</div>
 		</div>

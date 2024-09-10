@@ -94,28 +94,29 @@
 	<!-- Mobile menu -->
 	{#if mobileMenuOpen}
 		<div
-			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-10 z-10 p-4 shadow-lg"
+			class="md:hidden fixed inset-0 top-[4rem] bg-base-200 flex flex-col items-center justify-start gap-6 z-10 p-4 shadow-lg"
 		>
 			<a
 				href="#home"
 				on:click={(e) => scrollToSection(e, 'home')}
-				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
+				class="btn btn-primary btn-outline btn-lg py-4 hover:bg-base-300 w-full text-center flex gap-4 items-center justify-center rounded-lg"
 			>
-				<HomeIcon class="w-6 h-6 mr-2" /> Home
+				<HomeIcon class="w-8 h-8 mr-2" /> Home
 			</a>
 			<a
 				href="#demo"
 				on:click={(e) => scrollToSection(e, 'demo')}
-				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
+				class="btn btn-primary btn-outline btn-lg py-4 hover:bg-base-300 w-full text-center flex gap-4 items-center justify-center rounded-lg"
 			>
-				<DemoIcon class="w-6 h-6 mr-2" /> Demo
+				<DemoIcon class="w-8 h-8 mr-2" /> Demo
 			</a>
+
 			<a
 				href="#pricing"
 				on:click={(e) => scrollToSection(e, 'pricing')}
-				class="block py-4 text-2xl hover:bg-base-300 w-full text-center flex items-center justify-center rounded-lg"
+				class="btn btn-primary btn-outline btn-lg py-4 hover:bg-base-300 w-full text-center flex gap-4 items-center justify-center rounded-lg"
 			>
-				<PricingIcon class="w-6 h-6 mr-2" /> Pricing
+				<PricingIcon class="w-8 h-8 mr-2" /> Pricing
 			</a>
 		</div>
 	{/if}
@@ -205,13 +206,13 @@
 	<p class="text-lg">Take a peek at what your guests will see</p>
 	<button
 		class="flex justify-center"
-		on:click={() => goto('/public/listings/80?hash=Mim8eFYJ3N9QicKJzljNIBu0nFm4VZiaeyt5yvK4HB8=')}
+		on:click={() => goto('/public/listings/80?hash=PdoDR0jvY4B9suM50w8Fm/oiFqqCyg1ZYaa/0EtOZ8w=')}
 	>
 		<div class="mockup-phone lg:scale-90">
 			<div class="camera"></div>
 			<div class="display h-[844px] w-[390px] overflow-hidden hidden lg:block">
 				<iframe
-					src="/public/listings/80?hash=Mim8eFYJ3N9QicKJzljNIBu0nFm4VZiaeyt5yvK4HB8="
+					src="/public/listings/80?hash=PdoDR0jvY4B9suM50w8Fm/oiFqqCyg1ZYaa/0EtOZ8w="
 					title="GuestLink Demo"
 					class="w-full h-full border-none"
 					scrolling="no"
@@ -222,7 +223,10 @@
 			</div>
 		</div>
 	</button>
-	<a href="/auth" class="btn btn-primary btn-outline 2xl:btn-lg lg:-mt-8">Visit Demo Listing</a>
+	<a
+		href="/public/listings/80?hash=PdoDR0jvY4B9suM50w8Fm/oiFqqCyg1ZYaa/0EtOZ8w="
+		class="btn btn-primary btn-outline 2xl:btn-lg lg:-mt-8">Visit Demo Listing</a
+	>
 
 	<div class="flex gap-2 sm:gap-8 md:gap-16">
 		<a href="/auth" class="btn btn-primary 2xl:btn-lg">Get Started</a>

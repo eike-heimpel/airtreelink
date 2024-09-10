@@ -89,7 +89,7 @@
 				<span class="text-green-500 mr-2">✓</span>Unique private URL
 			</li>
 			<li class="flex items-center">
-				<span class="text-green-500 mr-2">✓</span>Unlimited modify listing info updates
+				<span class="text-green-500 mr-2">✓</span>Unlimited listing modifications
 			</li>
 		</ul>
 		<p class="text-center mb-4 italic">
